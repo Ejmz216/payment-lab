@@ -4,18 +4,35 @@ import { useProgressStore } from '@/store/progressStore'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 import { getLessons, getConfusions } from '@/lib/i18nContent'
+import { computeAllTopicMastery } from '@/lib/mastery'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { ArrowRight } from 'lucide-react'
 
 export function Dashboard() {
   const completed = useProgressStore((s) => s.completedLessons)
+  const quizResults = useProgressStore((s) => s.quizResults)
+  const scenarioHistory = useProgressStore((s) => s.scenarioHistory)
   const lang = useUIStore((s) => s.lang)
   const t = useT()
   const orderedLessons = getLessons(lang).slice().sort((a, b) => a.order - b.order)
   const nextLesson = orderedLessons.find((l) => !completed.includes(l.id)) ?? orderedLessons[0]
-  const overallMastery = Math.round((completed.length / orderedLessons.length) * 100)
+  const courseProgress = Math.round((completed.length / orderedLessons.length) * 100)
   const featuredConfusion = getConfusions(lang)[0]
+
+  const topics = computeAllTopicMastery(orderedLessons, completed, quizResults, scenarioHistory)
+  const practicedTopics = topics.filter((topic) => topic.hasPractice)
+  const avgMastery = practicedTopics.length
+    ? Math.round(practicedTopics.reduce((sum, topic) => sum + topic.mastery, 0) / practicedTopics.length)
+    : null
+
+  const totalAnswers = quizResults.length + scenarioHistory.length
+  const totalCorrect = quizResults.filter((r) => r.correct).length + scenarioHistory.filter((r) => r.correct).length
+  const practiceAccuracy = totalAnswers ? Math.round((totalCorrect / totalAnswers) * 100) : null
+
+  const weakestTopic = practicedTopics.length
+    ? practicedTopics.slice().sort((a, b) => a.mastery - b.mastery)[0]
+    : null
 
   return (
     <div className="flex flex-col gap-6">
@@ -40,13 +57,52 @@ export function Dashboard() {
         </div>
       </Card>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <CardTitle>{t('dashboard.overallMastery')}</CardTitle>
-          <div className="mt-2 text-2xl font-semibold">{overallMastery}%</div>
-          <div className="mt-2"><ProgressBar value={overallMastery} /></div>
-          <div className="mt-2 text-xs text-muted">{completed.length} / {orderedLessons.length} {t('dashboard.lessonsComplete')}</div>
+          <CardTitle>{t('dashboard.courseProgress')}</CardTitle>
+          <div className="mt-2 text-2xl font-semibold">{courseProgress}%</div>
+          <div className="mt-2"><ProgressBar value={courseProgress} /></div>
+          <div className="mt-2 text-xs text-muted">{completed.length} / {orderedLessons.length} {t('dashboard.courseProgressDesc')}</div>
         </Card>
+        <Card>
+          <CardTitle>{t('dashboard.mastery')}</CardTitle>
+          {avgMastery === null ? (
+            <div className="mt-2 text-sm text-muted">{t('dashboard.masteryNoData')}</div>
+          ) : (
+            <>
+              <div className="mt-2 text-2xl font-semibold">{avgMastery}%</div>
+              <div className="mt-2"><ProgressBar value={avgMastery} /></div>
+              <div className="mt-2 text-xs text-muted">{practicedTopics.length} {t('dashboard.masteryDesc')}</div>
+            </>
+          )}
+        </Card>
+        <Card>
+          <CardTitle>{t('dashboard.practiceAccuracy')}</CardTitle>
+          {practiceAccuracy === null ? (
+            <div className="mt-2 text-sm text-muted">{t('dashboard.noPracticeYet')}</div>
+          ) : (
+            <>
+              <div className="mt-2 text-2xl font-semibold">{practiceAccuracy}%</div>
+              <div className="mt-2"><ProgressBar value={practiceAccuracy} /></div>
+              <div className="mt-2 text-xs text-muted">{totalCorrect} / {totalAnswers} {t('dashboard.practiceAccuracyDesc')}</div>
+            </>
+          )}
+        </Card>
+        <Card>
+          <CardTitle>{t('dashboard.weakestArea')}</CardTitle>
+          {weakestTopic === null ? (
+            <div className="mt-2 text-sm text-muted">{t('dashboard.noPracticeYet')}</div>
+          ) : (
+            <>
+              <Link to={`/learn/fast-payments/${weakestTopic.id}`} className="mt-2 block text-sm hover:text-primary hover:underline">{weakestTopic.label}</Link>
+              <div className="mt-2"><ProgressBar value={weakestTopic.mastery} /></div>
+              <div className="mt-2 text-xs text-muted">{weakestTopic.mastery}% {t('dashboard.weakestAreaDesc')}</div>
+            </>
+          )}
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Card>
           <CardTitle>{t('dashboard.recommendedNext')}</CardTitle>
           <div className="mt-2 text-sm">{nextLesson.title}</div>

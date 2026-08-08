@@ -16,6 +16,12 @@ export function PracticeHome() {
         <h1 className="text-2xl font-semibold">{t('practice.title')}</h1>
         <p className="mt-1 text-sm text-muted">{t('practice.subtitle')}</p>
       </div>
+      <Link to="/practice/session">
+        <Card className="border-primary/40 bg-primary/5 hover:border-primary/70">
+          <CardTitle>{t('practice.session')}</CardTitle>
+          <p className="text-sm text-muted">{t('practice.sessionDesc')}</p>
+        </Card>
+      </Link>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Link to="/practice/scenarios">
           <Card className="h-full hover:border-primary/50">

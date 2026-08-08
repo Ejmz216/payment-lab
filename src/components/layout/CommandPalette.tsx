@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import MiniSearch from 'minisearch'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
-import { getLessons, getMessages, getGlossary } from '@/lib/i18nContent'
+import { getLessons, getMessages, getGlossary, getConfusions, getScenarios } from '@/lib/i18nContent'
 
 interface Item {
   id: string
@@ -41,6 +42,20 @@ export function CommandPalette() {
       to: `/glossary#${g.id}`,
       group: t('palette.groupGlossary'),
     }))
+    const confusionItems: Item[] = getConfusions(lang).map((c) => ({
+      id: `confusion-${c.id}`,
+      label: c.title,
+      sub: t('palette.groupConfusions'),
+      to: '/confusions',
+      group: t('palette.groupConfusions'),
+    }))
+    const scenarioItems: Item[] = getScenarios(lang).map((s) => ({
+      id: `scenario-${s.id}`,
+      label: s.title,
+      sub: t('palette.groupScenarios'),
+      to: '/practice/scenarios',
+      group: t('palette.groupScenarios'),
+    }))
     const labItems: Item[] = [
       { id: 'lab-sim', label: t('lab.simulatorTitle'), sub: t('lab.simulatorDesc'), to: '/lab/simulator', group: t('palette.groupLab') },
       { id: 'lab-debug', label: t('lab.debuggerTitle'), sub: t('lab.debuggerDesc'), to: '/lab/debugger', group: t('palette.groupLab') },
@@ -48,10 +63,24 @@ export function CommandPalette() {
       { id: 'lab-xml', label: t('lab.xmlTitle'), sub: t('lab.xmlDesc'), to: '/lab/xml', group: t('palette.groupLab') },
       { id: 'lab-break', label: t('lab.breakTitle'), sub: t('lab.breakDesc'), to: '/lab/break-message', group: t('palette.groupLab') },
     ]
-    return [...lessonItems, ...messageItems, ...glossaryItems, ...labItems]
+    return [...lessonItems, ...messageItems, ...glossaryItems, ...confusionItems, ...scenarioItems, ...labItems]
   }, [lang, t])
 
-  const filtered = items.filter((i) => (i.label + ' ' + i.sub).toLowerCase().includes(query.toLowerCase())).slice(0, 20)
+  const miniSearch = useMemo(() => {
+    const ms = new MiniSearch<Item>({
+      idField: 'id',
+      fields: ['label', 'sub', 'group'],
+      storeFields: ['label', 'sub', 'to', 'group'],
+      searchOptions: { prefix: true, fuzzy: 0.2, boost: { label: 3, group: 1 } },
+    })
+    ms.addAll(items)
+    return ms
+  }, [items])
+
+  const filtered: Item[] = useMemo(() => {
+    if (!query.trim()) return items.slice(0, 20)
+    return miniSearch.search(query).slice(0, 20).map((r) => ({ id: r.id as string, label: r.label, sub: r.sub, to: r.to, group: r.group }))
+  }, [query, miniSearch, items])
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-24" onClick={() => setOpen(false)}>

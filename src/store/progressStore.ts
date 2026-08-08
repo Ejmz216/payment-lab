@@ -4,13 +4,16 @@ import { persist } from 'zustand/middleware'
 export interface QuizResult {
   questionId: string
   correct: boolean
-  confidence?: 'guess' | 'unsure' | 'confident' | 'very-confident'
+  confidence?: Confidence
   timestamp: string
 }
+
+export type Confidence = 'guess' | 'unsure' | 'confident' | 'very-confident'
 
 export interface ScenarioResult {
   scenarioId: string
   correct: boolean
+  confidence?: Confidence
   timestamp: string
 }
 
@@ -71,10 +74,3 @@ export const useProgressStore = create<ProgressState>()(
     { name: 'payment-lab-progress' },
   ),
 )
-
-export function computeMastery(topicTag: string, quizResults: QuizResult[], conceptIds: string[]): number {
-  const relevant = quizResults.filter((r) => conceptIds.includes(topicTag))
-  if (relevant.length === 0) return 0
-  const correct = relevant.filter((r) => r.correct).length
-  return Math.round((correct / relevant.length) * 100)
-}

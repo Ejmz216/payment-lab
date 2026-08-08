@@ -16,6 +16,7 @@ import { RejectVsReturn } from '@/routes/lab/RejectVsReturn'
 import { PracticeHome } from '@/routes/practice/PracticeHome'
 import { ScenarioTrainer } from '@/routes/practice/ScenarioTrainer'
 import { Quiz } from '@/routes/practice/Quiz'
+import { PracticeSession } from '@/routes/practice/PracticeSession'
 import { Glossary } from '@/routes/Glossary'
 import { Confusions } from '@/routes/Confusions'
 import { Progress } from '@/routes/Progress'
@@ -56,6 +57,7 @@ export default function App() {
         <Route path="/practice" element={<PracticeHome />} />
         <Route path="/practice/scenarios" element={<ScenarioTrainer />} />
         <Route path="/practice/quiz" element={<Quiz />} />
+        <Route path="/practice/session" element={<PracticeSession />} />
 
         <Route path="/glossary" element={<Glossary />} />
         <Route path="/confusions" element={<Confusions />} />
