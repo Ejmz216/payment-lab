@@ -26,7 +26,8 @@ export const camt029: MessageDefinition = {
       version: '001.13',
       fullIdentifier: 'camt.029.001.13',
       lastReviewed: '2026-01-01',
-      cardinalityNotes: 'Illustrative structure for educational purposes; this is a catalog/basic-reference entry, not a full deep dive.',
+      status: 'illustrative',
+      cardinalityNotes: 'Illustrative structure for educational purposes; this is a catalog/basic-reference entry, not a full deep dive. Version number not independently verified against the current ISO 20022 catalogue.',
       tree: {
         id: 'Document',
         name: 'Document',

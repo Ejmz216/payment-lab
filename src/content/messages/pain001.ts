@@ -1,4 +1,36 @@
-import type { MessageDefinition } from '@/types/content'
+import type { MessageDefinition, MessageFieldNode } from '@/types/content'
+
+const pain001Tree: MessageFieldNode = {
+  id: 'Document',
+  name: 'Document',
+  xmlTag: 'Document',
+  businessMeaning: 'Root element of the message instance.',
+  cardinality: '1..1',
+  children: [
+    {
+      id: 'CstmrCdtTrfInitn',
+      name: 'CustomerCreditTransferInitiation',
+      xmlTag: 'CstmrCdtTrfInitn',
+      businessMeaning: 'The customer initiation business message.',
+      cardinality: '1..1',
+      children: [
+        { id: 'GrpHdr', name: 'Group Header', xmlTag: 'GrpHdr', businessMeaning: 'Common information for the whole message.', cardinality: '1..1' },
+        {
+          id: 'PmtInf',
+          name: 'Payment Information',
+          xmlTag: 'PmtInf',
+          businessMeaning: 'A group of one or more transactions sharing common debit-side information (e.g. same Debtor and Debtor Agent).',
+          cardinality: '1..n',
+          children: [
+            { id: 'Dbtr', name: 'Debtor', xmlTag: 'Dbtr', businessMeaning: 'The customer instructing the payment.', cardinality: '1..1' },
+            { id: 'DbtrAcct', name: 'Debtor Account', xmlTag: 'DbtrAcct', businessMeaning: 'The account to be debited.', cardinality: '1..1' },
+            { id: 'CdtTrfTxInf', name: 'Credit Transfer Transaction Information', xmlTag: 'CdtTrfTxInf', businessMeaning: 'One occurrence per individual credit transfer requested by the customer.', cardinality: '1..n' },
+          ],
+        },
+      ],
+    },
+  ],
+}
 
 export const pain001: MessageDefinition = {
   id: 'pain.001',
@@ -20,42 +52,22 @@ export const pain001: MessageDefinition = {
   coverage: 'basic-reference',
   versions: [
     {
+      version: '001.13',
+      fullIdentifier: 'pain.001.001.13',
+      lastReviewed: '2026-08-08',
+      status: 'current-iso',
+      reviewedAgainstCatalogue: '2026-08-08',
+      cardinalityNotes: 'Illustrative structure for educational purposes; confirm exact cardinalities against the official XSD before relying on them technically.',
+      tree: pain001Tree,
+    },
+    {
       version: '001.12',
       fullIdentifier: 'pain.001.001.12',
       lastReviewed: '2026-01-01',
-      cardinalityNotes: 'Illustrative structure for educational purposes.',
-      tree: {
-        id: 'Document',
-        name: 'Document',
-        xmlTag: 'Document',
-        businessMeaning: 'Root element of the message instance.',
-        cardinality: '1..1',
-        children: [
-          {
-            id: 'CstmrCdtTrfInitn',
-            name: 'CustomerCreditTransferInitiation',
-            xmlTag: 'CstmrCdtTrfInitn',
-            businessMeaning: 'The customer initiation business message.',
-            cardinality: '1..1',
-            children: [
-              { id: 'GrpHdr', name: 'Group Header', xmlTag: 'GrpHdr', businessMeaning: 'Common information for the whole message.', cardinality: '1..1' },
-              {
-                id: 'PmtInf',
-                name: 'Payment Information',
-                xmlTag: 'PmtInf',
-                businessMeaning: 'A group of one or more transactions sharing common debit-side information (e.g. same Debtor and Debtor Agent).',
-                cardinality: '1..n',
-                children: [
-                  { id: 'Dbtr', name: 'Debtor', xmlTag: 'Dbtr', businessMeaning: 'The customer instructing the payment.', cardinality: '1..1' },
-                  { id: 'DbtrAcct', name: 'Debtor Account', xmlTag: 'DbtrAcct', businessMeaning: 'The account to be debited.', cardinality: '1..1' },
-                  { id: 'CdtTrfTxInf', name: 'Credit Transfer Transaction Information', xmlTag: 'CdtTrfTxInf', businessMeaning: 'One occurrence per individual credit transfer requested by the customer.', cardinality: '1..n' },
-                ],
-              },
-            ],
-          },
-        ],
-      },
+      status: 'archived-iso',
+      cardinalityNotes: 'Shown for illustration of version history. Still seen in some existing scheme/implementation deployments.',
+      tree: pain001Tree,
     },
   ],
-  sources: [{ sourceName: 'ISO 20022 official catalogue', sourceType: 'ISO', lastReviewed: '2026-01-01', notes: 'Structure summarized for educational purposes.' }],
+  sources: [{ sourceName: 'ISO 20022 official catalogue', sourceType: 'ISO', lastReviewed: '2026-08-08', notes: 'Version number (pain.001.001.13) checked against the public ISO 20022 message definitions catalogue on 2026-08-08.' }],
 }

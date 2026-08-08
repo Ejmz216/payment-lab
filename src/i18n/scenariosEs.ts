@@ -48,6 +48,18 @@ export const scenariosEs: Record<string, ScenarioTranslation> = {
   },
 }
 
+scenariosEs['pacs008-choose-message'] = {
+  title: 'Eligiendo el mensaje interbancario correcto',
+  prompt: 'Un cliente en BANK_A quiere enviar 250 XXX a un cliente en BANK_B mediante un pago instantáneo. BANK_A necesita instruir a BANK_B (a través de la red de pagos) para acreditar al beneficiario. ¿Qué mensaje generaría típicamente BANK_A para este tramo interbancario?',
+  choices: {
+    a: 'pain.001',
+    b: 'pacs.008',
+    c: 'pacs.002',
+    d: 'camt.053',
+  },
+  reasoning: 'pain.001 (si se usa) es el mensaje de iniciación de cara al cliente. El tramo interbancario — instruir a BANK_B a acreditar al beneficiario — se lleva mediante pacs.008, una FIToFICustomerCreditTransfer. pacs.002 reporta el estado después, y camt.053 es un estado de cuenta, no una instrucción.',
+}
+
 export interface QuizTranslation {
   prompt: string
   choices: Record<string, string>

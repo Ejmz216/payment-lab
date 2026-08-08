@@ -27,6 +27,7 @@ export function getLessons(lang: Lang): Lesson[] {
       mentalModel: t.mentalModel ?? l.mentalModel,
       sections: t.sections ?? l.sections,
       commonConfusion: t.commonConfusion ?? l.commonConfusion,
+      blocks: t.blocks ?? l.blocks,
     }
   })
 }

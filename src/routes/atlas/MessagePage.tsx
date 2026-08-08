@@ -75,21 +75,38 @@ export function MessagePage() {
       </div>
 
       <div>
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">{t('msg.explorer')}</h2>
-          {message.versions.length > 1 && (
-            <select
-              value={versionIdx}
-              onChange={(e) => { setVersionIdx(Number(e.target.value)); setSelected(null) }}
-              className="rounded-md border border-border bg-surface2 px-2 py-1 text-xs"
-            >
-              {message.versions.map((v, i) => <option key={v.version} value={i}>{v.fullIdentifier}</option>)}
-            </select>
-          )}
-          {message.versions.length === 1 && (
-            <span className="text-xs text-muted">{message.versions[0].fullIdentifier} · {t('lesson.lastReviewed')} {message.versions[0].lastReviewed}</span>
-          )}
+          <div className="flex items-center gap-2">
+            {version && (
+              <span
+                className={clsx(
+                  'rounded-full border px-2 py-0.5 text-[10px] font-medium',
+                  version.status === 'current-iso' && 'border-success/50 bg-success/10 text-success',
+                  version.status === 'archived-iso' && 'border-muted/50 bg-surface2 text-muted',
+                  version.status === 'illustrative' && 'border-warning/50 bg-warning/10 text-warning',
+                )}
+                title={version.reviewedAgainstCatalogue ? `${t('version.checkedAgainst')}: ${version.reviewedAgainstCatalogue}` : undefined}
+              >
+                {version.status === 'current-iso' && t('version.current')}
+                {version.status === 'archived-iso' && t('version.archived')}
+                {version.status === 'illustrative' && t('version.illustrative')}
+              </span>
+            )}
+            {message.versions.length > 1 ? (
+              <select
+                value={versionIdx}
+                onChange={(e) => { setVersionIdx(Number(e.target.value)); setSelected(null) }}
+                className="rounded-md border border-border bg-surface2 px-2 py-1 text-xs"
+              >
+                {message.versions.map((v, i) => <option key={v.version} value={i}>{v.fullIdentifier}</option>)}
+              </select>
+            ) : (
+              <span className="text-xs text-muted">{message.versions[0].fullIdentifier} · {t('lesson.lastReviewed')} {message.versions[0].lastReviewed}</span>
+            )}
+          </div>
         </div>
+        {message.versions.length > 1 && <p className="mb-2 text-xs text-muted">{t('version.schemeNote')}</p>}
         {lang === 'es' && <p className="mb-2 text-xs text-muted">{t('msg.treeNote')}</p>}
         {version?.cardinalityNotes && (
           <p className="mb-3 rounded-md border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning">{version.cardinalityNotes}</p>

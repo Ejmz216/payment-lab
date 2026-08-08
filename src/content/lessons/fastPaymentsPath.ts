@@ -13,6 +13,7 @@ export const fastPaymentsPath: LearningPath = {
     'fast-payments',
     'iso20022-fundamentals',
     'message-families',
+    'pacs-008-deep-dive',
     'identifiers',
     'reject-vs-return',
     'cancellation-recall-reversal',
@@ -39,23 +40,69 @@ export const fastPaymentsLessons: Lesson[] = [
     ],
     mentalModel:
       'A payment is a business process, not a file. A message is just how participants communicate during that process.',
-    sections: [
+    sections: [],
+    blocks: [
       {
+        type: 'payment-flow',
+        heading: 'A simple payment',
+        actors: [
+          { id: 'alice', label: 'Alice' },
+          { id: 'banka', label: 'BANK_A' },
+          { id: 'net', label: 'PAYMENT NET' },
+          { id: 'bankb', label: 'BANK_B' },
+          { id: 'bob', label: 'Bob' },
+        ],
+        steps: [
+          { from: 'alice', to: 'banka' },
+          { from: 'banka', to: 'net' },
+          { from: 'net', to: 'bankb' },
+          { from: 'bankb', to: 'bob' },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'Alice → BANK_A',
+        question: 'Did Alice directly transfer money to Bob at this moment?',
+        options: [
+          { id: 'a', label: 'Yes, the money moved directly to Bob', correct: false },
+          { id: 'b', label: 'No — this step only involves Alice and her bank', correct: true },
+        ],
+        explanation:
+          'At this point, only Alice and her bank are involved. Money has not moved to Bob yet — that requires further steps between institutions, and ultimately a settlement step.',
+      },
+      {
+        type: 'prediction',
+        context: 'BANK_A → PAYMENT NET',
+        question: 'What is primarily being exchanged here?',
+        options: [
+          { id: 'a', label: 'Physical cash', correct: false },
+          { id: 'b', label: 'A payment instruction/message', correct: true },
+          { id: 'c', label: "The beneficiary's account", correct: false },
+          { id: 'd', label: "A customer profile", correct: false },
+        ],
+        explanation:
+          'Between institutions and infrastructure, what travels is a payment instruction/message (conceptually, a pacs.008-style message) — not physical cash and not the account itself.',
+      },
+      {
+        type: 'explanation',
         heading: 'What is a payment?',
         body:
           'A payment is the process of moving economic value from one party (the payer) to another (the payee). That process usually involves at least two financial institutions and one or more infrastructures that connect them. The instruction to pay and the actual movement of funds are two different things — the instruction can exist before the money truly moves.',
       },
       {
+        type: 'explanation',
         heading: 'Instruction vs. movement',
         body:
           'When a customer authorizes a payment, they create a payment instruction. That instruction travels through banks and infrastructures as messages. The actual discharge of the financial obligation (the movement of value between institutions) happens later, during settlement. Confusing "the instruction was sent" with "the money moved" is one of the most common beginner mistakes in payments.',
       },
       {
+        type: 'explanation',
         heading: 'Who is involved',
         body:
           'A simple domestic payment usually involves: the payer, the payer\'s bank, a payment system (clearing/settlement infrastructure), the payee\'s bank, and the payee. Cross-border or more complex payments can add intermediaries.',
       },
       {
+        type: 'explanation',
         heading: 'Payment rail, scheme, and network',
         body:
           'A payment rail is the underlying infrastructure that moves payment instructions and value (for example, an instant payment system or an RTGS system). A payment scheme is the set of rules, roles and obligations that participants agree to follow when using a rail (for example, message usage rules, timing rules, liability rules). A payment network is the set of participants connected through that rail and scheme. These terms are often used loosely in the industry — treat this as a working model, not a strict taxonomy.',
@@ -146,16 +193,27 @@ export const fastPaymentsLessons: Lesson[] = [
       'Identify what could plausibly fail at each stage.',
     ],
     mentalModel: 'This is a simplified educational model, not a universal ISO 20022 state machine.',
-    sections: [
+    sections: [],
+    blocks: [
       {
+        type: 'explanation',
         heading: 'A simplified lifecycle',
         body:
-          'Initiated → Received → Validated → Accepted → Cleared → Settled → Credited → Completed. Each stage represents a plausible checkpoint in a payment\'s life. Different payment schemes define their own actual state models — this sequence is a teaching tool to help you reason about "before vs. after," not a standard.',
+          'Each stage below represents a plausible checkpoint in a payment\'s life. Different payment schemes define their own actual state models — this sequence is a teaching tool to help you reason about "before vs. after," not a standard. Click each stage to see what it means and what can fail there.',
+        badge: 'simplified-model',
       },
       {
-        heading: 'What can fail at each stage',
-        body:
-          'Initiated: the customer request itself may be invalid. Received: the message may not reach the next participant. Validated: syntax, schema, or business rules may fail. Accepted: after acceptance, later failures usually require a different kind of message (such as a return) rather than a simple rejection. Cleared/Settled: obligations may not be discharged due to liquidity, timing or technical issues. Credited: the receiving institution may be unable to credit the beneficiary account (e.g., closed account) even though settlement succeeded.',
+        type: 'lifecycle',
+        stages: [
+          { id: 'initiated', label: 'Initiated', description: 'The customer or system creates the payment request.', canFail: 'The customer request itself may be invalid.' },
+          { id: 'received', label: 'Received', description: 'The next participant in the chain receives the instruction.', canFail: 'The message may not reach the next participant.' },
+          { id: 'validated', label: 'Validated', description: 'Syntax, schema and business rules are checked.', canFail: 'Syntax, schema, or business rules may fail.' },
+          { id: 'accepted', label: 'Accepted', description: 'The payment is accepted for further processing.', canFail: 'After acceptance, later failures usually require a different kind of message (such as a return) rather than a simple rejection.' },
+          { id: 'cleared', label: 'Cleared', description: 'The obligation between participants is determined.', canFail: 'Obligations may not be discharged due to liquidity, timing or technical issues.' },
+          { id: 'settled', label: 'Settled', description: 'Value actually moves between institutions.', canFail: 'Settlement itself may fail or be delayed due to liquidity or technical issues.' },
+          { id: 'credited', label: 'Credited', description: 'The receiving institution credits the beneficiary account.', canFail: 'The receiving institution may be unable to credit the beneficiary account (e.g., closed account) even though settlement succeeded.' },
+          { id: 'completed', label: 'Completed', description: 'The payment has reached its end state for this educational model.' },
+        ],
       },
     ],
     keyTerms: ['initiated', 'validated', 'accepted', 'cleared', 'settled', 'credited'],
@@ -344,9 +402,82 @@ export const fastPaymentsLessons: Lesson[] = [
     estimatedMinutes: 6,
   },
   {
-    id: 'identifiers',
+    id: 'pacs-008-deep-dive',
     pathId: 'fast-payments',
     order: 8,
+    title: 'pacs.008 Deep Dive',
+    subtitle: 'FIToFICustomerCreditTransfer, up close',
+    whyItMatters:
+      'pacs.008 is the workhorse credit transfer message behind most fast payments. Understanding it well — not just its name, but its purpose, its place in the flow, and its structure — makes every later lesson in this path click into place.',
+    objectives: [
+      'Explain what pacs.008 is and why it exists.',
+      'Place pacs.008 correctly between the originating and receiving institutions.',
+      'Predict what kind of information pacs.008 carries before opening its structure.',
+      'Open and inspect the actual field structure of a pacs.008 message.',
+      'Explain what typically happens after a pacs.008 is sent.',
+    ],
+    mentalModel: 'pacs.008 is how one financial institution tells another "move this money" — everything else in this path builds on understanding this one message well.',
+    sections: [],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'What pacs.008 is, and why it exists',
+        body:
+          'pacs.008 (FIToFICustomerCreditTransfer) is a financial-institution-to-financial-institution message. It transports everything needed to process a customer credit transfer between institutions — who is paying, who is being paid, how much, and the identifiers needed to track the transaction end to end.',
+      },
+      {
+        type: 'payment-flow',
+        heading: 'Where pacs.008 travels',
+        actors: [
+          { id: 'banka', label: 'BANK_A' },
+          { id: 'net', label: 'PAYMENT NETWORK' },
+          { id: 'bankb', label: 'BANK_B' },
+        ],
+        steps: [
+          { from: 'banka', to: 'net', label: 'pacs.008', messageId: 'pacs.008', status: 'active' },
+          { from: 'net', to: 'bankb', label: 'pacs.008', messageId: 'pacs.008', status: 'active' },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'BANK_A ──[pacs.008]──▶ PAYMENT NETWORK',
+        question: 'If pacs.008 fails schema validation at the network, has Bob already been credited?',
+        options: [
+          { id: 'a', label: 'Yes — crediting happens as soon as the message is sent', correct: false },
+          { id: 'b', label: 'No — this is before acceptance, so nothing has been credited yet', correct: true },
+        ],
+        explanation:
+          'A schema validation failure happens before the payment is accepted. Nothing has settled or been credited at this point — this is the shape of a reject, not a return.',
+      },
+      {
+        type: 'message-inspector',
+        messageId: 'pacs.008',
+        intro: 'Explore the actual field structure below. Click any field to see its business meaning, cardinality and common mistakes.',
+      },
+      {
+        type: 'scenario',
+        scenarioId: 'pacs008-choose-message',
+      },
+      {
+        type: 'callout',
+        title: 'What typically comes after',
+        body: 'A status report (commonly pacs.002-style) reports what happened to the instruction. If something fails later — after acceptance or settlement — a return (commonly pacs.004-style) may follow instead. Both are covered in upcoming lessons.',
+        tone: 'info',
+      },
+    ],
+    keyTerms: ['pacs.008', 'FIToFICustomerCreditTransfer', 'interbank leg'],
+    commonConfusion: [
+      { title: 'A valid pacs.008 is not the same as a completed payment', explanation: 'Passing schema/syntax validation only means the message is well-formed — the payment can still be rejected for business or scheme reasons, or fail later in the lifecycle.' },
+    ],
+    relatedLessons: ['message-families', 'identifiers'],
+    relatedMessages: ['pacs.008', 'pacs.002', 'pacs.004'],
+    sources: [{ sourceName: 'ISO 20022 official catalogue', sourceType: 'ISO', lastReviewed: '2026-08-08' }],
+    estimatedMinutes: 10,
+  },
+  {
+    id: 'identifiers',
+    pathId: 'fast-payments',
+    order: 9,
     title: 'Identifiers',
     subtitle: 'MsgId, InstrId, EndToEndId, TxId — and why they are not interchangeable',
     whyItMatters:
@@ -386,7 +517,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'reject-vs-return',
     pathId: 'fast-payments',
-    order: 9,
+    order: 10,
     title: 'Reject vs. Return',
     subtitle: 'One of the most important distinctions in payments',
     whyItMatters:
@@ -427,7 +558,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'cancellation-recall-reversal',
     pathId: 'fast-payments',
-    order: 10,
+    order: 11,
     title: 'Cancellation, Recall & Reversal',
     subtitle: 'Not the same as a return — and not the same as each other',
     whyItMatters:
@@ -438,26 +569,51 @@ export const fastPaymentsLessons: Lesson[] = [
       'Use a simple decision tree to reason about which concept applies to a given situation.',
     ],
     mentalModel: 'Cancellation-family concepts are all about undoing something after the fact — they differ in when they are used and whether the outcome is guaranteed.',
-    sections: [
+    sections: [],
+    blocks: [
       {
+        type: 'explanation',
         heading: 'Request to cancel',
         body:
           'A request, usually sent by the original sending side, asking that a payment not be processed further or be undone. Whether it succeeds depends on how far the payment has already progressed and on the rules of the scheme involved.',
       },
       {
+        type: 'explanation',
         heading: 'Recall',
         body:
           'Similar in spirit to a cancellation request — the sending side asks for a payment to be brought back, generally after it has already been sent. A recall is a request, not a guarantee: the receiving side may or may not be able to honor it (for example, if funds have already been paid out to the beneficiary).',
       },
       {
+        type: 'explanation',
         heading: 'Reversal',
         body:
           'Undoing the effect of a payment that has already settled, typically initiated on the processing/receiving side rather than as a customer-driven request (for example, correcting a technical duplicate). The exact mechanics depend heavily on the scheme.',
       },
       {
+        type: 'explanation',
         heading: 'Rejection and Return, revisited',
         body:
           'As covered earlier: a rejection happens before/at acceptance (the payment never truly progressed). A return happens after acceptance, when a payment already progressed but later cannot be completed. Cancellation and recall requests are different again — they are attempts to undo something that may already be past the point where undoing it is guaranteed to work.',
+        badge: 'simplified-model',
+      },
+      {
+        type: 'decision-tree',
+        root: {
+          question: 'Has the payment already progressed (accepted / settled)?',
+          answers: [
+            { label: 'No', result: 'Investigate as a rejection or cancellation request' },
+            {
+              label: 'Yes',
+              next: {
+                question: 'Are funds explicitly being sent back?',
+                answers: [
+                  { label: 'Yes', result: 'Investigate as a return' },
+                  { label: 'No', result: 'Investigate as a recall or reversal request (not guaranteed)' },
+                ],
+              },
+            },
+          ],
+        },
       },
     ],
     keyTerms: ['cancellation', 'recall', 'reversal'],
@@ -473,7 +629,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'camt-cash-management',
     pathId: 'fast-payments',
-    order: 11,
+    order: 12,
     title: 'camt & Cash Management',
     subtitle: 'More than "bank statements"',
     whyItMatters:
@@ -512,7 +668,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'reconciliation-investigations',
     pathId: 'fast-payments',
-    order: 12,
+    order: 13,
     title: 'Reconciliation & Investigations',
     subtitle: 'Matching records and chasing down exceptions',
     whyItMatters:
@@ -552,7 +708,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'payment-architecture',
     pathId: 'fast-payments',
-    order: 13,
+    order: 14,
     title: 'Payment Architecture',
     subtitle: 'A generic educational view of how the pieces fit together',
     whyItMatters:
@@ -563,21 +719,33 @@ export const fastPaymentsLessons: Lesson[] = [
       'Explain why this is a simplified educational model, not a universal architecture.',
     ],
     mentalModel: 'This is one plausible generic architecture, used to build intuition — real institutions structure this differently.',
-    sections: [
+    sections: [],
+    blocks: [
       {
+        type: 'explanation',
         heading: 'A generic flow',
         body:
           'Channel (where the customer or system initiates) → Payments API → Payment Orchestrator → Validation (including fraud, compliance, limits, and routing checks) → ISO Mapper (translating between internal data models and ISO 20022 messages) → Payment Network → Inbound Adapter (on the receiving side) → Core / Ledger (where the account is actually debited or credited).',
+        badge: 'simplified-model',
       },
       {
+        type: 'architecture',
+        label: 'Generic educational architecture',
+        steps: ['Channel', 'Payments API', 'Payment Orchestrator', 'Validation', 'ISO Mapper', 'Payment Network', 'Inbound Adapter', 'Core / Ledger'],
+        branchAfterStep: 'Validation',
+        branchItems: ['Fraud', 'Compliance', 'Limits', 'Routing'],
+      },
+      {
+        type: 'explanation',
         heading: 'Why this matters for troubleshooting',
         body:
           'When someone reports "the payment failed," this generic model gives you questions to ask: did it fail at validation (before ever reaching the network), at the network/scheme level, or after being received, during core/ledger processing? Each layer tends to produce different symptoms and requires different people to investigate.',
       },
       {
-        heading: 'This is not universal',
-        body:
-          'Real institutions combine, split, rename or reorder these components constantly. Use this diagram to build a habit of thinking in layers, not as a description of any specific system.',
+        type: 'callout',
+        title: 'This is not universal',
+        body: 'Real institutions combine, split, rename or reorder these components constantly. Use this diagram to build a habit of thinking in layers, not as a description of any specific system.',
+        tone: 'warning',
       },
     ],
     keyTerms: ['orchestrator', 'ISO mapper', 'core / ledger', 'inbound adapter'],

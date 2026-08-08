@@ -7,8 +7,7 @@ import { useProgressStore } from '@/store/progressStore'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { BookmarkButton } from '@/components/ui/BookmarkButton'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
-import { ArchitectureDiagram } from '@/components/learning/ArchitectureDiagram'
-import { CancellationDecisionTree } from '@/components/learning/DecisionTree'
+import { LessonBlockRenderer } from '@/components/learning/LessonBlockRenderer'
 import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react'
 
 export function LessonPage() {
@@ -74,23 +73,21 @@ export function LessonPage() {
         </Card>
       )}
 
-      <div className="flex flex-col gap-4">
-        {lesson.sections.map((section) => (
-          <Card key={section.heading}>
-            <CardTitle>{section.heading}</CardTitle>
-            <p className="text-sm leading-relaxed text-text/90">{section.body}</p>
-          </Card>
-        ))}
-      </div>
-
-      {lesson.id === 'cancellation-recall-reversal' && <CancellationDecisionTree />}
-
-      {lesson.id === 'payment-architecture' && (
-        <ArchitectureDiagram
-          label={t('arch.label')}
-          steps={[t('arch.channel'), t('arch.api'), t('arch.orchestrator'), t('arch.validation'), t('arch.mapper'), t('arch.network'), t('arch.inbound'), t('arch.core')]}
-          branches={{ after: t('arch.validation'), items: [t('arch.fraud'), t('arch.compliance'), t('arch.limits'), t('arch.routing')] }}
-        />
+      {lesson.blocks && lesson.blocks.length > 0 ? (
+        <div className="flex flex-col gap-4">
+          {lesson.blocks.map((block, i) => (
+            <LessonBlockRenderer key={i} block={block} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {lesson.sections.map((section) => (
+            <Card key={section.heading}>
+              <CardTitle>{section.heading}</CardTitle>
+              <p className="text-sm leading-relaxed text-text/90">{section.body}</p>
+            </Card>
+          ))}
+        </div>
       )}
 
       {lesson.keyTerms.length > 0 && (

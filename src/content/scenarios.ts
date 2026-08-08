@@ -62,6 +62,25 @@ export const scenarios: Scenario[] = [
   },
 ]
 
+scenarios.push({
+  id: 'pacs008-choose-message',
+  title: 'Choosing the right interbank message',
+  prompt:
+    'A customer at BANK_A wants to send 250 XXX to a customer at BANK_B via a fast payment. BANK_A needs to instruct BANK_B (via the payment network) to credit the beneficiary. Which message would BANK_A typically generate for this interbank leg?',
+  choices: [
+    { id: 'a', label: 'pain.001', correct: false },
+    { id: 'b', label: 'pacs.008', correct: true },
+    { id: 'c', label: 'pacs.002', correct: false },
+    { id: 'd', label: 'camt.053', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'pain.001 (if used at all) is the customer-facing initiation message. The interbank leg — instructing BANK_B to credit the beneficiary — is carried by pacs.008, a FIToFICustomerCreditTransfer. pacs.002 reports status afterward, and camt.053 is an account statement, not an instruction.',
+    relatedMessages: ['pacs.008', 'pain.001'],
+  },
+  tags: ['pacs-008-deep-dive'],
+})
+
 export const quizQuestions: QuizQuestion[] = [
   {
     id: 'q-clearing-settlement-1',

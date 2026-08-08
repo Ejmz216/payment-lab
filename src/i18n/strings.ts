@@ -115,6 +115,11 @@ export const strings = {
   'msg.whyMatters': { en: 'Why it matters', es: 'Por qué importa' },
   'msg.mistakes': { en: 'Common mistakes', es: 'Errores comunes' },
   'msg.relatedFields': { en: 'Related fields', es: 'Campos relacionados' },
+  'version.current': { en: 'ISO catalogue current', es: 'Actual en catálogo ISO' },
+  'version.archived': { en: 'Archived ISO version', es: 'Versión ISO archivada' },
+  'version.illustrative': { en: 'Illustrative (not verified against current catalogue)', es: 'Ilustrativa (no verificada contra el catálogo actual)' },
+  'version.checkedAgainst': { en: 'checked against ISO catalogue', es: 'verificado contra el catálogo ISO' },
+  'version.schemeNote': { en: 'A payment scheme or implementation may use a different ISO message version than the latest version published in the ISO catalogue.', es: 'Un esquema de pago o una implementación puede usar una versión de mensaje ISO diferente a la última publicada en el catálogo ISO.' },
   'msg.treeNote': { en: 'Field names (XML tags) are shown in their original English/ISO form, as used internationally in ISO 20022 documentation.', es: 'Los nombres de campo (etiquetas XML) se muestran en su forma original en inglés/ISO, tal como se usan internacionalmente en la documentación de ISO 20022.' },
 
   // Lab
@@ -270,6 +275,12 @@ export const strings = {
     en: 'Payment Lab hands you a synthetic message with something wrong in it. Find the problem, then see what kind of error it is — some errors can\'t be determined from ISO 20022 alone.',
     es: 'Payment Lab te entrega un mensaje sintético con algo mal. Encuentra el problema y luego descubre qué tipo de error es — algunos errores no pueden determinarse solo con ISO 20022.',
   },
+
+  // Lesson blocks
+  'block.predict': { en: 'PREDICT', es: 'PREDICE' },
+  'block.quickCheck': { en: 'QUICK CHECK', es: 'COMPROBACIÓN RÁPIDA' },
+  'block.lifecycle': { en: 'Lifecycle', es: 'Ciclo de vida' },
+  'lifecycle.canFail': { en: 'What can fail here', es: 'Qué puede fallar aquí' },
 
   // Architecture diagram
   'arch.label': { en: 'Generic educational architecture', es: 'Arquitectura educativa genérica' },

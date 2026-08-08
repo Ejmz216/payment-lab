@@ -26,7 +26,7 @@ export const messagesEs: Record<string, MessageTranslation> = {
     commonMistakes: [
       { title: 'Asumir que la validez del esquema implica aceptación', explanation: 'Un pacs.008 sintáctica y esquemáticamente válido aún puede ser rechazado por razones de negocio o del esquema.' },
     ],
-    cardinalityNotes: 'Las cardinalidades mostradas son ilustrativas para esta construcción educativa y deben confirmarse contra la versión específica en la documentación oficial antes de usarlas técnicamente.',
+    cardinalityNotes: 'Las cardinalidades mostradas son ilustrativas para esta construcción educativa. La estructura de campos es representativa del mensaje; confirma las cardinalidades exactas contra el XSD oficial antes de usarlas técnicamente. Un esquema de pago o implementación puede exigir una versión ISO distinta (más antigua) a la versión actual del catálogo mostrada aquí.',
   },
   'pacs.002': {
     shortDescription: 'Reporta el estado de una instrucción de pago previamente enviada entre instituciones financieras.',
@@ -36,11 +36,11 @@ export const messagesEs: Record<string, MessageTranslation> = {
     cardinalityNotes: 'Estructura ilustrativa con fines educativos.',
   },
   'pacs.004': {
-    shortDescription: 'Envía de vuelta un pago previamente liquidado/acreditado hacia el lado deudor original.',
-    purpose: 'Se usa cuando un pago que ya progresó (fue aceptado/liquidado) no puede finalmente completarse, así que se devuelve — llevando referencias de vuelta a la transacción original, el monto devuelto y el motivo.',
-    whatComesBefore: 'Una transferencia de crédito previamente enviada y aceptada/liquidada (comúnmente representada como un mensaje tipo pacs.008) que no pudo finalmente completarse del lado receptor.',
+    shortDescription: 'Envía de vuelta un pago que ya progresó hacia el settlement, hacia el lado deudor original, cuando no puede completarse finalmente.',
+    purpose: 'Se usa cuando un pago que ya progresó más allá de la aceptación no puede finalmente completarse, así que se devuelve — llevando referencias de vuelta a la transacción original, el monto devuelto y el motivo. Exactamente qué punto del ciclo de vida dispara una devolución (por ejemplo, después del settlement, o después de un intento fallido de acreditar al beneficiario) depende del esquema de pago; ISO 20022 en sí no exige un único disparador universal.',
+    whatComesBefore: 'Una transferencia de crédito previamente enviada (comúnmente representada como un mensaje tipo pacs.008) que ya había progresado más allá de la aceptación, pero no pudo completarse finalmente — el punto exacto del disparo depende del esquema, no es una regla ISO fija.',
     whatComesAfter: 'El lado deudor original recibe los fondos/el pago devuelto y lo reconcilia contra la transacción original.',
-    cardinalityNotes: 'Estructura ilustrativa con fines educativos.',
+    cardinalityNotes: 'Estructura ilustrativa con fines educativos; confirma las cardinalidades exactas contra el XSD oficial antes de usarlas técnicamente.',
   },
   'camt.053': {
     shortDescription: 'Un estado de cuenta con las transacciones y saldos de una cuenta durante un período, enviado de una institución financiera al titular de la cuenta.',

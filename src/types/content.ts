@@ -29,6 +29,7 @@ export interface Lesson {
   objectives: string[]
   mentalModel?: string
   sections: LessonSection[]
+  blocks?: import('./blocks').LessonBlock[]
   keyTerms: string[]
   commonConfusion?: { title: string; explanation: string }[]
   scenarioId?: string
@@ -60,10 +61,14 @@ export interface MessageFieldNode {
   children?: MessageFieldNode[]
 }
 
+export type VersionStatus = 'current-iso' | 'archived-iso' | 'illustrative'
+
 export interface MessageVersion {
   version: string
   fullIdentifier: string
   lastReviewed: string
+  status: VersionStatus
+  reviewedAgainstCatalogue?: string
   cardinalityNotes?: string
   tree: MessageFieldNode
 }
