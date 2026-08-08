@@ -13,6 +13,8 @@ import { domains as domainsEn } from '@/content/domains'
 import { domainsEs } from '@/i18n/domainsEs'
 import { simulatorScenarios as simScenariosEn, simActors as simActorsEn } from '@/content/simulatorScenarios'
 import { simulatorEs, simActorsEs } from '@/i18n/simulatorEs'
+import { debugCases as debugCasesEn } from '@/content/debugCases'
+import { debugCasesEs } from '@/i18n/debugCasesEs'
 import type { Lesson, MessageDefinition, GlossaryEntry, Scenario, QuizQuestion } from '@/types/content'
 
 export function getLessons(lang: Lang): Lesson[] {
@@ -142,6 +144,33 @@ export function getSimulatorScenarios(lang: Lang) {
             : ev.decisionOptions,
         }
       }),
+    }
+  })
+}
+
+export function getDebugCases(lang: Lang) {
+  if (lang === 'en') return debugCasesEn
+  return debugCasesEn.map((c) => {
+    const t = debugCasesEs[c.id]
+    if (!t) return c
+    return {
+      ...c,
+      title: t.title,
+      brief: t.brief,
+      timeline: c.timeline.map((entry, i) => ({ ...entry, text: t.timeline[i] ?? entry.text })),
+      messages: c.messages.map((m, i) => ({ ...m, note: t.messages[i] ?? m.note })),
+      participants: c.participants.map((p, i) => ({ ...p, note: t.participants[i] ?? p.note })),
+      questions: c.questions.map((q, i) => {
+        const qt = t.questions[i]
+        if (!qt) return q
+        return {
+          ...q,
+          prompt: qt.prompt,
+          explanation: qt.explanation,
+          options: q.options.map((o, j) => ({ ...o, label: qt.options[j] ?? o.label })),
+        }
+      }),
+      finalDiagnosis: t.finalDiagnosis,
     }
   })
 }

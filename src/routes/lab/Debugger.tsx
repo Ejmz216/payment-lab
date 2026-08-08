@@ -1,141 +1,236 @@
 import { useState } from 'react'
-import { Card, CardTitle } from '@/components/ui/Card'
-import { useT } from '@/i18n/strings'
 import clsx from 'clsx'
+import { Card, CardTitle } from '@/components/ui/Card'
+import { useUIStore } from '@/store/uiStore'
+import { useT } from '@/i18n/strings'
+import { getDebugCases } from '@/lib/i18nContent'
+import type { DebugCase } from '@/content/debugCases'
 
-interface Case {
-  id: string
-  title: string
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced'
-  timeline: { time: string; label: string; suspicious?: boolean }[]
-  question: string
-  options: { id: string; label: string; correct: boolean }[]
-  explanation: string
-  investigate: string
+const difficultyColor: Record<string, string> = {
+  beginner: 'border-success/50 bg-success/10 text-success',
+  intermediate: 'border-warning/50 bg-warning/10 text-warning',
+  advanced: 'border-danger/50 bg-danger/10 text-danger',
 }
 
-const cases: Case[] = [
-  {
-    id: 'case-1',
-    title: 'Credit failed after settlement',
-    difficulty: 'Beginner',
-    timeline: [
-      { time: '10:32:01', label: 'Payment received' },
-      { time: '10:32:01', label: 'Validation passed' },
-      { time: '10:32:02', label: 'Accepted' },
-      { time: '10:32:02', label: 'Settlement confirmed' },
-      { time: '10:32:03', label: 'Credit failed', suspicious: true },
-      { time: '10:32:04', label: 'Return initiated' },
-    ],
-    question: 'At which stage did the problem occur?',
-    options: [
-      { id: 'a', label: 'Before acceptance', correct: false },
-      { id: 'b', label: 'After settlement, during credit', correct: true },
-      { id: 'c', label: 'During validation', correct: false },
-    ],
-    explanation: 'Settlement succeeded, but crediting the beneficiary failed afterward — this is a post-acceptance failure, handled as a return.',
-    investigate: 'pacs.004 (Payment Return) — look at the return reason information.',
-  },
-  {
-    id: 'case-2',
-    title: 'Duplicate EndToEndId, delayed status',
-    difficulty: 'Intermediate',
-    timeline: [
-      { time: '09:14:00', label: 'Payment A received, EndToEndId=E2E-777' },
-      { time: '09:14:02', label: 'Payment A accepted' },
-      { time: '09:15:40', label: 'Payment B received, EndToEndId=E2E-777', suspicious: true },
-      { time: '09:15:41', label: 'Payment B flagged as possible duplicate' },
-      { time: '09:16:10', label: 'Status report for Payment A finally arrives (delayed)' },
-    ],
-    question: 'Which action is most likely for Payment B?',
-    options: [
-      { id: 'a', label: 'It proceeds normally, since it arrived later', correct: false },
-      { id: 'b', label: 'It gets rejected as a likely duplicate of Payment A', correct: true },
-      { id: 'c', label: 'It automatically becomes a return of Payment A', correct: false },
-    ],
-    explanation: 'Reusing the same EndToEndId is a strong duplicate signal. The delayed status report for Payment A is a red herring — it does not change the duplicate determination for Payment B.',
-    investigate: 'pacs.002 for Payment B — check the reason code for duplicate detection.',
-  },
-]
+const difficultyKey = {
+  beginner: 'dbg.difficulty.beginner',
+  intermediate: 'dbg.difficulty.intermediate',
+  advanced: 'dbg.difficulty.advanced',
+} as const
+
+type Tab = 'timeline' | 'messages' | 'identifiers' | 'participants'
 
 export function Debugger() {
-  const [caseId, setCaseId] = useState(cases[0].id)
-  const [selected, setSelected] = useState<string | null>(null)
-  const [revealed, setRevealed] = useState(false)
-  const c = cases.find((x) => x.id === caseId)!
+  const lang = useUIStore((s) => s.lang)
   const t = useT()
-
-  function choose(id: string) {
-    setSelected(id)
-    setRevealed(true)
-  }
-
-  function reset(id: string) {
-    setCaseId(id)
-    setSelected(null)
-    setRevealed(false)
-  }
+  const cases = getDebugCases(lang)
+  const [caseId, setCaseId] = useState(cases[0].id)
+  const c = cases.find((x) => x.id === caseId)!
 
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold">{t('dbg.title')}</h1>
-        <p className="mt-1 text-sm text-muted">{t('dbg.subtitle')}</p>
+        <p className="mt-1 text-sm text-muted">{t('dbg.workbenchSubtitle')}</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
         {cases.map((x) => (
           <button
             key={x.id}
-            onClick={() => reset(x.id)}
+            onClick={() => setCaseId(x.id)}
             className={clsx(
-              'rounded-md border px-3 py-1.5 text-xs font-medium',
+              'flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs font-medium',
               caseId === x.id ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted hover:text-text',
             )}
           >
-            {x.title} · {x.difficulty}
+            {x.caseNumber}
+            <span className={clsx('rounded-full border px-1.5 py-0.5 text-[10px]', difficultyColor[x.difficulty])}>{t(difficultyKey[x.difficulty])}</span>
           </button>
         ))}
       </div>
 
-      <Card>
-        <CardTitle>{t('dbg.timeline')}</CardTitle>
-        <ol className="mt-2 flex flex-col gap-1.5 font-mono text-sm">
-          {c.timeline.map((t, i) => (
-            <li key={i} className={clsx('flex gap-3', t.suspicious && 'text-warning')}>
-              <span className="text-muted">{t.time}</span>
-              <span>{t.label}</span>
-            </li>
-          ))}
-        </ol>
-      </Card>
+      <InvestigationWorkbench key={c.id} debugCase={c} />
+    </div>
+  )
+}
 
-      <Card>
-        <CardTitle>{c.question}</CardTitle>
-        <div className="mt-2 flex flex-col gap-2">
-          {c.options.map((o) => (
+function InvestigationWorkbench({ debugCase }: { debugCase: DebugCase }) {
+  const t = useT()
+  const [tab, setTab] = useState<Tab>('timeline')
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [viewIndex, setViewIndex] = useState(0)
+  const [showDiagnosis, setShowDiagnosis] = useState(false)
+
+  const currentQuestion = debugCase.questions[viewIndex]
+  const isLastQuestion = viewIndex === debugCase.questions.length - 1
+  const currentAnswered = currentQuestion && answers[currentQuestion.id] !== undefined
+
+  function choose(questionId: string, optionId: string) {
+    if (answers[questionId] !== undefined) return
+    setAnswers((prev) => ({ ...prev, [questionId]: optionId }))
+  }
+
+  function advance() {
+    if (isLastQuestion) {
+      setShowDiagnosis(true)
+    } else {
+      setViewIndex((i) => i + 1)
+    }
+  }
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'timeline', label: t('dbg.tabTimeline') },
+    { id: 'messages', label: t('dbg.tabMessages') },
+    { id: 'identifiers', label: t('dbg.tabIdentifiers') },
+    { id: 'participants', label: t('dbg.tabParticipants') },
+  ]
+
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
+      <div className="flex flex-col gap-3 lg:col-span-3">
+        <Card>
+          <div className="mb-1 font-mono text-xs text-muted">{debugCase.caseNumber}</div>
+          <CardTitle>{debugCase.title}</CardTitle>
+          <p className="text-sm text-text/90">{debugCase.brief}</p>
+        </Card>
+
+        <div className="flex flex-wrap gap-1.5">
+          {tabs.map((tb) => (
             <button
-              key={o.id}
-              disabled={revealed}
-              onClick={() => choose(o.id)}
+              key={tb.id}
+              onClick={() => setTab(tb.id)}
               className={clsx(
-                'rounded-md border px-3 py-2 text-left text-sm',
-                revealed && o.correct && 'border-success bg-success/10',
-                revealed && selected === o.id && !o.correct && 'border-danger bg-danger/10',
-                !revealed && 'border-border hover:bg-surface2',
+                'rounded-md border px-3 py-1.5 text-xs font-medium',
+                tab === tb.id ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted hover:text-text',
               )}
             >
-              {o.label}
+              {tb.label}
             </button>
           ))}
         </div>
-        {revealed && (
-          <div className="mt-3 rounded-md border border-border bg-surface2 p-3 text-sm">
-            <p>{c.explanation}</p>
-            <p className="mt-2 text-xs text-muted"><span className="font-medium text-text">{t('dbg.whichMessage')}</span> {c.investigate}</p>
-          </div>
-        )}
-      </Card>
+
+        <Card>
+          {tab === 'timeline' && (
+            <ol className="flex flex-col gap-1.5 font-mono text-sm">
+              {debugCase.timeline.map((entry, i) => (
+                <li key={i} className="flex gap-3">
+                  <span className="shrink-0 text-muted">{entry.time}</span>
+                  <span>{entry.text}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+
+          {tab === 'messages' && (
+            <div className="flex flex-col gap-3">
+              {debugCase.messages.map((m) => (
+                <div key={m.id} className="rounded-md border border-border p-3">
+                  <div className="flex flex-wrap items-center gap-2 text-sm">
+                    <span className="font-mono font-semibold text-primary">{m.id}</span>
+                    <span className="rounded-full border border-border bg-surface2 px-2 py-0.5 font-mono text-[10px]">{m.kind}</span>
+                  </div>
+                  <div className="mt-1 text-xs text-muted">{m.from} → {m.to}</div>
+                  <p className="mt-1 text-sm text-text/90">{m.note}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab === 'identifiers' && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="text-muted">
+                    <th className="pb-2 pr-3">{t('dbg.colMessage')}</th>
+                    <th className="pb-2 pr-3">MsgId</th>
+                    <th className="pb-2 pr-3">EndToEndId</th>
+                    <th className="pb-2 pr-3">OrgnlEndToEndId</th>
+                    <th className="pb-2 pr-3">TxId</th>
+                  </tr>
+                </thead>
+                <tbody className="font-mono">
+                  {debugCase.identifiers.map((row) => (
+                    <tr key={row.message} className="border-t border-border">
+                      <td className="py-2 pr-3">{row.message}</td>
+                      <td className="py-2 pr-3">{row.msgId ?? '—'}</td>
+                      <td className="py-2 pr-3">{row.endToEndId ?? '—'}</td>
+                      <td className="py-2 pr-3">{row.orgnlEndToEndId ?? '—'}</td>
+                      <td className="py-2 pr-3">{row.txId ?? '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {tab === 'participants' && (
+            <div className="flex flex-col gap-3">
+              {debugCase.participants.map((p) => (
+                <div key={p.id} className="rounded-md border border-border p-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-mono font-semibold">{p.id}</span>
+                    <span className="text-xs text-muted">{p.role}</span>
+                  </div>
+                  <p className="mt-1 text-sm text-text/90">{p.note}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      </div>
+
+      <div className="flex flex-col gap-3 lg:col-span-2">
+        <Card>
+          <CardTitle>{t('dbg.investigation')}</CardTitle>
+          <p className="mb-2 text-xs text-muted">{viewIndex + (currentAnswered ? 1 : 0)} / {debugCase.questions.length}</p>
+
+          {!showDiagnosis && currentQuestion && (
+            <div>
+              <p className="mb-2 text-sm font-medium">{currentQuestion.prompt}</p>
+              <div className="flex flex-col gap-2">
+                {currentQuestion.options.map((opt) => {
+                  const answered = answers[currentQuestion.id]
+                  const revealed = answered !== undefined
+                  return (
+                    <button
+                      key={opt.id}
+                      disabled={revealed}
+                      onClick={() => choose(currentQuestion.id, opt.id)}
+                      className={clsx(
+                        'rounded-md border px-3 py-2 text-left text-sm',
+                        revealed && opt.correct && 'border-success bg-success/10',
+                        revealed && answered === opt.id && !opt.correct && 'border-danger bg-danger/10',
+                        !revealed && 'border-border hover:bg-surface2',
+                      )}
+                    >
+                      {opt.label}
+                    </button>
+                  )
+                })}
+              </div>
+              {currentAnswered && (
+                <div className="mt-3 rounded-md border border-border bg-surface2 p-3 text-sm">
+                  <p className="text-text/90">{currentQuestion.explanation}</p>
+                  <button
+                    onClick={advance}
+                    className="mt-3 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
+                  >
+                    {isLastQuestion ? t('dbg.seeDiagnosis') : t('dbg.nextQuestion')}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {showDiagnosis && (
+            <div className="rounded-md border border-primary/40 bg-primary/10 p-3">
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-primary">{t('dbg.diagnosis')}</div>
+              <p className="text-sm text-text/90">{debugCase.finalDiagnosis}</p>
+            </div>
+          )}
+        </Card>
+      </div>
     </div>
   )
 }
