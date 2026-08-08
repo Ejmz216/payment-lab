@@ -13,6 +13,7 @@ export const strings = {
   'nav.glossary': { en: 'Glossary', es: 'Glosario' },
   'nav.confusions': { en: 'Common Confusions', es: 'Confusiones Comunes' },
   'nav.progress': { en: 'Progress', es: 'Progreso' },
+  'nav.saved': { en: 'Saved', es: 'Guardados' },
   'sidebar.tagline': { en: 'ISO 20022 & Payments', es: 'ISO 20022 y Pagos' },
   'sidebar.footer': { en: 'Static, client-side only. No backend, no tracking.', es: 'Sitio estático, solo del lado del cliente. Sin backend, sin rastreo.' },
 
@@ -214,6 +215,26 @@ export const strings = {
   'progress.resetTitle': { en: 'Reset progress', es: 'Reiniciar progreso' },
   'progress.resetDesc': { en: 'This clears completed lessons, quiz results, scenario history and viewed messages from this browser.', es: 'Esto borra las lecciones completadas, resultados de cuestionarios, historial de escenarios y mensajes vistos de este navegador.' },
   'progress.resetConfirm': { en: 'Click again to confirm reset', es: 'Haz clic de nuevo para confirmar el reinicio' },
+  'progress.topicMastery': { en: 'Topic Mastery', es: 'Dominio por Tema' },
+  'progress.topicMasteryNote': {
+    en: 'Blends lesson completion with quiz and scenario accuracy where available. A topic with no practice yet is shown at 0% or 100% based on lesson completion alone — not a precise measurement.',
+    es: 'Combina la finalización de la lección con la precisión de quiz y escenarios cuando existen. Un tema sin práctica aún se muestra en 0% o 100% solo según la finalización de la lección — no es una medición precisa.',
+  },
+  'progress.learningMap': { en: 'Learning Map', es: 'Mapa de Aprendizaje' },
+  'status.notStarted': { en: 'Not started', es: 'No iniciado' },
+  'status.learning': { en: 'Learning', es: 'Aprendiendo' },
+  'status.practicing': { en: 'Practicing', es: 'Practicando' },
+  'status.mastered': { en: 'Mastered', es: 'Dominado' },
+
+  // Bookmarks / Saved
+  'bookmark.save': { en: 'Save', es: 'Guardar' },
+  'bookmark.saved': { en: 'Saved', es: 'Guardado' },
+  'saved.title': { en: 'Saved', es: 'Guardados' },
+  'saved.description': { en: 'Concepts, lessons and messages you have bookmarked. Stored locally in your browser only.', es: 'Conceptos, lecciones y mensajes que has guardado. Almacenado solo localmente en tu navegador.' },
+  'saved.empty': { en: "You haven't saved anything yet. Look for the Save button on lessons, messages and glossary terms.", es: 'Todavía no has guardado nada. Busca el botón Guardar en lecciones, mensajes y términos del glosario.' },
+  'saved.lessons': { en: 'Lessons', es: 'Lecciones' },
+  'saved.messages': { en: 'Messages', es: 'Mensajes' },
+  'saved.glossary': { en: 'Glossary', es: 'Glosario' },
 
   // XML Lab
   'lab.xmlTitle': { en: 'XML Lab', es: 'Laboratorio XML' },

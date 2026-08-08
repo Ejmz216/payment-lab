@@ -5,6 +5,7 @@ import { useT } from '@/i18n/strings'
 import { getMessage } from '@/lib/i18nContent'
 import { relationLabelsEs } from '@/i18n/messagesEs'
 import { Card, CardTitle } from '@/components/ui/Card'
+import { BookmarkButton } from '@/components/ui/BookmarkButton'
 import { MessageTree } from '@/components/messages/MessageTree'
 import { FieldDetail } from '@/components/messages/FieldDetail'
 import { findParent } from '@/lib/tree'
@@ -48,7 +49,10 @@ export function MessagePage() {
       </div>
 
       <div>
-        <h1 className={clsx('text-2xl font-semibold', familyColor[message.family])}>{message.id}</h1>
+        <div className="flex items-start justify-between gap-4">
+          <h1 className={clsx('text-2xl font-semibold', familyColor[message.family])}>{message.id}</h1>
+          <BookmarkButton id={`message:${message.id}`} />
+        </div>
         <p className="mt-1 text-sm text-muted">{message.name}</p>
         <div className="mt-2 flex flex-wrap gap-1.5 text-xs">
           <span className="rounded-full border border-border bg-surface2 px-2 py-0.5">{message.domain}</span>

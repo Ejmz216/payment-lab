@@ -5,6 +5,7 @@ import { useT } from '@/i18n/strings'
 import { getLessons, getScenarios } from '@/lib/i18nContent'
 import { useProgressStore } from '@/store/progressStore'
 import { Card, CardTitle } from '@/components/ui/Card'
+import { BookmarkButton } from '@/components/ui/BookmarkButton'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { ArchitectureDiagram } from '@/components/learning/ArchitectureDiagram'
 import { CancellationDecisionTree } from '@/components/learning/DecisionTree'
@@ -41,9 +42,12 @@ export function LessonPage() {
         {lesson.title}
       </div>
 
-      <div>
-        <h1 className="text-2xl font-semibold">{lesson.title}</h1>
-        {lesson.subtitle && <p className="mt-1 text-sm text-muted">{lesson.subtitle}</p>}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold">{lesson.title}</h1>
+          {lesson.subtitle && <p className="mt-1 text-sm text-muted">{lesson.subtitle}</p>}
+        </div>
+        <BookmarkButton id={`lesson:${lesson.id}`} />
       </div>
 
       <Card className="border-primary/30 bg-primary/5">

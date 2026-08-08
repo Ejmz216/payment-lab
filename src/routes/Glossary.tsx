@@ -4,6 +4,7 @@ import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 import { getGlossary } from '@/lib/i18nContent'
 import { Card } from '@/components/ui/Card'
+import { BookmarkButton } from '@/components/ui/BookmarkButton'
 
 export function Glossary() {
   const [query, setQuery] = useState('')
@@ -27,8 +28,9 @@ export function Glossary() {
       <div className="flex flex-col gap-3">
         {filtered.map((g) => (
           <Card key={g.id} className="scroll-mt-4" id={g.id}>
-            <div className="flex items-baseline justify-between gap-2">
+            <div className="flex items-start justify-between gap-2">
               <div className="text-sm font-semibold">{g.term}</div>
+              <BookmarkButton id={`glossary:${g.id}`} />
             </div>
             <p className="mt-0.5 text-sm text-text/90">{g.oneLine}</p>
             <p className="mt-2 text-sm text-muted">{g.fullExplanation}</p>

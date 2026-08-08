@@ -1,10 +1,20 @@
+import { Link } from 'react-router-dom'
+import clsx from 'clsx'
 import { useProgressStore } from '@/store/progressStore'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 import { getLessons, getMessages } from '@/lib/i18nContent'
+import { computeAllTopicMastery, type MasteryStatus } from '@/lib/mastery'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { useState } from 'react'
+
+const statusColor: Record<MasteryStatus, string> = {
+  'not-started': 'border-border text-muted',
+  learning: 'border-warning/50 bg-warning/10 text-warning',
+  practicing: 'border-primary/50 bg-primary/10 text-primary',
+  mastered: 'border-success/50 bg-success/10 text-success',
+}
 
 export function Progress() {
   const completedLessons = useProgressStore((s) => s.completedLessons)
@@ -17,6 +27,14 @@ export function Progress() {
   const t = useT()
   const lessons = getLessons(lang)
   const messages = getMessages(lang)
+  const topics = computeAllTopicMastery(lessons, completedLessons, quizResults, scenarioHistory)
+
+  const statusLabel: Record<MasteryStatus, string> = {
+    'not-started': t('status.notStarted'),
+    learning: t('status.learning'),
+    practicing: t('status.practicing'),
+    mastered: t('status.mastered'),
+  }
 
   const lessonPct = Math.round((completedLessons.length / lessons.length) * 100)
   const quizCorrect = quizResults.filter((r) => r.correct).length
@@ -47,6 +65,40 @@ export function Progress() {
         <Metric label={t('progress.scenarioAccuracy')} value={scenarioPct} sub={`${scenarioHistory.length} ${t('progress.answered')}`} />
         <Metric label={t('progress.messagesExplored')} value={messagePct} sub={`${messageViewed.length}/${messages.length} ${t('progress.viewed')}`} />
       </div>
+
+      <Card>
+        <CardTitle>{t('progress.topicMastery')}</CardTitle>
+        <p className="mb-3 text-xs text-muted">{t('progress.topicMasteryNote')}</p>
+        <div className="flex flex-col gap-3">
+          {topics.map((topic) => (
+            <div key={topic.id}>
+              <div className="mb-1 flex items-center justify-between text-sm">
+                <Link to={`/learn/fast-payments/${topic.id}`} className="hover:text-primary hover:underline">{topic.label}</Link>
+                <span className="text-xs text-muted">{topic.mastery}%</span>
+              </div>
+              <ProgressBar value={topic.mastery} />
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <CardTitle>{t('progress.learningMap')}</CardTitle>
+        <div className="mt-2 flex flex-col gap-1.5">
+          {topics.map((topic) => (
+            <Link
+              key={topic.id}
+              to={`/learn/fast-payments/${topic.id}`}
+              className="flex items-center justify-between gap-3 rounded-md px-2 py-1.5 text-sm hover:bg-surface2"
+            >
+              <span>{topic.label}</span>
+              <span className={clsx('shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium', statusColor[topic.status])}>
+                {statusLabel[topic.status]}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </Card>
 
       <Card>
         <CardTitle>{t('progress.resetTitle')}</CardTitle>

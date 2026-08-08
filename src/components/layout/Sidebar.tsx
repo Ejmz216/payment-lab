@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Rocket, Map, FlaskConical, Dumbbell, BookOpen, LineChart, Search } from 'lucide-react'
+import { LayoutDashboard, Rocket, Map, FlaskConical, Dumbbell, BookOpen, LineChart, Search, Bookmark } from 'lucide-react'
 import clsx from 'clsx'
 import { useT, type StringKey } from '@/i18n/strings'
 
@@ -23,6 +23,7 @@ const navGroups: { groupKey: StringKey; items: { to: string; labelKey: StringKey
       { to: '/glossary', labelKey: 'nav.glossary', icon: BookOpen },
       { to: '/confusions', labelKey: 'nav.confusions', icon: Search },
       { to: '/progress', labelKey: 'nav.progress', icon: LineChart },
+      { to: '/saved', labelKey: 'nav.saved', icon: Bookmark },
     ],
   },
 ]

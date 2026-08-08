@@ -18,6 +18,7 @@ import { Quiz } from '@/routes/practice/Quiz'
 import { Glossary } from '@/routes/Glossary'
 import { Confusions } from '@/routes/Confusions'
 import { Progress } from '@/routes/Progress'
+import { Saved } from '@/routes/Saved'
 import { NotFound } from '@/routes/NotFound'
 
 // Monaco-backed labs are code-split and only fetched when visited, so the
@@ -57,6 +58,7 @@ export default function App() {
         <Route path="/glossary" element={<Glossary />} />
         <Route path="/confusions" element={<Confusions />} />
         <Route path="/progress" element={<Progress />} />
+        <Route path="/saved" element={<Saved />} />
 
         <Route path="*" element={<NotFound />} />
       </Route>
