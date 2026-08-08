@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Card, CardTitle } from '@/components/ui/Card'
+import { useT } from '@/i18n/strings'
 import clsx from 'clsx'
 
 interface Case {
@@ -62,6 +63,7 @@ export function Debugger() {
   const [selected, setSelected] = useState<string | null>(null)
   const [revealed, setRevealed] = useState(false)
   const c = cases.find((x) => x.id === caseId)!
+  const t = useT()
 
   function choose(id: string) {
     setSelected(id)
@@ -77,8 +79,8 @@ export function Debugger() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Payment Debugger</h1>
-        <p className="mt-1 text-sm text-muted">PAYMENT FAILED. Find out what happened. All cases are synthetic.</p>
+        <h1 className="text-2xl font-semibold">{t('dbg.title')}</h1>
+        <p className="mt-1 text-sm text-muted">{t('dbg.subtitle')}</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -97,7 +99,7 @@ export function Debugger() {
       </div>
 
       <Card>
-        <CardTitle>Timeline</CardTitle>
+        <CardTitle>{t('dbg.timeline')}</CardTitle>
         <ol className="mt-2 flex flex-col gap-1.5 font-mono text-sm">
           {c.timeline.map((t, i) => (
             <li key={i} className={clsx('flex gap-3', t.suspicious && 'text-warning')}>
@@ -130,7 +132,7 @@ export function Debugger() {
         {revealed && (
           <div className="mt-3 rounded-md border border-border bg-surface2 p-3 text-sm">
             <p>{c.explanation}</p>
-            <p className="mt-2 text-xs text-muted"><span className="font-medium text-text">Which message would you investigate?</span> {c.investigate}</p>
+            <p className="mt-2 text-xs text-muted"><span className="font-medium text-text">{t('dbg.whichMessage')}</span> {c.investigate}</p>
           </div>
         )}
       </Card>

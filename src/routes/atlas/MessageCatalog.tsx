@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { messages } from '@/content/messages'
+import { useUIStore } from '@/store/uiStore'
+import { useT } from '@/i18n/strings'
+import { getMessages } from '@/lib/i18nContent'
 import { Card } from '@/components/ui/Card'
 import clsx from 'clsx'
 
@@ -9,6 +11,9 @@ const familyColor: Record<string, string> = { pain: 'text-pain border-pain/40', 
 export function MessageCatalog() {
   const [query, setQuery] = useState('')
   const [family, setFamily] = useState<string>('all')
+  const lang = useUIStore((s) => s.lang)
+  const t = useT()
+  const messages = getMessages(lang)
 
   const filtered = messages.filter((m) => {
     const matchesQuery = (m.id + ' ' + m.name + ' ' + m.shortDescription).toLowerCase().includes(query.toLowerCase())
@@ -19,19 +24,19 @@ export function MessageCatalog() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Message Catalog</h1>
-        <p className="mt-1 text-sm text-muted">Search across covered ISO 20022 messages.</p>
+        <h1 className="text-2xl font-semibold">{t('catalog.title')}</h1>
+        <p className="mt-1 text-sm text-muted">{t('catalog.description')}</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search pacs.008, customer credit transfer, status report…"
+          placeholder={t('catalog.searchPlaceholder')}
           className="min-w-[16rem] flex-1 rounded-md border border-border bg-surface2 px-3 py-2 text-sm outline-none focus-ring"
         />
         <select value={family} onChange={(e) => setFamily(e.target.value)} className="rounded-md border border-border bg-surface2 px-3 py-2 text-sm">
-          <option value="all">All families</option>
+          <option value="all">{t('catalog.allFamilies')}</option>
           <option value="pain">pain</option>
           <option value="pacs">pacs</option>
           <option value="camt">camt</option>
@@ -51,7 +56,7 @@ export function MessageCatalog() {
             </Card>
           </Link>
         ))}
-        {filtered.length === 0 && <div className="text-sm text-muted">No messages match your search.</div>}
+        {filtered.length === 0 && <div className="text-sm text-muted">{t('catalog.noResults')}</div>}
       </div>
     </div>
   )

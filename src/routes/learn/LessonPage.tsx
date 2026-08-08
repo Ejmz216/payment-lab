@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
-import { fastPaymentsLessons } from '@/content/lessons/fastPaymentsPath'
-import { scenarios } from '@/content/scenarios'
+import { useUIStore } from '@/store/uiStore'
+import { useT } from '@/i18n/strings'
+import { getLessons, getScenarios } from '@/lib/i18nContent'
 import { useProgressStore } from '@/store/progressStore'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
@@ -9,12 +10,15 @@ import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react'
 
 export function LessonPage() {
   const { lessonId } = useParams()
-  const lesson = fastPaymentsLessons.find((l) => l.id === lessonId)
+  const lang = useUIStore((s) => s.lang)
+  const t = useT()
+  const lessons = getLessons(lang)
+  const lesson = lessons.find((l) => l.id === lessonId)
   const completed = useProgressStore((s) => s.completedLessons)
   const completeLesson = useProgressStore((s) => s.completeLesson)
   const isDone = lesson ? completed.includes(lesson.id) : false
 
-  const orderedLessons = fastPaymentsLessons.slice().sort((a, b) => a.order - b.order)
+  const orderedLessons = lessons.slice().sort((a, b) => a.order - b.order)
   const idx = lesson ? orderedLessons.findIndex((l) => l.id === lesson.id) : -1
   const prev = idx > 0 ? orderedLessons[idx - 1] : undefined
   const next = idx >= 0 && idx < orderedLessons.length - 1 ? orderedLessons[idx + 1] : undefined
@@ -25,12 +29,12 @@ export function LessonPage() {
 
   if (!lesson) return <Navigate to="/learn/fast-payments" replace />
 
-  const scenario = lesson.scenarioId ? scenarios.find((s) => s.id === lesson.scenarioId) : undefined
+  const scenario = lesson.scenarioId ? getScenarios(lang).find((s) => s.id === lesson.scenarioId) : undefined
 
   return (
     <div className="flex flex-col gap-6">
       <div className="text-xs text-muted">
-        <Link to="/learn/fast-payments" className="hover:text-text">Fast Payments</Link>
+        <Link to="/learn/fast-payments" className="hover:text-text">{t('fp.title')}</Link>
         <span className="mx-1.5">/</span>
         {lesson.title}
       </div>
@@ -41,12 +45,12 @@ export function LessonPage() {
       </div>
 
       <Card className="border-primary/30 bg-primary/5">
-        <CardTitle>Why this matters</CardTitle>
+        <CardTitle>{t('lesson.whyMatters')}</CardTitle>
         <p className="text-sm text-text/90">{lesson.whyItMatters}</p>
       </Card>
 
       <Card>
-        <CardTitle>After this lesson you should be able to</CardTitle>
+        <CardTitle>{t('lesson.objectives')}</CardTitle>
         <ul className="mt-2 flex flex-col gap-1.5 text-sm">
           {lesson.objectives.map((o) => (
             <li key={o} className="flex items-start gap-2">
@@ -59,7 +63,7 @@ export function LessonPage() {
 
       {lesson.mentalModel && (
         <Card>
-          <CardTitle>Mental model</CardTitle>
+          <CardTitle>{t('lesson.mentalModel')}</CardTitle>
           <p className="text-sm italic text-text/90">{lesson.mentalModel}</p>
         </Card>
       )}
@@ -75,10 +79,10 @@ export function LessonPage() {
 
       {lesson.keyTerms.length > 0 && (
         <Card>
-          <CardTitle>Key terms</CardTitle>
+          <CardTitle>{t('lesson.keyTerms')}</CardTitle>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {lesson.keyTerms.map((t) => (
-              <span key={t} className="rounded-full border border-border bg-surface2 px-2.5 py-1 text-xs">{t}</span>
+            {lesson.keyTerms.map((term) => (
+              <span key={term} className="rounded-full border border-border bg-surface2 px-2.5 py-1 text-xs">{term}</span>
             ))}
           </div>
         </Card>
@@ -86,7 +90,7 @@ export function LessonPage() {
 
       {lesson.commonConfusion && lesson.commonConfusion.length > 0 && (
         <Card className="border-warning/30">
-          <CardTitle>Common mistake</CardTitle>
+          <CardTitle>{t('lesson.commonMistake')}</CardTitle>
           {lesson.commonConfusion.map((c) => (
             <div key={c.title} className="mt-1 text-sm">
               <div className="font-medium">{c.title}</div>
@@ -98,17 +102,17 @@ export function LessonPage() {
 
       {scenario && (
         <div>
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted">Check yourself</h2>
+          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted">{t('lesson.checkYourself')}</h2>
           <ScenarioCard scenario={scenario} />
         </div>
       )}
 
       <Card>
-        <CardTitle>Sources & references</CardTitle>
+        <CardTitle>{t('lesson.sources')}</CardTitle>
         <ul className="mt-1 flex flex-col gap-1 text-xs text-muted">
           {lesson.sources.map((s) => (
             <li key={s.sourceName}>
-              {s.sourceName} ({s.sourceType}) — last reviewed {s.lastReviewed}
+              {s.sourceName} ({s.sourceType}) — {t('lesson.lastReviewed')} {s.lastReviewed}
               {s.notes ? ` — ${s.notes}` : ''}
             </li>
           ))}
@@ -120,7 +124,7 @@ export function LessonPage() {
           onClick={() => completeLesson(lesson.id)}
           className="self-start rounded-md bg-success px-4 py-2 text-sm font-medium text-white hover:opacity-90"
         >
-          Mark lesson complete
+          {t('lesson.markComplete')}
         </button>
       )}
 

@@ -1,45 +1,47 @@
 import { NavLink } from 'react-router-dom'
 import { LayoutDashboard, Rocket, Map, FlaskConical, Dumbbell, BookOpen, LineChart, Search } from 'lucide-react'
 import clsx from 'clsx'
+import { useT, type StringKey } from '@/i18n/strings'
 
-const navGroups: { label: string; items: { to: string; label: string; icon: typeof Rocket }[] }[] = [
+const navGroups: { groupKey: StringKey; items: { to: string; labelKey: StringKey; icon: typeof Rocket }[] }[] = [
   {
-    label: 'Overview',
-    items: [{ to: '/', label: 'Dashboard', icon: LayoutDashboard }],
+    groupKey: 'nav.overview',
+    items: [{ to: '/', labelKey: 'nav.dashboard', icon: LayoutDashboard }],
   },
   {
-    label: 'Modes',
+    groupKey: 'nav.modes',
     items: [
-      { to: '/learn/fast-payments', label: 'Fast Payments', icon: Rocket },
-      { to: '/atlas', label: 'ISO 20022 Atlas', icon: Map },
-      { to: '/lab', label: 'Lab', icon: FlaskConical },
+      { to: '/learn/fast-payments', labelKey: 'nav.fastPayments', icon: Rocket },
+      { to: '/atlas', labelKey: 'nav.atlas', icon: Map },
+      { to: '/lab', labelKey: 'nav.lab', icon: FlaskConical },
     ],
   },
   {
-    label: 'Study',
+    groupKey: 'nav.study',
     items: [
-      { to: '/practice', label: 'Practice', icon: Dumbbell },
-      { to: '/glossary', label: 'Glossary', icon: BookOpen },
-      { to: '/confusions', label: 'Common Confusions', icon: Search },
-      { to: '/progress', label: 'Progress', icon: LineChart },
+      { to: '/practice', labelKey: 'nav.practice', icon: Dumbbell },
+      { to: '/glossary', labelKey: 'nav.glossary', icon: BookOpen },
+      { to: '/confusions', labelKey: 'nav.confusions', icon: Search },
+      { to: '/progress', labelKey: 'nav.progress', icon: LineChart },
     ],
   },
 ]
 
 export function Sidebar() {
+  const t = useT()
   return (
     <aside className="hidden w-64 shrink-0 border-r border-border bg-surface md:flex md:flex-col">
       <div className="flex items-center gap-2 border-b border-border px-5 py-4">
         <div className="flex h-7 w-7 items-center justify-center rounded bg-primary text-sm font-bold text-white">PL</div>
         <div>
           <div className="text-sm font-semibold leading-none">Payment Lab</div>
-          <div className="text-xs text-muted">ISO 20022 & Payments</div>
+          <div className="text-xs text-muted">{t('sidebar.tagline')}</div>
         </div>
       </div>
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         {navGroups.map((group) => (
-          <div key={group.label} className="mb-5">
-            <div className="mb-1.5 px-2 text-xs font-semibold uppercase tracking-wider text-muted">{group.label}</div>
+          <div key={group.groupKey} className="mb-5">
+            <div className="mb-1.5 px-2 text-xs font-semibold uppercase tracking-wider text-muted">{t(group.groupKey)}</div>
             <div className="flex flex-col gap-0.5">
               {group.items.map((item) => (
                 <NavLink
@@ -54,7 +56,7 @@ export function Sidebar() {
                   }
                 >
                   <item.icon size={16} />
-                  {item.label}
+                  {t(item.labelKey)}
                 </NavLink>
               ))}
             </div>
@@ -62,7 +64,7 @@ export function Sidebar() {
         ))}
       </nav>
       <div className="border-t border-border px-4 py-3 text-xs text-muted">
-        Static, client-side only. No backend, no tracking.
+        {t('sidebar.footer')}
       </div>
     </aside>
   )

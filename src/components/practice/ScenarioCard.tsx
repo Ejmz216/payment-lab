@@ -3,12 +3,14 @@ import clsx from 'clsx'
 import type { Scenario } from '@/types/content'
 import { Card } from '@/components/ui/Card'
 import { useProgressStore } from '@/store/progressStore'
+import { useT } from '@/i18n/strings'
 import { Link } from 'react-router-dom'
 
 export function ScenarioCard({ scenario }: { scenario: Scenario }) {
   const [selected, setSelected] = useState<string | null>(null)
   const [revealed, setRevealed] = useState(false)
   const recordScenario = useProgressStore((s) => s.recordScenario)
+  const t = useT()
 
   function choose(choiceId: string) {
     if (revealed) return
@@ -47,14 +49,16 @@ export function ScenarioCard({ scenario }: { scenario: Scenario }) {
       </div>
       {revealed && (
         <div className="mt-3 rounded-md border border-border bg-surface2 p-3 text-sm">
-          <div className="mb-1 font-semibold">{selected && scenario.choices.find((c) => c.id === selected)?.correct ? 'Correct' : 'Incorrect'}</div>
+          <div className="mb-1 font-semibold">
+            {selected && scenario.choices.find((c) => c.id === selected)?.correct ? t('practice.correct') : t('practice.incorrect')}
+          </div>
           <p className="text-text/90">{scenario.explanation.reasoning}</p>
           {scenario.explanation.lifecycleImpact && (
-            <p className="mt-1 text-xs text-muted"><span className="font-medium text-text">Lifecycle:</span> {scenario.explanation.lifecycleImpact}</p>
+            <p className="mt-1 text-xs text-muted"><span className="font-medium text-text">{t('practice.lifecycle')}:</span> {scenario.explanation.lifecycleImpact}</p>
           )}
           {scenario.explanation.relatedMessages && scenario.explanation.relatedMessages.length > 0 && (
             <p className="mt-1 text-xs text-muted">
-              <span className="font-medium text-text">Related: </span>
+              <span className="font-medium text-text">{t('practice.related')}: </span>
               {scenario.explanation.relatedMessages.map((m, i) => (
                 <span key={m}>
                   {i > 0 && ', '}
@@ -64,7 +68,7 @@ export function ScenarioCard({ scenario }: { scenario: Scenario }) {
             </p>
           )}
           {scenario.explanation.dependsOnScheme && (
-            <p className="mt-2 text-xs font-medium text-danger">DEPENDS ON SCHEME — the exact messages/rules can vary by payment scheme.</p>
+            <p className="mt-2 text-xs font-medium text-danger">{t('practice.dependsOnScheme')}</p>
           )}
         </div>
       )}

@@ -1,28 +1,28 @@
 import { Link } from 'react-router-dom'
 import { Card, CardTitle } from '@/components/ui/Card'
+import { useT, type StringKey } from '@/i18n/strings'
 
-const tools = [
-  { to: '/lab/simulator', title: 'Payment Simulator', desc: 'Configure and run a payment through a synthetic end-to-end flow.' },
-  { to: '/lab/debugger', title: 'Payment Debugger', desc: 'Investigate a failed payment: find where it broke and what to check next.' },
-  { to: '/lab/identifiers', title: 'Identifier Lab', desc: 'Understand MsgId, InstrId, EndToEndId and TxId across a multi-transaction message.' },
-  { to: '/lab/reject-return', title: 'Reject vs. Return Trainer', desc: 'Place a failure on the lifecycle and decide: reject, return, or something else?' },
+const tools: { to: string; titleKey: StringKey; descKey: StringKey }[] = [
+  { to: '/lab/simulator', titleKey: 'lab.simulatorTitle', descKey: 'lab.simulatorDesc' },
+  { to: '/lab/debugger', titleKey: 'lab.debuggerTitle', descKey: 'lab.debuggerDesc' },
+  { to: '/lab/identifiers', titleKey: 'lab.identifierTitle', descKey: 'lab.identifierDesc' },
+  { to: '/lab/reject-return', titleKey: 'lab.rejectReturnTitle', descKey: 'lab.rejectReturnDesc' },
 ]
 
 export function LabHome() {
+  const t = useT()
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Lab</h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted">
-          Hands-on tools: simulate payments, debug failures, and experiment with identifiers — all using synthetic data.
-        </p>
+        <h1 className="text-2xl font-semibold">{t('lab.title')}</h1>
+        <p className="mt-1 max-w-2xl text-sm text-muted">{t('lab.description')}</p>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {tools.map((t) => (
-          <Link key={t.to} to={t.to}>
+        {tools.map((tool) => (
+          <Link key={tool.to} to={tool.to}>
             <Card className="h-full hover:border-primary/50">
-              <CardTitle>{t.title}</CardTitle>
-              <p className="text-sm text-muted">{t.desc}</p>
+              <CardTitle>{t(tool.titleKey)}</CardTitle>
+              <p className="text-sm text-muted">{t(tool.descKey)}</p>
             </Card>
           </Link>
         ))}

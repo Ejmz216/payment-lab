@@ -1,17 +1,21 @@
 import { Link } from 'react-router-dom'
-import { fastPaymentsLessons, fastPaymentsPath } from '@/content/lessons/fastPaymentsPath'
 import { useProgressStore } from '@/store/progressStore'
+import { useUIStore } from '@/store/uiStore'
+import { useT } from '@/i18n/strings'
+import { getLessons } from '@/lib/i18nContent'
 import { Card } from '@/components/ui/Card'
 
 export function FastPaymentsHome() {
   const completed = useProgressStore((s) => s.completedLessons)
-  const lessons = fastPaymentsLessons.slice().sort((a, b) => a.order - b.order)
+  const lang = useUIStore((s) => s.lang)
+  const t = useT()
+  const lessons = getLessons(lang).slice().sort((a, b) => a.order - b.order)
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">{fastPaymentsPath.title}</h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted">{fastPaymentsPath.description}</p>
+        <h1 className="text-2xl font-semibold">{t('fp.title')}</h1>
+        <p className="mt-1 max-w-2xl text-sm text-muted">{t('fp.description')}</p>
       </div>
       <div className="flex flex-col gap-3">
         {lessons.map((lesson, idx) => {
@@ -30,7 +34,7 @@ export function FastPaymentsHome() {
                   <div className="font-medium">{lesson.title}</div>
                   <div className="truncate text-sm text-muted">{lesson.subtitle}</div>
                 </div>
-                <div className="shrink-0 text-xs text-muted">{lesson.estimatedMinutes} min</div>
+                <div className="shrink-0 text-xs text-muted">{lesson.estimatedMinutes} {t('dashboard.min')}</div>
               </Card>
             </Link>
           )

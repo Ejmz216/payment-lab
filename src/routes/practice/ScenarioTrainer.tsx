@@ -1,12 +1,18 @@
-import { scenarios } from '@/content/scenarios'
+import { useUIStore } from '@/store/uiStore'
+import { useT } from '@/i18n/strings'
+import { getScenarios } from '@/lib/i18nContent'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 
 export function ScenarioTrainer() {
+  const lang = useUIStore((s) => s.lang)
+  const t = useT()
+  const scenarios = getScenarios(lang)
+
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Scenario Trainer</h1>
-        <p className="mt-1 text-sm text-muted">Realistic reasoning scenarios, not just term recall.</p>
+        <h1 className="text-2xl font-semibold">{t('practice.scenarioTrainer')}</h1>
+        <p className="mt-1 text-sm text-muted">{t('practice.subtitle')}</p>
       </div>
       <div className="flex flex-col gap-4">
         {scenarios.map((s) => <ScenarioCard key={s.id} scenario={s} />)}

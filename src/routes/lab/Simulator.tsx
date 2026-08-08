@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { simulatorScenarios } from '@/content/simulatorScenarios'
 import { Card, CardTitle } from '@/components/ui/Card'
+import { useT } from '@/i18n/strings'
 import clsx from 'clsx'
 import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react'
 
@@ -20,27 +21,28 @@ export function Simulator() {
   const [amount] = useState('100')
   const [currency] = useState('XXX')
   const [ran, setRan] = useState(false)
+  const t = useT()
 
   const scenario = simulatorScenarios.find((s) => s.id === scenarioId)!
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Payment Simulator</h1>
-        <p className="mt-1 text-sm text-muted">All data below is synthetic. This does not represent a real payment or institution.</p>
+        <h1 className="text-2xl font-semibold">{t('lab.simulatorTitle')}</h1>
+        <p className="mt-1 text-sm text-muted">{t('sim.syntheticNote')}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-1">
-          <CardTitle>Configuration</CardTitle>
+          <CardTitle>{t('sim.configuration')}</CardTitle>
           <div className="mt-3 flex flex-col gap-3 text-sm">
-            <Field label="Debtor" value={debtor} />
-            <Field label="Debtor Agent" value="BANK_A" />
-            <Field label="Creditor" value={creditor} />
-            <Field label="Creditor Agent" value="BANK_B" />
-            <Field label="Amount" value={`${amount} ${currency}`} />
+            <Field label={t('sim.debtor')} value={debtor} />
+            <Field label={t('sim.debtorAgent')} value="BANK_A" />
+            <Field label={t('sim.creditor')} value={creditor} />
+            <Field label={t('sim.creditorAgent')} value="BANK_B" />
+            <Field label={t('sim.amount')} value={`${amount} ${currency}`} />
             <div>
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted">Scenario</label>
+              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted">{t('sim.scenario')}</label>
               <select
                 value={scenarioId}
                 onChange={(e) => { setScenarioId(e.target.value); setRan(false) }}
@@ -54,14 +56,14 @@ export function Simulator() {
               onClick={() => setRan(true)}
               className="mt-1 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90"
             >
-              Run simulation
+              {t('sim.run')}
             </button>
           </div>
         </Card>
 
         <div className="flex flex-col gap-4 lg:col-span-2">
           <Card>
-            <CardTitle>Flow</CardTitle>
+            <CardTitle>{t('sim.flow')}</CardTitle>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
               {['Customer', 'Debtor Agent', 'Infrastructure', 'Creditor Agent', 'Beneficiary'].map((step, i, arr) => (
                 <div key={step} className="flex items-center gap-2">
@@ -73,9 +75,9 @@ export function Simulator() {
           </Card>
 
           <Card>
-            <CardTitle>Timeline</CardTitle>
+            <CardTitle>{t('sim.timeline')}</CardTitle>
             {!ran ? (
-              <p className="text-sm text-muted">Run the simulation to see a synthetic timeline of events.</p>
+              <p className="text-sm text-muted">{t('sim.timelineHint')}</p>
             ) : (
               <ol className="mt-2 flex flex-col gap-2">
                 {scenario.events.map((ev, i) => (
@@ -94,7 +96,7 @@ export function Simulator() {
                       </div>
                       {ev.messageId && (
                         <Link to={`/atlas/messages/${ev.messageId}`} className="text-xs text-primary hover:underline">
-                          View message: {ev.messageId}
+                          {t('sim.viewMessage')}: {ev.messageId}
                         </Link>
                       )}
                     </div>
@@ -106,7 +108,7 @@ export function Simulator() {
 
           {ran && (
             <Card>
-              <CardTitle>Outcome</CardTitle>
+              <CardTitle>{t('sim.outcome')}</CardTitle>
               <p className={clsx('text-sm font-semibold capitalize', outcomeColor[scenario.finalOutcome])}>{scenario.finalOutcome}</p>
             </Card>
           )}

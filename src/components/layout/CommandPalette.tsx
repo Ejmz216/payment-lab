@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUIStore } from '@/store/uiStore'
-import { fastPaymentsLessons } from '@/content/lessons/fastPaymentsPath'
-import { messages } from '@/content/messages'
-import { glossary } from '@/content/glossary'
+import { useT } from '@/i18n/strings'
+import { getLessons, getMessages, getGlossary } from '@/lib/i18nContent'
 
 interface Item {
   id: string
@@ -15,38 +14,40 @@ interface Item {
 
 export function CommandPalette() {
   const setOpen = useUIStore((s) => s.setCommandPaletteOpen)
+  const lang = useUIStore((s) => s.lang)
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
+  const t = useT()
 
   const items: Item[] = useMemo(() => {
-    const lessonItems: Item[] = fastPaymentsLessons.map((l) => ({
+    const lessonItems: Item[] = getLessons(lang).map((l) => ({
       id: `lesson-${l.id}`,
       label: l.title,
-      sub: l.subtitle ?? 'Lesson',
+      sub: l.subtitle ?? t('palette.groupLessons'),
       to: `/learn/fast-payments/${l.id}`,
-      group: 'Lessons',
+      group: t('palette.groupLessons'),
     }))
-    const messageItems: Item[] = messages.map((m) => ({
+    const messageItems: Item[] = getMessages(lang).map((m) => ({
       id: `msg-${m.id}`,
       label: m.id,
       sub: m.name,
       to: `/atlas/messages/${m.id}`,
-      group: 'Messages',
+      group: t('palette.groupMessages'),
     }))
-    const glossaryItems: Item[] = glossary.map((g) => ({
+    const glossaryItems: Item[] = getGlossary(lang).map((g) => ({
       id: `gloss-${g.id}`,
       label: g.term,
       sub: g.oneLine,
       to: `/glossary#${g.id}`,
-      group: 'Glossary',
+      group: t('palette.groupGlossary'),
     }))
     const labItems: Item[] = [
-      { id: 'lab-sim', label: 'Payment Simulator', sub: 'Simulate a payment end to end', to: '/lab/simulator', group: 'Lab' },
-      { id: 'lab-debug', label: 'Payment Debugger', sub: 'Investigate a failed payment', to: '/lab/debugger', group: 'Lab' },
-      { id: 'lab-id', label: 'Identifier Lab', sub: 'MsgId, InstrId, EndToEndId, TxId', to: '/lab/identifiers', group: 'Lab' },
+      { id: 'lab-sim', label: t('lab.simulatorTitle'), sub: t('lab.simulatorDesc'), to: '/lab/simulator', group: t('palette.groupLab') },
+      { id: 'lab-debug', label: t('lab.debuggerTitle'), sub: t('lab.debuggerDesc'), to: '/lab/debugger', group: t('palette.groupLab') },
+      { id: 'lab-id', label: t('lab.identifierTitle'), sub: 'MsgId, InstrId, EndToEndId, TxId', to: '/lab/identifiers', group: t('palette.groupLab') },
     ]
     return [...lessonItems, ...messageItems, ...glossaryItems, ...labItems]
-  }, [])
+  }, [lang, t])
 
   const filtered = items.filter((i) => (i.label + ' ' + i.sub).toLowerCase().includes(query.toLowerCase())).slice(0, 20)
 
@@ -60,11 +61,11 @@ export function CommandPalette() {
           autoFocus
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search lessons, messages, glossary, lab tools…"
+          placeholder={t('palette.placeholder')}
           className="w-full border-b border-border bg-transparent px-4 py-3 text-sm outline-none"
         />
         <div className="max-h-96 overflow-y-auto py-1">
-          {filtered.length === 0 && <div className="px-4 py-6 text-center text-sm text-muted">No results.</div>}
+          {filtered.length === 0 && <div className="px-4 py-6 text-center text-sm text-muted">{t('palette.noResults')}</div>}
           {filtered.map((item) => (
             <button
               key={item.id}

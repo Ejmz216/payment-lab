@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+export type Lang = 'en' | 'es'
+
 interface UIState {
   theme: 'dark' | 'light'
   toggleTheme: () => void
@@ -10,6 +12,8 @@ interface UIState {
   setExpertDetail: (v: boolean) => void
   perspective: 'business' | 'ba-bsa' | 'developer' | 'qa' | 'operations'
   setPerspective: (p: UIState['perspective']) => void
+  lang: Lang
+  setLang: (l: Lang) => void
 }
 
 export const useUIStore = create<UIState>()(
@@ -23,6 +27,8 @@ export const useUIStore = create<UIState>()(
       setExpertDetail: (v) => set({ expertDetail: v }),
       perspective: 'business',
       setPerspective: (p) => set({ perspective: p }),
+      lang: 'en',
+      setLang: (l) => set({ lang: l }),
     }),
     { name: 'payment-lab-ui' },
   ),

@@ -1,25 +1,32 @@
 import { Link } from 'react-router-dom'
 import { Card, CardTitle } from '@/components/ui/Card'
-import { scenarios, quizQuestions } from '@/content/scenarios'
+import { useUIStore } from '@/store/uiStore'
+import { useT } from '@/i18n/strings'
+import { getScenarios, getQuizQuestions } from '@/lib/i18nContent'
 
 export function PracticeHome() {
+  const lang = useUIStore((s) => s.lang)
+  const t = useT()
+  const scenarios = getScenarios(lang)
+  const quizQuestions = getQuizQuestions(lang)
+
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Practice Center</h1>
-        <p className="mt-1 text-sm text-muted">Application and troubleshooting practice, not just recall.</p>
+        <h1 className="text-2xl font-semibold">{t('practice.title')}</h1>
+        <p className="mt-1 text-sm text-muted">{t('practice.subtitle')}</p>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Link to="/practice/scenarios">
           <Card className="h-full hover:border-primary/50">
-            <CardTitle>Scenario Trainer</CardTitle>
-            <p className="text-sm text-muted">{scenarios.length} realistic reasoning scenarios ready.</p>
+            <CardTitle>{t('practice.scenarioTrainer')}</CardTitle>
+            <p className="text-sm text-muted">{scenarios.length} {t('practice.scenariosReady')}</p>
           </Card>
         </Link>
         <Link to="/practice/quiz">
           <Card className="h-full hover:border-primary/50">
-            <CardTitle>Quiz</CardTitle>
-            <p className="text-sm text-muted">{quizQuestions.length} questions covering Tier 1 concepts.</p>
+            <CardTitle>{t('practice.quiz')}</CardTitle>
+            <p className="text-sm text-muted">{quizQuestions.length} {t('practice.quizQuestions')}</p>
           </Card>
         </Link>
       </div>

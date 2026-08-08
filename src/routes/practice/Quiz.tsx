@@ -1,11 +1,18 @@
 import { useState } from 'react'
 import clsx from 'clsx'
-import { quizQuestions } from '@/content/scenarios'
+import { useUIStore } from '@/store/uiStore'
+import { useT } from '@/i18n/strings'
+import { getQuizQuestions } from '@/lib/i18nContent'
 import { Card } from '@/components/ui/Card'
 import { useProgressStore } from '@/store/progressStore'
 
 type Confidence = 'guess' | 'unsure' | 'confident' | 'very-confident'
-const confidenceLabels: Confidence[] = ['guess', 'unsure', 'confident', 'very-confident']
+const confidenceKeys: { c: Confidence; key: 'confidence.guess' | 'confidence.unsure' | 'confidence.confident' | 'confidence.veryConfident' }[] = [
+  { c: 'guess', key: 'confidence.guess' },
+  { c: 'unsure', key: 'confidence.unsure' },
+  { c: 'confident', key: 'confidence.confident' },
+  { c: 'very-confident', key: 'confidence.veryConfident' },
+]
 
 export function Quiz() {
   const [idx, setIdx] = useState(0)
@@ -13,6 +20,9 @@ export function Quiz() {
   const [revealed, setRevealed] = useState(false)
   const [confidence, setConfidence] = useState<Confidence | null>(null)
   const recordQuiz = useProgressStore((s) => s.recordQuiz)
+  const lang = useUIStore((s) => s.lang)
+  const t = useT()
+  const quizQuestions = getQuizQuestions(lang)
   const q = quizQuestions[idx]
 
   function choose(choiceId: string) {
@@ -37,8 +47,8 @@ export function Quiz() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold">Quiz</h1>
-        <p className="mt-1 text-sm text-muted">Question {idx + 1} of {quizQuestions.length}</p>
+        <h1 className="text-2xl font-semibold">{t('practice.quiz')}</h1>
+        <p className="mt-1 text-sm text-muted">{t('practice.questionOf')} {idx + 1} {t('practice.of')} {quizQuestions.length}</p>
       </div>
 
       <Card>
@@ -69,11 +79,11 @@ export function Quiz() {
 
         {revealed && !confidence && (
           <div className="mt-3">
-            <div className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted">How confident were you?</div>
+            <div className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted">{t('practice.confidence')}</div>
             <div className="flex flex-wrap gap-2">
-              {confidenceLabels.map((c) => (
+              {confidenceKeys.map(({ c, key }) => (
                 <button key={c} onClick={() => submitConfidence(c)} className="rounded-md border border-border px-2.5 py-1 text-xs capitalize hover:bg-surface2">
-                  {c.replace('-', ' ')}
+                  {t(key)}
                 </button>
               ))}
             </div>
@@ -82,7 +92,7 @@ export function Quiz() {
 
         {confidence && (
           <button onClick={next} className="mt-4 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90">
-            Next question
+            {t('practice.nextQuestion')}
           </button>
         )}
       </Card>
