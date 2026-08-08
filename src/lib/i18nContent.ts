@@ -11,6 +11,8 @@ import { scenariosEs, quizEs } from '@/i18n/scenariosEs'
 import { messagesEs } from '@/i18n/messagesEs'
 import { domains as domainsEn } from '@/content/domains'
 import { domainsEs } from '@/i18n/domainsEs'
+import { simulatorScenarios as simScenariosEn, simActors as simActorsEn } from '@/content/simulatorScenarios'
+import { simulatorEs, simActorsEs } from '@/i18n/simulatorEs'
 import type { Lesson, MessageDefinition, GlossaryEntry, Scenario, QuizQuestion } from '@/types/content'
 
 export function getLessons(lang: Lang): Lesson[] {
@@ -111,6 +113,37 @@ export function getDomains(lang: Lang) {
 
 export function getDomain(id: string, lang: Lang) {
   return getDomains(lang).find((d) => d.id === id)
+}
+
+export function getSimActors(lang: Lang) {
+  if (lang === 'en') return simActorsEn
+  return simActorsEn.map((a) => ({ ...a, label: simActorsEs[a.id] ?? a.label }))
+}
+
+export function getSimulatorScenarios(lang: Lang) {
+  if (lang === 'en') return simScenariosEn
+  return simScenariosEn.map((s) => {
+    const t = simulatorEs[s.id]
+    if (!t) return s
+    return {
+      ...s,
+      title: t.title,
+      description: t.description,
+      events: s.events.map((ev, i) => {
+        const et = t.events[i]
+        if (!et) return ev
+        return {
+          ...ev,
+          label: et.label ?? ev.label,
+          decisionQuestion: et.decisionQuestion ?? ev.decisionQuestion,
+          decisionExplanation: et.decisionExplanation ?? ev.decisionExplanation,
+          decisionOptions: ev.decisionOptions
+            ? ev.decisionOptions.map((o) => ({ ...o, label: et.decisionOptions?.[o.id] ?? o.label }))
+            : ev.decisionOptions,
+        }
+      }),
+    }
+  })
 }
 
 const familyDescriptionsEs: Record<string, string> = {

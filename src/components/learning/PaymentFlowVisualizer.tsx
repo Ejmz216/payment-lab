@@ -51,7 +51,7 @@ export function PaymentFlowVisualizer({ actors, steps, onStepClick, selectedInde
                       selectedIndex === stepIndex && 'ring-1 ring-primary',
                     )}
                   >
-                    {step.messageId ? (
+                    {step.messageId && !onStepClick ? (
                       <Link to={`/atlas/messages/${step.messageId}`} onClick={(e) => e.stopPropagation()} className="hover:underline">
                         {step.label}
                       </Link>
