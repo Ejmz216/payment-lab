@@ -45,6 +45,8 @@ export function CommandPalette() {
       { id: 'lab-sim', label: t('lab.simulatorTitle'), sub: t('lab.simulatorDesc'), to: '/lab/simulator', group: t('palette.groupLab') },
       { id: 'lab-debug', label: t('lab.debuggerTitle'), sub: t('lab.debuggerDesc'), to: '/lab/debugger', group: t('palette.groupLab') },
       { id: 'lab-id', label: t('lab.identifierTitle'), sub: 'MsgId, InstrId, EndToEndId, TxId', to: '/lab/identifiers', group: t('palette.groupLab') },
+      { id: 'lab-xml', label: t('lab.xmlTitle'), sub: t('lab.xmlDesc'), to: '/lab/xml', group: t('palette.groupLab') },
+      { id: 'lab-break', label: t('lab.breakTitle'), sub: t('lab.breakDesc'), to: '/lab/break-message', group: t('palette.groupLab') },
     ]
     return [...lessonItems, ...messageItems, ...glossaryItems, ...labItems]
   }, [lang, t])

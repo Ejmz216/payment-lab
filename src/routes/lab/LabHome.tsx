@@ -7,6 +7,8 @@ const tools: { to: string; titleKey: StringKey; descKey: StringKey }[] = [
   { to: '/lab/debugger', titleKey: 'lab.debuggerTitle', descKey: 'lab.debuggerDesc' },
   { to: '/lab/identifiers', titleKey: 'lab.identifierTitle', descKey: 'lab.identifierDesc' },
   { to: '/lab/reject-return', titleKey: 'lab.rejectReturnTitle', descKey: 'lab.rejectReturnDesc' },
+  { to: '/lab/xml', titleKey: 'lab.xmlTitle', descKey: 'lab.xmlDesc' },
+  { to: '/lab/break-message', titleKey: 'lab.breakTitle', descKey: 'lab.breakDesc' },
 ]
 
 export function LabHome() {

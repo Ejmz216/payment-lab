@@ -215,6 +215,37 @@ export const strings = {
   'progress.resetDesc': { en: 'This clears completed lessons, quiz results, scenario history and viewed messages from this browser.', es: 'Esto borra las lecciones completadas, resultados de cuestionarios, historial de escenarios y mensajes vistos de este navegador.' },
   'progress.resetConfirm': { en: 'Click again to confirm reset', es: 'Haz clic de nuevo para confirmar el reinicio' },
 
+  // XML Lab
+  'lab.xmlTitle': { en: 'XML Lab', es: 'Laboratorio XML' },
+  'lab.xmlDesc': { en: 'Explore a synthetic XML message side by side with its business meaning.', es: 'Explora un mensaje XML sintético junto a su significado de negocio.' },
+  'lab.breakTitle': { en: 'Break the Message', es: 'Encuentra el Error' },
+  'lab.breakDesc': { en: 'Something is wrong with this synthetic message. Find it, then classify it.', es: 'Algo está mal en este mensaje sintético. Encuéntralo y luego clasifícalo.' },
+  'xmllab.title': { en: 'XML Lab', es: 'Laboratorio XML' },
+  'xmllab.description': {
+    en: 'Select an element in the XML to see its business meaning. All examples are synthetic — this lab never sends your input anywhere; parsing happens entirely in your browser.',
+    es: 'Selecciona un elemento en el XML para ver su significado de negocio. Todos los ejemplos son sintéticos — este laboratorio nunca envía tu contenido a ningún lado; el análisis ocurre completamente en tu navegador.',
+  },
+  'xmllab.safety': {
+    en: 'Use only synthetic, public or authorized examples. Do not paste confidential, personal, proprietary or production data. No telemetry — XML is parsed only in your browser.',
+    es: 'Usa solo ejemplos sintéticos, públicos o autorizados. No pegues datos confidenciales, personales, propietarios o de producción. Sin telemetría — el XML se analiza solo en tu navegador.',
+  },
+  'xmllab.sample': { en: 'Sample', es: 'Ejemplo' },
+  'xmllab.viewMessage': { en: 'View message definition', es: 'Ver definición del mensaje' },
+  'xmllab.clickHint': { en: 'Click or move the cursor onto a line to see its meaning on the right.', es: 'Haz clic o mueve el cursor sobre una línea para ver su significado a la derecha.' },
+  'xmllab.meaning': { en: 'Meaning', es: 'Significado' },
+  'xmllab.selectHint': { en: 'Select a line in the XML to see its business meaning here.', es: 'Selecciona una línea en el XML para ver aquí su significado de negocio.' },
+  'xmllab.pipeline': { en: 'Always translating', es: 'Traduciendo constantemente' },
+  'xmllab.dataModel': { en: 'Data model', es: 'Modelo de datos' },
+  'xmllab.businessMeaning': { en: 'Business meaning', es: 'Significado de negocio' },
+  'xmllab.paymentBehavior': { en: 'Payment behavior', es: 'Comportamiento del pago' },
+
+  // Break the message
+  'breakmsg.title': { en: 'Break the Message', es: 'Encuentra el Error' },
+  'breakmsg.description': {
+    en: 'Payment Lab hands you a synthetic message with something wrong in it. Find the problem, then see what kind of error it is — some errors can\'t be determined from ISO 20022 alone.',
+    es: 'Payment Lab te entrega un mensaje sintético con algo mal. Encuentra el problema y luego descubre qué tipo de error es — algunos errores no pueden determinarse solo con ISO 20022.',
+  },
+
   // Not found
   'notfound.text': { en: "This page doesn't exist yet in Payment Lab.", es: 'Esta página aún no existe en Payment Lab.' },
   'notfound.back': { en: 'Back to Dashboard', es: 'Volver al Panel' },

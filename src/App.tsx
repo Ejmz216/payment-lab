@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
 import { Dashboard } from '@/routes/Dashboard'
@@ -19,6 +20,15 @@ import { Confusions } from '@/routes/Confusions'
 import { Progress } from '@/routes/Progress'
 import { NotFound } from '@/routes/NotFound'
 
+// Monaco-backed labs are code-split and only fetched when visited, so the
+// heavy editor bundle never loads on the main path.
+const XmlLab = lazy(() => import('@/routes/lab/XmlLab').then((m) => ({ default: m.XmlLab })))
+const BreakMessage = lazy(() => import('@/routes/lab/BreakMessage').then((m) => ({ default: m.BreakMessage })))
+
+function LazyFallback() {
+  return <div className="py-24 text-center text-sm text-muted">Loading…</div>
+}
+
 export default function App() {
   return (
     <Routes>
@@ -37,6 +47,8 @@ export default function App() {
         <Route path="/lab/debugger" element={<Debugger />} />
         <Route path="/lab/identifiers" element={<IdentifierLab />} />
         <Route path="/lab/reject-return" element={<RejectVsReturn />} />
+        <Route path="/lab/xml" element={<Suspense fallback={<LazyFallback />}><XmlLab /></Suspense>} />
+        <Route path="/lab/break-message" element={<Suspense fallback={<LazyFallback />}><BreakMessage /></Suspense>} />
 
         <Route path="/practice" element={<PracticeHome />} />
         <Route path="/practice/scenarios" element={<ScenarioTrainer />} />
