@@ -5,6 +5,19 @@ import { useT } from '@/i18n/strings'
 import { getDomains } from '@/lib/i18nContent'
 import clsx from 'clsx'
 
+const familyStyles: Record<string, string> = {
+  pain: 'border-pain/45 bg-pain/10 text-pain',
+  pacs: 'border-pacs/45 bg-pacs/10 text-pacs',
+  camt: 'border-camt/45 bg-camt/10 text-camt',
+  admi: 'border-infra/45 bg-infra/10 text-infra',
+  head: 'border-iso/45 bg-iso/10 text-iso',
+  remt: 'border-party/45 bg-party/10 text-party',
+}
+
+function getFamilyStyle(code: string) {
+  return familyStyles[code] ?? 'border-border bg-surface2 text-muted'
+}
+
 export function AtlasHome() {
   const lang = useUIStore((s) => s.lang)
   const t = useT()
@@ -20,7 +33,7 @@ export function AtlasHome() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {domainList.map((d) => (
           <Link key={d.id} to={`/atlas/domains/${d.id}`}>
-            <Card className="flex h-full flex-col gap-2 hover:border-primary/50">
+            <Card variant={d.coverage === 'deep' ? 'reference' : 'default'} className="flex h-full flex-col gap-2 hover:border-primary/50">
               <div className="flex items-center justify-between gap-2">
                 <CardTitle className="mb-0">{d.name}</CardTitle>
                 <span
@@ -35,7 +48,7 @@ export function AtlasHome() {
               <p className="text-sm text-muted">{d.description}</p>
               <div className="mt-auto flex flex-wrap gap-1.5 pt-1">
                 {d.families.map((f) => (
-                  <span key={f.code} className="rounded-full border border-border bg-surface2 px-2 py-0.5 font-mono text-[10px]">{f.code}</span>
+                  <span key={f.code} className={clsx('rounded-full border px-2 py-0.5 font-mono text-[10px]', getFamilyStyle(f.code))}>{f.code}</span>
                 ))}
               </div>
             </Card>

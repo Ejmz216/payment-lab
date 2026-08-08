@@ -1,29 +1,49 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Rocket, Map, FlaskConical, Dumbbell, BookOpen, LineChart, Search, Bookmark } from 'lucide-react'
+import {
+  Bookmark,
+  BookOpen,
+  Dumbbell,
+  FlaskConical,
+  LayoutDashboard,
+  LineChart,
+  ListTree,
+  Map,
+  Route,
+  Search,
+} from 'lucide-react'
 import clsx from 'clsx'
 import { useT, type StringKey } from '@/i18n/strings'
 
-const navGroups: { groupKey: StringKey; items: { to: string; labelKey: StringKey; icon: typeof Rocket }[] }[] = [
+const navGroups: { groupKey: StringKey; items: { to: string; labelKey: StringKey; icon: typeof Route; accent: string }[] }[] = [
   {
-    groupKey: 'nav.overview',
-    items: [{ to: '/', labelKey: 'nav.dashboard', icon: LayoutDashboard }],
+    groupKey: 'nav.study',
+    items: [{ to: '/learn/fast-payments', labelKey: 'nav.fastPayments', icon: Route, accent: 'text-primary' }],
   },
   {
-    groupKey: 'nav.modes',
+    groupKey: 'nav.reference',
     items: [
-      { to: '/learn/fast-payments', labelKey: 'nav.fastPayments', icon: Rocket },
-      { to: '/atlas', labelKey: 'nav.atlas', icon: Map },
-      { to: '/lab', labelKey: 'nav.lab', icon: FlaskConical },
+      { to: '/atlas', labelKey: 'nav.atlas', icon: Map, accent: 'text-iso' },
+      { to: '/atlas/messages', labelKey: 'nav.messageCatalog', icon: ListTree, accent: 'text-camt' },
+      { to: '/glossary', labelKey: 'nav.glossary', icon: BookOpen, accent: 'text-party' },
     ],
   },
   {
-    groupKey: 'nav.study',
+    groupKey: 'nav.lab',
+    items: [{ to: '/lab', labelKey: 'nav.lab', icon: FlaskConical, accent: 'text-camt' }],
+  },
+  {
+    groupKey: 'nav.practiceGroup',
     items: [
-      { to: '/practice', labelKey: 'nav.practice', icon: Dumbbell },
-      { to: '/glossary', labelKey: 'nav.glossary', icon: BookOpen },
-      { to: '/confusions', labelKey: 'nav.confusions', icon: Search },
-      { to: '/progress', labelKey: 'nav.progress', icon: LineChart },
-      { to: '/saved', labelKey: 'nav.saved', icon: Bookmark },
+      { to: '/practice', labelKey: 'nav.practice', icon: Dumbbell, accent: 'text-success' },
+      { to: '/confusions', labelKey: 'nav.confusions', icon: Search, accent: 'text-warning' },
+    ],
+  },
+  {
+    groupKey: 'nav.progressGroup',
+    items: [
+      { to: '/', labelKey: 'nav.dashboard', icon: LayoutDashboard, accent: 'text-primary' },
+      { to: '/progress', labelKey: 'nav.progress', icon: LineChart, accent: 'text-success' },
+      { to: '/saved', labelKey: 'nav.saved', icon: Bookmark, accent: 'text-warning' },
     ],
   },
 ]
@@ -31,9 +51,9 @@ const navGroups: { groupKey: StringKey; items: { to: string; labelKey: StringKey
 export function Sidebar() {
   const t = useT()
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-border bg-surface md:flex md:flex-col">
+    <aside className="hidden w-64 shrink-0 border-r border-border bg-surface/95 md:flex md:flex-col">
       <div className="flex items-center gap-2 border-b border-border px-5 py-4">
-        <div className="flex h-7 w-7 items-center justify-center rounded bg-primary text-sm font-bold text-white">PL</div>
+        <div className="flex h-7 w-7 items-center justify-center rounded bg-primary text-sm font-bold text-white shadow-sm shadow-primary/25">PL</div>
         <div>
           <div className="text-sm font-semibold leading-none">Payment Lab</div>
           <div className="text-xs text-muted">{t('sidebar.tagline')}</div>
@@ -56,7 +76,7 @@ export function Sidebar() {
                     )
                   }
                 >
-                  <item.icon size={16} />
+                  <item.icon size={16} className={item.accent} />
                   {t(item.labelKey)}
                 </NavLink>
               ))}

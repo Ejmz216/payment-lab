@@ -7,7 +7,7 @@ import { getLessons, getConfusions } from '@/lib/i18nContent'
 import { computeAllTopicMastery } from '@/lib/mastery'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { ProgressBar } from '@/components/ui/ProgressBar'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Check } from 'lucide-react'
 
 export function Dashboard() {
   const completed = useProgressStore((s) => s.completedLessons)
@@ -41,7 +41,7 @@ export function Dashboard() {
         <p className="mt-1 text-sm text-muted">{t('dashboard.subtitle')}</p>
       </div>
 
-      <Card>
+      <Card variant="study" className="technical-surface">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="text-xs uppercase tracking-wide text-muted">{t('dashboard.continueLearning')}</div>
@@ -58,13 +58,13 @@ export function Dashboard() {
       </Card>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card variant="study">
           <CardTitle>{t('dashboard.courseProgress')}</CardTitle>
           <div className="mt-2 text-2xl font-semibold">{courseProgress}%</div>
           <div className="mt-2"><ProgressBar value={courseProgress} /></div>
           <div className="mt-2 text-xs text-muted">{completed.length} / {orderedLessons.length} {t('dashboard.courseProgressDesc')}</div>
         </Card>
-        <Card>
+        <Card variant="simulation">
           <CardTitle>{t('dashboard.mastery')}</CardTitle>
           {avgMastery === null ? (
             <div className="mt-2 text-sm text-muted">{t('dashboard.masteryNoData')}</div>
@@ -76,7 +76,7 @@ export function Dashboard() {
             </>
           )}
         </Card>
-        <Card>
+        <Card variant="investigation">
           <CardTitle>{t('dashboard.practiceAccuracy')}</CardTitle>
           {practiceAccuracy === null ? (
             <div className="mt-2 text-sm text-muted">{t('dashboard.noPracticeYet')}</div>
@@ -88,7 +88,7 @@ export function Dashboard() {
             </>
           )}
         </Card>
-        <Card>
+        <Card variant="warning">
           <CardTitle>{t('dashboard.weakestArea')}</CardTitle>
           {weakestTopic === null ? (
             <div className="mt-2 text-sm text-muted">{t('dashboard.noPracticeYet')}</div>
@@ -103,12 +103,12 @@ export function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Card>
+        <Card variant="study">
           <CardTitle>{t('dashboard.recommendedNext')}</CardTitle>
           <div className="mt-2 text-sm">{nextLesson.title}</div>
           <div className="mt-1 text-xs text-muted">{nextLesson.estimatedMinutes} {t('dashboard.min')}</div>
         </Card>
-        <Card>
+        <Card variant="investigation">
           <CardTitle>{t('dashboard.commonConfusion')}</CardTitle>
           <div className="mt-2 text-sm">{featuredConfusion.title}</div>
           <Link to="/confusions" className="mt-1 inline-block text-xs text-primary hover:underline">{t('dashboard.seeAllConfusions')}</Link>
@@ -116,19 +116,19 @@ export function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Card>
+        <Card variant="simulation">
           <CardTitle>{t('dashboard.practice')}</CardTitle>
           <p className="mt-1 text-sm text-muted">{t('dashboard.practiceDesc')}</p>
           <Link to="/practice" className="mt-3 inline-block rounded-md border border-border px-3 py-1.5 text-sm hover:bg-surface2">{t('dashboard.openPractice')}</Link>
         </Card>
-        <Card>
+        <Card variant="reference">
           <CardTitle>{t('dashboard.exploreAtlas')}</CardTitle>
           <p className="mt-1 text-sm text-muted">{t('dashboard.exploreAtlasDesc')}</p>
           <Link to="/atlas" className="mt-3 inline-block rounded-md border border-border px-3 py-1.5 text-sm hover:bg-surface2">{t('dashboard.openAtlas')}</Link>
         </Card>
       </div>
 
-      <Card>
+      <Card variant="study">
         <CardTitle>{fastPaymentsPath.title === 'Fast Payments Path' ? t('fp.title') : fastPaymentsPath.title}</CardTitle>
         <p className="mt-1 text-sm text-muted">{t('fp.description')}</p>
         <ol className="mt-4 flex flex-col gap-1.5">
@@ -143,7 +143,7 @@ export function Dashboard() {
                   <span
                     className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${done ? 'bg-success text-white' : 'border border-border text-muted'}`}
                   >
-                    {done ? '✓' : l.order}
+                    {done ? <Check size={12} strokeWidth={3} /> : l.order}
                   </span>
                   <span className={done ? 'text-muted line-through' : ''}>{l.title}</span>
                 </Link>

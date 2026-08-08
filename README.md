@@ -23,6 +23,9 @@ This is the MVP build. Tier 1 of the Fast Payments curriculum is complete
 pain.001, pacs.008, pacs.002 and pacs.004. Broader ISO 20022 Atlas coverage
 and later curriculum tiers are planned — see `CONTENT_GUIDE.md`.
 
+The V3 direction is tracked in `docs/PAYMENT_LAB_V3_PLAN.md`, with local
+Codex working rules in `AGENTS.md`.
+
 ## Stack
 
 Vite + React + TypeScript + Tailwind CSS, client-side only, no backend. Uses

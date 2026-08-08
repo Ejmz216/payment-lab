@@ -2,10 +2,10 @@ import clsx from 'clsx'
 import type { ContentBadge } from '@/types/content'
 
 const styles: Record<ContentBadge, string> = {
-  reference: 'bg-primary/15 text-primary border-primary/30',
+  reference: 'bg-iso/15 text-iso border-iso/30',
   'simplified-model': 'bg-warning/15 text-warning border-warning/30',
   simulation: 'bg-camt/15 text-camt border-camt/30',
-  'scheme-dependent': 'bg-danger/15 text-danger border-danger/30',
+  'scheme-dependent': 'bg-scheme/15 text-scheme border-scheme/30',
 }
 
 const labels: Record<ContentBadge, string> = {
