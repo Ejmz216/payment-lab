@@ -6,6 +6,8 @@ import { getLessons, getScenarios } from '@/lib/i18nContent'
 import { useProgressStore } from '@/store/progressStore'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
+import { ArchitectureDiagram } from '@/components/learning/ArchitectureDiagram'
+import { CancellationDecisionTree } from '@/components/learning/DecisionTree'
 import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react'
 
 export function LessonPage() {
@@ -76,6 +78,16 @@ export function LessonPage() {
           </Card>
         ))}
       </div>
+
+      {lesson.id === 'cancellation-recall-reversal' && <CancellationDecisionTree />}
+
+      {lesson.id === 'payment-architecture' && (
+        <ArchitectureDiagram
+          label={t('arch.label')}
+          steps={[t('arch.channel'), t('arch.api'), t('arch.orchestrator'), t('arch.validation'), t('arch.mapper'), t('arch.network'), t('arch.inbound'), t('arch.core')]}
+          branches={{ after: t('arch.validation'), items: [t('arch.fraud'), t('arch.compliance'), t('arch.limits'), t('arch.routing')] }}
+        />
+      )}
 
       {lesson.keyTerms.length > 0 && (
         <Card>

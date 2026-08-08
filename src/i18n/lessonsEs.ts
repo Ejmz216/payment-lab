@@ -265,4 +265,81 @@ export const lessonsEs: Record<string, LessonTranslation> = {
       { title: 'Reject y Return no son lo mismo', explanation: 'Un reject significa que el pago nunca progresó realmente. Un return significa que sí progresó y ahora se está revirtiendo. Investigar el equivocado desperdicia tiempo.' },
     ],
   },
+  'cancellation-recall-reversal': {
+    title: 'Cancelación, Recall y Reversión',
+    subtitle: 'No son lo mismo que una devolución — ni son lo mismo entre sí',
+    whyItMatters: 'Los equipos a menudo dicen "cancélalo" queriendo decir cosas muy distintas. Saber qué concepto aplica realmente cambia qué pides y qué resultado puedes esperar.',
+    objectives: [
+      'Distinguir una solicitud de cancelación de un recall, una reversión, un rechazo y una devolución.',
+      'Explicar por qué ninguno de estos resultados está garantizado una vez que un pago ha progresado lo suficiente.',
+      'Usar un árbol de decisión simple para razonar sobre qué concepto aplica a una situación dada.',
+    ],
+    mentalModel: 'Los conceptos de la familia de cancelación tratan de deshacer algo después de los hechos — difieren en cuándo se usan y si el resultado está garantizado.',
+    sections: [
+      { heading: 'Solicitud de cancelación', body: 'Una solicitud, generalmente enviada por el lado emisor original, pidiendo que un pago no se procese más o se deshaga. Que tenga éxito depende de cuánto haya progresado ya el pago y de las reglas del esquema involucrado.' },
+      { heading: 'Recall', body: 'Similar en espíritu a una solicitud de cancelación — el lado emisor pide que un pago sea devuelto, generalmente después de haber sido enviado. Un recall es una solicitud, no una garantía: el lado receptor puede o no poder honrarla (por ejemplo, si los fondos ya fueron pagados al beneficiario).' },
+      { heading: 'Reversión (Reversal)', body: 'Deshacer el efecto de un pago que ya fue liquidado, típicamente iniciado del lado de procesamiento/recepción en vez de como una solicitud impulsada por el cliente (por ejemplo, corregir un duplicado técnico). Los mecanismos exactos dependen mucho del esquema.' },
+      { heading: 'Rechazo y Devolución, revisitados', body: 'Como se cubrió antes: un rechazo ocurre antes/durante la aceptación (el pago nunca progresó realmente). Una devolución ocurre después de la aceptación, cuando un pago ya progresó pero luego no puede completarse. Las solicitudes de cancelación y recall son diferentes otra vez — son intentos de deshacer algo que ya podría estar más allá del punto donde deshacerlo está garantizado.' },
+    ],
+    commonConfusion: [
+      { title: 'Cancelación ≠ Devolución', explanation: 'Una devolución significa que el pago ya progresó y los fondos se están enviando de vuelta por el flujo normal de excepción. Una cancelación/recall es una solicitud que puede o no ser honrada — no es un resultado garantizado.' },
+      { title: 'Recall ≠ reversión garantizada', explanation: 'Pedir que un pago sea recuperado no significa que se deshará. El lado receptor puede ya haber liberado los fondos, especialmente en esquemas de pagos instantáneos diseñados para alta finalidad.' },
+    ],
+  },
+  'camt-cash-management': {
+    title: 'camt y Gestión de Efectivo',
+    subtitle: 'Más que "estados de cuenta"',
+    whyItMatters: 'Los mensajes camt aparecen constantemente en trabajo de reconciliación e investigación. Saber qué cubre realmente la familia — no solo estados de cuenta — te ayuda a reconocer cuándo un mensaje camt es la herramienta correcta.',
+    objectives: [
+      'Explicar qué cubre "gestión de efectivo" más allá de los estados de cuenta.',
+      'Reconocer reportes de cuenta, notificaciones y mensajes de investigación como casos de uso de camt.',
+      'Identificar dónde encaja camt respecto a los mensajes pacs en la vida de un pago.',
+    ],
+    sections: [
+      { heading: 'Más allá del estado de cuenta', body: 'camt a menudo se presenta como "la familia de estados de cuenta bancarios", lo cual la subestima. Cubre un conjunto más amplio de actividades de gestión de efectivo: estados de cuenta periódicos, notificaciones de débito/crédito en tiempo real, solicitudes de reporte de cuenta ad-hoc, y mensajes relacionados con investigaciones usados cuando algo sobre un pago necesita ser revisado después de los hechos.' },
+      { heading: 'Dónde encaja camt', body: 'Mientras que los mensajes pain inician pagos y los mensajes pacs los llevan entre instituciones, los mensajes camt típicamente reportan sobre el estado resultante de las cuentas y ayudan a mirar hacia atrás lo que ocurrió — lo que los hace centrales para el trabajo de reconciliación e investigación, cubierto en la siguiente lección.' },
+      { heading: 'Dos ejemplos representativos', body: 'Un mensaje tipo estado de cuenta reporta las transacciones y saldos de una cuenta durante un período. Un mensaje tipo investigación se usa para solicitar o reportar sobre la resolución de una pregunta sobre un pago específico (por ejemplo, "¿a dónde fue este pago?"). El Atlas de Payment Lab incluye entradas a nivel de catálogo para ambos — ver la familia camt en el Catálogo de Mensajes.' },
+    ],
+    commonConfusion: [
+      { title: 'camt no es solo estados de cuenta', explanation: 'Los estados de cuenta son una parte de camt. Las notificaciones, solicitudes de reporte y mensajes de investigación también son parte de la familia.' },
+    ],
+  },
+  'reconciliation-investigations': {
+    title: 'Reconciliación e Investigaciones',
+    subtitle: 'Comparar registros y perseguir excepciones',
+    whyItMatters: 'Cuando un cliente pregunta "¿dónde está mi pago?", la reconciliación y la investigación son las disciplinas que lo responden — y dependen enteramente de los identificadores y relaciones entre mensajes cubiertos antes en esta ruta.',
+    objectives: [
+      'Explicar la reconciliación como comparar registros entre sistemas o instituciones.',
+      'Explicar cuándo se abre una investigación y qué típicamente intenta establecer.',
+      'Identificar qué identificadores y mensajes son más útiles al iniciar una investigación.',
+    ],
+    mentalModel: 'La reconciliación pregunta "¿coinciden nuestros registros?" La investigación pregunta "¿qué pasó realmente con este pago específico?"',
+    sections: [
+      { heading: 'Reconciliación', body: 'La reconciliación compara registros mantenidos por diferentes sistemas o instituciones (por ejemplo, un ledger central y un sistema de pagos) para confirmar que coinciden — mismas transacciones, mismos montos, mismos estados. Las discrepancias encontradas durante la reconciliación a menudo son lo que desencadena una investigación.' },
+      { heading: 'Investigación', body: 'Se abre una investigación cuando algo sobre un pago específico necesita establecerse — por ejemplo, si fue recibido, por qué no se ha acreditado, o dónde se encuentra actualmente en la cadena. Las investigaciones típicamente comienzan a partir de un identificador (más confiablemente EndToEndId) y rastrean hacia adelante o hacia atrás a través de mensajes relacionados.' },
+      { heading: 'Qué buscas primero', body: 'En la práctica: comienza con el EndToEndId de la transacción en cuestión, busca reportes de estado (tipo pacs.002) que lo referencien, verifica si existe una devolución (tipo pacs.004), y consulta mensajes de reporte/investigación tipo camt para la vista a nivel de cuenta. Esta es la misma habilidad de razonamiento que se ejercita en el laboratorio del Depurador de Pagos.' },
+    ],
+    commonConfusion: [
+      { title: 'Reconciliación vs. Investigación', explanation: 'La reconciliación es un proceso rutinario de comparación que puede revelar una discrepancia. La investigación es el seguimiento enfocado en un pago específico una vez que se identifica una discrepancia o pregunta.' },
+    ],
+  },
+  'payment-architecture': {
+    title: 'Arquitectura de Pagos',
+    subtitle: 'Una vista educativa genérica de cómo encajan las piezas',
+    whyItMatters: 'Tener una sola imagen mental de cómo se relacionan típicamente un canal, un orquestador, la validación y un ledger central facilita mucho adivinar dónde vive un problema cuando alguien describe un problema de pago.',
+    objectives: [
+      'Describir un flujo técnico genérico desde el canal del cliente hasta el ledger central.',
+      'Identificar dónde suelen ubicarse la validación, el fraude/cumplimiento y el mapeo ISO en ese flujo.',
+      'Explicar por qué esto es un modelo educativo simplificado, no una arquitectura universal.',
+    ],
+    mentalModel: 'Esta es una arquitectura genérica plausible, usada para construir intuición — las instituciones reales estructuran esto de forma diferente.',
+    sections: [
+      { heading: 'Un flujo genérico', body: 'Canal (donde el cliente o sistema inicia) → API de Pagos → Orquestador de Pagos → Validación (incluyendo fraude, cumplimiento, límites y enrutamiento) → Mapper ISO (traduciendo entre modelos de datos internos y mensajes ISO 20022) → Red de Pagos → Adaptador de Entrada (del lado receptor) → Core / Ledger (donde la cuenta realmente se debita o acredita).' },
+      { heading: 'Por qué importa esto para la resolución de problemas', body: 'Cuando alguien reporta "el pago falló", este modelo genérico te da preguntas que hacer: ¿falló en la validación (antes de llegar a la red), a nivel de red/esquema, o después de ser recibido, durante el procesamiento del core/ledger? Cada capa tiende a producir síntomas diferentes y requiere personas distintas para investigar.' },
+      { heading: 'Esto no es universal', body: 'Las instituciones reales combinan, dividen, renombran o reordenan estos componentes constantemente. Usa este diagrama para construir el hábito de pensar en capas, no como la descripción de un sistema específico.' },
+    ],
+    commonConfusion: [
+      { title: 'Este es un modelo educativo, no una arquitectura real', explanation: 'Ninguna institución está obligada a estructurar sus sistemas exactamente así. Úsalo para razonar sobre capas de responsabilidad, no como una especificación.' },
+    ],
+  },
 }

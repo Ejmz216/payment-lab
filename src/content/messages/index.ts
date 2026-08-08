@@ -3,8 +3,10 @@ import { pacs008 } from './pacs008'
 import { pacs002 } from './pacs002'
 import { pacs004 } from './pacs004'
 import { pain001 } from './pain001'
+import { camt053 } from './camt053'
+import { camt029 } from './camt029'
 
-export const messages: MessageDefinition[] = [pain001, pacs008, pacs002, pacs004]
+export const messages: MessageDefinition[] = [pain001, pacs008, pacs002, pacs004, camt053, camt029]
 
 export function getMessage(id: string): MessageDefinition | undefined {
   return messages.find((m) => m.id === id)

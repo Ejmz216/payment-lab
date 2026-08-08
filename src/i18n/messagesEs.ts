@@ -42,6 +42,20 @@ export const messagesEs: Record<string, MessageTranslation> = {
     whatComesAfter: 'El lado deudor original recibe los fondos/el pago devuelto y lo reconcilia contra la transacción original.',
     cardinalityNotes: 'Estructura ilustrativa con fines educativos.',
   },
+  'camt.053': {
+    shortDescription: 'Un estado de cuenta con las transacciones y saldos de una cuenta durante un período, enviado de una institución financiera al titular de la cuenta.',
+    purpose: 'Reporta los movimientos (débitos y créditos) y los saldos resultantes en una cuenta, típicamente cubriendo un período definido (como un día hábil), para que el titular pueda reconciliar sus propios registros contra los de la institución.',
+    whatComesBefore: 'Una o más transacciones liquidadas (que pueden incluir transferencias de crédito tipo pacs.008, entre otros tipos de movimientos) ocurridas en la cuenta durante el período reportado.',
+    whatComesAfter: 'El titular de la cuenta reconcilia el estado de cuenta contra sus propios registros, posiblemente abriendo una investigación por cualquier discrepancia encontrada.',
+    cardinalityNotes: 'Estructura ilustrativa con fines educativos; esta es una entrada de catálogo/referencia básica, no un análisis profundo completo.',
+  },
+  'camt.029': {
+    shortDescription: 'Reporta el resultado de una investigación abierta sobre un pago o caso previo.',
+    purpose: 'Comunica la resolución (o el estado actual) de una investigación — por ejemplo, confirmando que un pago fue localizado y procesado, o que los fondos están siendo devueltos — típicamente referenciando el caso y la transacción original.',
+    whatComesBefore: 'Un caso de investigación abierto sobre un pago específico, a menudo después de encontrar una discrepancia durante la reconciliación o una consulta del cliente.',
+    whatComesAfter: 'La parte que abrió la investigación actúa según la resolución — cerrando el caso, informando al cliente, o desencadenando una acción adicional como una devolución.',
+    cardinalityNotes: 'Estructura ilustrativa con fines educativos; esta es una entrada de catálogo/referencia básica, no un análisis profundo completo.',
+  },
   'pain.001': {
     shortDescription: 'Un cliente instruye a su institución financiera a iniciar una o más transferencias de crédito.',
     purpose: 'Lleva la instrucción de un cliente a su institución financiera para mover fondos a uno o más acreedores. Este es el paso de iniciación de cara al cliente, distinto de la transferencia interbancaria que le sigue.',

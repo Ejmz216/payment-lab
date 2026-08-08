@@ -15,6 +15,10 @@ export const fastPaymentsPath: LearningPath = {
     'message-families',
     'identifiers',
     'reject-vs-return',
+    'cancellation-recall-reversal',
+    'camt-cash-management',
+    'reconciliation-investigations',
+    'payment-architecture',
   ],
 }
 
@@ -419,5 +423,169 @@ export const fastPaymentsLessons: Lesson[] = [
     relatedMessages: ['pacs.002', 'pacs.004'],
     sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 9,
+  },
+  {
+    id: 'cancellation-recall-reversal',
+    pathId: 'fast-payments',
+    order: 10,
+    title: 'Cancellation, Recall & Reversal',
+    subtitle: 'Not the same as a return — and not the same as each other',
+    whyItMatters:
+      'Teams often say "cancel it" when they mean very different things. Knowing which concept actually applies changes what you ask for and what outcome you can expect.',
+    objectives: [
+      'Distinguish a request to cancel from a recall, a reversal, a rejection, and a return.',
+      'Explain why none of these outcomes are guaranteed once a payment has progressed far enough.',
+      'Use a simple decision tree to reason about which concept applies to a given situation.',
+    ],
+    mentalModel: 'Cancellation-family concepts are all about undoing something after the fact — they differ in when they are used and whether the outcome is guaranteed.',
+    sections: [
+      {
+        heading: 'Request to cancel',
+        body:
+          'A request, usually sent by the original sending side, asking that a payment not be processed further or be undone. Whether it succeeds depends on how far the payment has already progressed and on the rules of the scheme involved.',
+      },
+      {
+        heading: 'Recall',
+        body:
+          'Similar in spirit to a cancellation request — the sending side asks for a payment to be brought back, generally after it has already been sent. A recall is a request, not a guarantee: the receiving side may or may not be able to honor it (for example, if funds have already been paid out to the beneficiary).',
+      },
+      {
+        heading: 'Reversal',
+        body:
+          'Undoing the effect of a payment that has already settled, typically initiated on the processing/receiving side rather than as a customer-driven request (for example, correcting a technical duplicate). The exact mechanics depend heavily on the scheme.',
+      },
+      {
+        heading: 'Rejection and Return, revisited',
+        body:
+          'As covered earlier: a rejection happens before/at acceptance (the payment never truly progressed). A return happens after acceptance, when a payment already progressed but later cannot be completed. Cancellation and recall requests are different again — they are attempts to undo something that may already be past the point where undoing it is guaranteed to work.',
+      },
+    ],
+    keyTerms: ['cancellation', 'recall', 'reversal'],
+    commonConfusion: [
+      { title: 'Cancellation ≠ Return', explanation: 'A return means the payment already progressed and funds are being sent back through the normal exception flow. A cancellation/recall is a request that may or may not be honored — it is not a guaranteed outcome.' },
+      { title: 'Recall ≠ guaranteed reversal', explanation: 'Asking for a payment to be recalled does not mean it will be undone. The receiving side may already have released the funds, especially in fast payment schemes designed for high finality.' },
+    ],
+    relatedLessons: ['reject-vs-return', 'fast-payments'],
+    relatedMessages: ['pacs.004'],
+    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    estimatedMinutes: 8,
+  },
+  {
+    id: 'camt-cash-management',
+    pathId: 'fast-payments',
+    order: 11,
+    title: 'camt & Cash Management',
+    subtitle: 'More than "bank statements"',
+    whyItMatters:
+      'camt messages show up constantly in reconciliation and investigation work. Knowing what the family actually covers — not just statements — helps you recognize when a camt message is the right tool.',
+    objectives: [
+      'Explain what "cash management" covers beyond account statements.',
+      'Recognize account reporting, notifications, and investigation messages as camt use cases.',
+      'Identify where camt fits relative to pacs messages in a payment\'s life.',
+    ],
+    sections: [
+      {
+        heading: 'Beyond the bank statement',
+        body:
+          'camt is often introduced as "the bank statement family," which undersells it. It covers a broader set of cash management activities: periodic account statements, real-time debit/credit notifications, ad-hoc account reporting requests, and investigation-related messages used when something about a payment needs to be looked into after the fact.',
+      },
+      {
+        heading: 'Where camt fits',
+        body:
+          'While pain messages initiate payments and pacs messages carry them between institutions, camt messages typically report on the resulting state of accounts and support looking back at what happened — which makes them central to reconciliation and investigation work, covered in the next lesson.',
+      },
+      {
+        heading: 'Two representative examples',
+        body:
+          'A statement-style message reports the transactions and balances on an account over a period. An investigation-style message is used to request or report on the resolution of a question about a specific payment (for example, "where did this payment go?"). Payment Lab\'s Atlas includes catalog-level entries for both — see the camt family in the Message Catalog.',
+      },
+    ],
+    keyTerms: ['camt', 'cash management', 'account statement', 'notification'],
+    commonConfusion: [
+      { title: 'camt is not just statements', explanation: 'Statements are one part of camt. Notifications, reporting requests, and investigation messages are also part of the family.' },
+    ],
+    relatedLessons: ['message-families', 'reconciliation-investigations'],
+    relatedMessages: ['camt.053', 'camt.029'],
+    sources: [{ sourceName: 'ISO 20022 official catalogue', sourceType: 'ISO', lastReviewed: '2026-01-01' }],
+    estimatedMinutes: 6,
+  },
+  {
+    id: 'reconciliation-investigations',
+    pathId: 'fast-payments',
+    order: 12,
+    title: 'Reconciliation & Investigations',
+    subtitle: 'Matching records and chasing down exceptions',
+    whyItMatters:
+      'When a customer asks "where is my payment?", reconciliation and investigation are the disciplines that answer it — and they lean entirely on the identifiers and message relationships covered earlier in this path.',
+    objectives: [
+      'Explain reconciliation as matching records across systems or institutions.',
+      'Explain when an investigation is opened and what it typically tries to establish.',
+      'Identify which identifiers and messages are most useful when starting an investigation.',
+    ],
+    mentalModel: 'Reconciliation asks "do our records agree?" Investigation asks "what actually happened to this specific payment?"',
+    sections: [
+      {
+        heading: 'Reconciliation',
+        body:
+          'Reconciliation compares records held by different systems or institutions (for example, a core ledger and a payment system) to confirm they agree — same transactions, same amounts, same statuses. Discrepancies found during reconciliation are often what trigger an investigation.',
+      },
+      {
+        heading: 'Investigation',
+        body:
+          'An investigation is opened when something about a specific payment needs to be established — for example, whether it was received, why it hasn\'t been credited, or where in the chain it currently sits. Investigations typically start from an identifier (most reliably EndToEndId) and trace forward or backward through related messages.',
+      },
+      {
+        heading: 'What you reach for first',
+        body:
+          'In practice: start with the EndToEndId of the transaction in question, look for any status reports (pacs.002-style) referencing it, check whether a return (pacs.004-style) exists, and consult camt-style reporting/investigation messages for the account-level view. This is the same reasoning skill exercised in the Payment Debugger lab.',
+      },
+    ],
+    keyTerms: ['reconciliation', 'investigation', 'EndToEndId'],
+    commonConfusion: [
+      { title: 'Reconciliation vs. Investigation', explanation: 'Reconciliation is a routine comparison process that can surface a discrepancy. Investigation is the focused follow-up on one specific payment once a discrepancy or question is identified.' },
+    ],
+    relatedLessons: ['identifiers', 'camt-cash-management'],
+    relatedMessages: ['pacs.002', 'pacs.004', 'camt.029'],
+    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    estimatedMinutes: 7,
+  },
+  {
+    id: 'payment-architecture',
+    pathId: 'fast-payments',
+    order: 13,
+    title: 'Payment Architecture',
+    subtitle: 'A generic educational view of how the pieces fit together',
+    whyItMatters:
+      'Having one mental picture of how a channel, an orchestrator, validation, and a core ledger typically relate makes it much easier to guess where a problem lives when someone describes a payment issue.',
+    objectives: [
+      'Describe a generic technical flow from customer channel to core ledger.',
+      'Identify where validation, fraud/compliance, and ISO mapping typically sit in that flow.',
+      'Explain why this is a simplified educational model, not a universal architecture.',
+    ],
+    mentalModel: 'This is one plausible generic architecture, used to build intuition — real institutions structure this differently.',
+    sections: [
+      {
+        heading: 'A generic flow',
+        body:
+          'Channel (where the customer or system initiates) → Payments API → Payment Orchestrator → Validation (including fraud, compliance, limits, and routing checks) → ISO Mapper (translating between internal data models and ISO 20022 messages) → Payment Network → Inbound Adapter (on the receiving side) → Core / Ledger (where the account is actually debited or credited).',
+      },
+      {
+        heading: 'Why this matters for troubleshooting',
+        body:
+          'When someone reports "the payment failed," this generic model gives you questions to ask: did it fail at validation (before ever reaching the network), at the network/scheme level, or after being received, during core/ledger processing? Each layer tends to produce different symptoms and requires different people to investigate.',
+      },
+      {
+        heading: 'This is not universal',
+        body:
+          'Real institutions combine, split, rename or reorder these components constantly. Use this diagram to build a habit of thinking in layers, not as a description of any specific system.',
+      },
+    ],
+    keyTerms: ['orchestrator', 'ISO mapper', 'core / ledger', 'inbound adapter'],
+    commonConfusion: [
+      { title: 'This is a teaching model, not a real architecture', explanation: 'No institution is guaranteed to structure their systems exactly this way. Use it to reason about layers of responsibility, not as a spec.' },
+    ],
+    relatedLessons: ['payment-lifecycle', 'reconciliation-investigations'],
+    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    estimatedMinutes: 6,
   },
 ]

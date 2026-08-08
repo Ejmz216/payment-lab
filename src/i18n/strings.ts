@@ -246,6 +246,31 @@ export const strings = {
     es: 'Payment Lab te entrega un mensaje sintético con algo mal. Encuentra el problema y luego descubre qué tipo de error es — algunos errores no pueden determinarse solo con ISO 20022.',
   },
 
+  // Architecture diagram
+  'arch.label': { en: 'Generic educational architecture', es: 'Arquitectura educativa genérica' },
+  'arch.channel': { en: 'Channel', es: 'Canal' },
+  'arch.api': { en: 'Payments API', es: 'API de Pagos' },
+  'arch.orchestrator': { en: 'Payment Orchestrator', es: 'Orquestador de Pagos' },
+  'arch.validation': { en: 'Validation', es: 'Validación' },
+  'arch.fraud': { en: 'Fraud', es: 'Fraude' },
+  'arch.compliance': { en: 'Compliance', es: 'Cumplimiento' },
+  'arch.limits': { en: 'Limits', es: 'Límites' },
+  'arch.routing': { en: 'Routing', es: 'Enrutamiento' },
+  'arch.mapper': { en: 'ISO Mapper', es: 'Mapper ISO' },
+  'arch.network': { en: 'Payment Network', es: 'Red de Pagos' },
+  'arch.inbound': { en: 'Inbound Adapter', es: 'Adaptador de Entrada' },
+  'arch.core': { en: 'Core / Ledger', es: 'Core / Ledger' },
+
+  // Decision tree (cancellation/recall/reversal)
+  'dtree.label': { en: 'Educational simplification', es: 'Simplificación educativa' },
+  'dtree.q1': { en: 'Has the payment already progressed (accepted / settled)?', es: '¿El pago ya progresó (aceptado / liquidado)?' },
+  'dtree.q2': { en: 'Are funds explicitly being sent back?', es: '¿Los fondos se están enviando explícitamente de vuelta?' },
+  'dtree.a1': { en: 'Investigate as a rejection or cancellation request', es: 'Investigar como un rechazo o solicitud de cancelación' },
+  'dtree.a2': { en: 'Investigate as a return', es: 'Investigar como una devolución' },
+  'dtree.a3': { en: 'Investigate as a recall or reversal request (not guaranteed)', es: 'Investigar como un recall o solicitud de reversión (no garantizado)' },
+  'dtree.yes': { en: 'Yes', es: 'Sí' },
+  'dtree.no': { en: 'No', es: 'No' },
+
   // Not found
   'notfound.text': { en: "This page doesn't exist yet in Payment Lab.", es: 'Esta página aún no existe en Payment Lab.' },
   'notfound.back': { en: 'Back to Dashboard', es: 'Volver al Panel' },
