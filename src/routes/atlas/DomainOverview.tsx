@@ -4,6 +4,7 @@ import { useT } from '@/i18n/strings'
 import { getDomain, getMessages } from '@/lib/i18nContent'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 
 export function DomainOverview() {
   const { domainId } = useParams()
@@ -17,11 +18,7 @@ export function DomainOverview() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="text-xs text-muted">
-        <Link to="/atlas" className="hover:text-text">{t('atlas.title')}</Link>
-        <span className="mx-1.5">/</span>
-        {domain.name}
-      </div>
+      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('atlas.title'), to: '/atlas' }, { label: domain.name }]} />
 
       <div>
         <h1 className="text-2xl font-semibold">{domain.name}</h1>

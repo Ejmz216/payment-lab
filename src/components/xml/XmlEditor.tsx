@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { setupMonaco } from '@/lib/monacoSetup'
 import type { editor } from 'monaco-editor'
 
@@ -8,11 +8,14 @@ interface XmlEditorProps {
   value: string
   height?: string
   readOnly?: boolean
-  onCursorLine?: (lineContent: string) => void
+  onCursorLine?: (lineNumber: number) => void
+  /** When this changes, the editor scrolls to and highlights the given 1-based line. */
+  highlightLine?: number | null
 }
 
-export function XmlEditor({ value, height = '28rem', readOnly = true, onCursorLine }: XmlEditorProps) {
+export function XmlEditor({ value, height = '28rem', readOnly = true, onCursorLine, highlightLine }: XmlEditorProps) {
   const [ready, setReady] = useState(false)
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -23,6 +26,20 @@ export function XmlEditor({ value, height = '28rem', readOnly = true, onCursorLi
       cancelled = true
     }
   }, [])
+
+  useEffect(() => {
+    const editorInstance = editorRef.current
+    if (!editorInstance || !highlightLine) return
+    const model = editorInstance.getModel()
+    if (!model) return
+    editorInstance.revealLineInCenter(highlightLine)
+    editorInstance.setSelection({
+      startLineNumber: highlightLine,
+      startColumn: 1,
+      endLineNumber: highlightLine,
+      endColumn: model.getLineMaxColumn(highlightLine),
+    })
+  }, [highlightLine])
 
   if (!ready) {
     return (
@@ -50,10 +67,9 @@ export function XmlEditor({ value, height = '28rem', readOnly = true, onCursorLi
             renderLineHighlight: 'all',
           }}
           onMount={(editorInstance: editor.IStandaloneCodeEditor) => {
+            editorRef.current = editorInstance
             editorInstance.onDidChangeCursorPosition((e) => {
-              const model = editorInstance.getModel()
-              if (!model || !onCursorLine) return
-              onCursorLine(model.getLineContent(e.position.lineNumber))
+              onCursorLine?.(e.position.lineNumber)
             })
           }}
         />

@@ -6,6 +6,7 @@ import { getLessons, getScenarios } from '@/lib/i18nContent'
 import { useProgressStore } from '@/store/progressStore'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { BookmarkButton } from '@/components/ui/BookmarkButton'
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { LessonBlockRenderer } from '@/components/learning/LessonBlockRenderer'
 import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react'
@@ -35,11 +36,7 @@ export function LessonPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="text-xs text-muted">
-        <Link to="/learn/fast-payments" className="hover:text-text">{t('fp.title')}</Link>
-        <span className="mx-1.5">/</span>
-        {lesson.title}
-      </div>
+      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('fp.title'), to: '/learn/fast-payments' }, { label: lesson.title }]} />
 
       <div className="flex items-start justify-between gap-4">
         <div>

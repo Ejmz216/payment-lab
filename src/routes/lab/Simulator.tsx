@@ -1,5 +1,6 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { Card, CardTitle } from '@/components/ui/Card'
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { PaymentFlowVisualizer } from '@/components/learning/PaymentFlowVisualizer'
 import { useSimulatorEngine } from '@/hooks/useSimulatorEngine'
 import { useUIStore } from '@/store/uiStore'
@@ -33,6 +34,7 @@ export function Simulator() {
 
   return (
     <div className="flex flex-col gap-6">
+      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('nav.lab'), to: '/lab' }, { label: t('lab.simulatorTitle') }]} />
       <div>
         <h1 className="text-2xl font-semibold">{t('lab.simulatorTitle')}</h1>
         <p className="mt-1 text-sm text-muted">{t('sim.syntheticNote')}</p>

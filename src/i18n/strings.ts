@@ -296,6 +296,8 @@ export const strings = {
   'xmllab.viewMessage': { en: 'View message definition', es: 'Ver definición del mensaje' },
   'xmllab.clickHint': { en: 'Click or move the cursor onto a line to see its meaning on the right.', es: 'Haz clic o mueve el cursor sobre una línea para ver su significado a la derecha.' },
   'xmllab.meaning': { en: 'Meaning', es: 'Significado' },
+  'xmllab.structure': { en: 'Structure', es: 'Estructura' },
+  'xmllab.treeClickHint': { en: 'Selecting a field here scrolls the XML to match.', es: 'Al seleccionar un campo aquí, el XML se desplaza para coincidir.' },
   'xmllab.selectHint': { en: 'Select a line in the XML to see its business meaning here.', es: 'Selecciona una línea en el XML para ver aquí su significado de negocio.' },
   'xmllab.pipeline': { en: 'Always translating', es: 'Traduciendo constantemente' },
   'xmllab.dataModel': { en: 'Data model', es: 'Modelo de datos' },

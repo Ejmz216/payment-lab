@@ -2,6 +2,7 @@ import { useState } from 'react'
 import clsx from 'clsx'
 import { AlertTriangle } from 'lucide-react'
 import { Card, CardTitle } from '@/components/ui/Card'
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { XmlEditor } from '@/components/xml/XmlEditor'
 import { brokenSamples } from '@/content/xmlSamples'
 import { useT } from '@/i18n/strings'
@@ -35,6 +36,7 @@ export function BreakMessage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('nav.lab'), to: '/lab' }, { label: t('breakmsg.title') }]} />
       <div>
         <h1 className="text-2xl font-semibold">{t('breakmsg.title')}</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted">{t('breakmsg.description')}</p>

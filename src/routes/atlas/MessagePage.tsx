@@ -6,6 +6,7 @@ import { getMessage } from '@/lib/i18nContent'
 import { relationLabelsEs } from '@/i18n/messagesEs'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { BookmarkButton } from '@/components/ui/BookmarkButton'
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { MessageTree } from '@/components/messages/MessageTree'
 import { FieldDetail } from '@/components/messages/FieldDetail'
 import { findParent } from '@/lib/tree'
@@ -40,13 +41,14 @@ export function MessagePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="text-xs text-muted">
-        <Link to="/atlas" className="hover:text-text">{t('atlas.title')}</Link>
-        <span className="mx-1.5">/</span>
-        <Link to="/atlas/messages" className="hover:text-text">{t('catalog.title')}</Link>
-        <span className="mx-1.5">/</span>
-        {message.id}
-      </div>
+      <Breadcrumbs
+        items={[
+          { label: t('nav.dashboard'), to: '/' },
+          { label: t('atlas.title'), to: '/atlas' },
+          { label: t('catalog.title'), to: '/atlas/messages' },
+          { label: message.id },
+        ]}
+      />
 
       <div>
         <div className="flex items-start justify-between gap-4">

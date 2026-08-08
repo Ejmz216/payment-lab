@@ -4,6 +4,7 @@ import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 import { getQuizQuestions } from '@/lib/i18nContent'
 import { Card } from '@/components/ui/Card'
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { useProgressStore } from '@/store/progressStore'
 
 type Confidence = 'guess' | 'unsure' | 'confident' | 'very-confident'
@@ -46,6 +47,7 @@ export function Quiz() {
 
   return (
     <div className="flex flex-col gap-6">
+      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('nav.practice'), to: '/practice' }, { label: t('practice.quiz') }]} />
       <div>
         <h1 className="text-2xl font-semibold">{t('practice.quiz')}</h1>
         <p className="mt-1 text-sm text-muted">{t('practice.questionOf')} {idx + 1} {t('practice.of')} {quizQuestions.length}</p>
