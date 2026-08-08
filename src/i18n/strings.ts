@@ -81,6 +81,10 @@ export const strings = {
   'atlas.deepCoverage': { en: 'Deep coverage', es: 'Cobertura profunda' },
   'atlas.messages': { en: 'messages', es: 'mensajes' },
   'atlas.message': { en: 'message', es: 'mensaje' },
+  'domain.families': { en: 'Business area families', es: 'Familias de área de negocio' },
+  'domain.messagesInDomain': { en: 'Messages in this domain', es: 'Mensajes en este dominio' },
+  'domain.comingSoon': { en: 'Coming in a future learning module. Payment Lab currently offers deep coverage for Payments — this domain is discovery-level for now.', es: 'Próximamente en un futuro módulo de aprendizaje. Payment Lab actualmente ofrece cobertura profunda para Pagos — este dominio es de nivel de descubrimiento por ahora.' },
+  'domain.catalogBadgeTitle': { en: 'Catalog-level discovery only — no full lessons or message deep dives yet for this domain.', es: 'Solo descubrimiento a nivel de catálogo — todavía no hay lecciones completas ni análisis profundos de mensajes para este dominio.' },
 
   // Message catalog
   'catalog.title': { en: 'Message Catalog', es: 'Catálogo de Mensajes' },

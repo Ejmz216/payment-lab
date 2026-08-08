@@ -9,6 +9,8 @@ import { glossaryEs } from '@/i18n/glossaryEs'
 import { confusionsEs } from '@/i18n/confusionsEs'
 import { scenariosEs, quizEs } from '@/i18n/scenariosEs'
 import { messagesEs } from '@/i18n/messagesEs'
+import { domains as domainsEn } from '@/content/domains'
+import { domainsEs } from '@/i18n/domainsEs'
 import type { Lesson, MessageDefinition, GlossaryEntry, Scenario, QuizQuestion } from '@/types/content'
 
 export function getLessons(lang: Lang): Lesson[] {
@@ -91,6 +93,23 @@ export function getScenarios(lang: Lang): Scenario[] {
       },
     }
   })
+}
+
+export function getDomains(lang: Lang) {
+  if (lang === 'en') return domainsEn
+  return domainsEn.map((d) => {
+    const t = domainsEs[d.id]
+    if (!t) return d
+    return {
+      ...d,
+      description: t.description,
+      families: d.families.map((f) => ({ ...f, description: t.families?.[f.code] ?? f.description })),
+    }
+  })
+}
+
+export function getDomain(id: string, lang: Lang) {
+  return getDomains(lang).find((d) => d.id === id)
 }
 
 const familyDescriptionsEs: Record<string, string> = {

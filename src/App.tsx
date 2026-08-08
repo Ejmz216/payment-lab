@@ -5,6 +5,7 @@ import { Dashboard } from '@/routes/Dashboard'
 import { FastPaymentsHome } from '@/routes/learn/FastPaymentsHome'
 import { LessonPage } from '@/routes/learn/LessonPage'
 import { AtlasHome } from '@/routes/atlas/AtlasHome'
+import { DomainOverview } from '@/routes/atlas/DomainOverview'
 import { MessageCatalog } from '@/routes/atlas/MessageCatalog'
 import { MessagePage } from '@/routes/atlas/MessagePage'
 import { LabHome } from '@/routes/lab/LabHome'
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/learn/fast-payments/:lessonId" element={<LessonPage />} />
 
         <Route path="/atlas" element={<AtlasHome />} />
+        <Route path="/atlas/domains/:domainId" element={<DomainOverview />} />
         <Route path="/atlas/messages" element={<MessageCatalog />} />
         <Route path="/atlas/messages/:messageId" element={<MessagePage />} />
 
