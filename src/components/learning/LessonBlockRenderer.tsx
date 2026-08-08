@@ -6,6 +6,7 @@ import { LifecycleVisualizer } from '@/components/learning/LifecycleVisualizer'
 import { PredictionView } from '@/components/learning/PredictionView'
 import { MessageInspectorView } from '@/components/learning/MessageInspectorView'
 import { DecisionTreeView } from '@/components/learning/DecisionTreeView'
+import { IdentifierTracer } from '@/components/learning/IdentifierTracer'
 import { ArchitectureDiagram } from '@/components/learning/ArchitectureDiagram'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { useUIStore } from '@/store/uiStore'
@@ -84,6 +85,9 @@ export function LessonBlockRenderer({ block }: { block: LessonBlock }) {
       if (!scenario) return null
       return <ScenarioCard scenario={scenario} />
     }
+
+    case 'identifier-trace':
+      return <IdentifierTracer messages={block.messages} />
 
     case 'decision-tree':
       return <DecisionTreeView root={block.root} label={t('dtree.label')} />

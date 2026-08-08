@@ -4,19 +4,21 @@ import clsx from 'clsx'
 import { X } from 'lucide-react'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { MessageInspectorView } from '@/components/learning/MessageInspectorView'
+import { TraceOriginalPayment } from '@/components/learning/TraceOriginalPayment'
 import { XmlEditor } from '@/components/xml/XmlEditor'
 import { xmlSamples } from '@/content/xmlSamples'
 import { getMessage } from '@/lib/i18nContent'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 
-type View = 'friendly' | 'structure' | 'xml'
+type View = 'friendly' | 'structure' | 'xml' | 'trace'
 
 export function MessageDetailPanel({ messageId, onClose }: { messageId: string; onClose: () => void }) {
   const lang = useUIStore((s) => s.lang)
   const t = useT()
   const message = getMessage(messageId, lang)
   const sample = xmlSamples.find((s) => s.messageId === messageId)
+  const returnsMessageId = message?.relatedMessages.find((r) => r.relation === 'returns')?.messageId
   const [view, setView] = useState<View>('friendly')
 
   if (!message) return null
@@ -32,7 +34,7 @@ export function MessageDetailPanel({ messageId, onClose }: { messageId: string; 
         </button>
       </div>
       <div className="mb-3 flex flex-wrap gap-1.5">
-        {(['friendly', 'structure', ...(sample ? (['xml'] as View[]) : [])] as View[]).map((v) => (
+        {(['friendly', 'structure', ...(sample ? (['xml'] as View[]) : []), ...(returnsMessageId ? (['trace'] as View[]) : [])] as View[]).map((v) => (
           <button
             key={v}
             onClick={() => setView(v)}
@@ -44,6 +46,7 @@ export function MessageDetailPanel({ messageId, onClose }: { messageId: string; 
             {v === 'friendly' && t('sim.viewFriendly')}
             {v === 'structure' && t('sim.viewStructure')}
             {v === 'xml' && t('sim.viewXml')}
+            {v === 'trace' && t('trace.title')}
           </button>
         ))}
       </div>
@@ -64,6 +67,8 @@ export function MessageDetailPanel({ messageId, onClose }: { messageId: string; 
       {view === 'structure' && <MessageInspectorView messageId={message.id} />}
 
       {view === 'xml' && sample && <XmlEditor value={sample.xml} height="20rem" />}
+
+      {view === 'trace' && returnsMessageId && <TraceOriginalPayment originalMessageId={returnsMessageId} returnMessageId={message.id} />}
 
       <Link to={`/atlas/messages/${message.id}`} className="mt-3 inline-block text-xs text-primary hover:underline">
         {t('sim.openInAtlas')} →

@@ -6,6 +6,15 @@ export function flattenByXmlTag(root: MessageFieldNode, map: Map<string, Message
   return map
 }
 
+export function findById(root: MessageFieldNode, id: string): MessageFieldNode | null {
+  if (root.id === id) return root
+  for (const child of root.children ?? []) {
+    const found = findById(child, id)
+    if (found) return found
+  }
+  return null
+}
+
 export function findParent(root: MessageFieldNode, targetId: string): MessageFieldNode | null {
   if (!root.children) return null
   for (const child of root.children) {

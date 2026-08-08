@@ -20,6 +20,18 @@ const pacs002Tree: MessageFieldNode = {
           xmlTag: 'GrpHdr',
           businessMeaning: 'Common information for the whole report (message id, creation time).',
           cardinality: '1..1',
+          children: [
+            {
+              id: 'MsgId',
+              name: 'Message Identification',
+              xmlTag: 'MsgId',
+              businessMeaning: 'Unique identifier assigned by the sender to this status report message itself — distinct from the identifiers of the transaction it is reporting on.',
+              cardinality: '1..1',
+              dataType: 'Max35Text',
+              commonMistakes: 'Assuming this MsgId relates to the original payment — it identifies this status report envelope, not the original pacs.008.',
+              exampleValue: 'MSG-2026-000456',
+            },
+          ],
         },
         {
           id: 'TxInfAndSts',
@@ -35,6 +47,7 @@ const pacs002Tree: MessageFieldNode = {
               businessMeaning: 'The EndToEndId of the original transaction this status refers to.',
               cardinality: '0..1',
               whyItMatters: 'Often one of the most useful fields for correlating a status report back to the original payment — but real investigations may also need OrgnlInstrId, OrgnlTxId, or scheme-specific references, not this field alone.',
+              exampleValue: 'E2E-ALICE-BOB-0001',
             },
             {
               id: 'TxSts',

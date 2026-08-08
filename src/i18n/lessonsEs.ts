@@ -387,6 +387,31 @@ export const lessonsEs: Record<string, LessonTranslation> = {
       { heading: 'Roles típicos', body: 'MsgId: identifica el sobre del mensaje, asignado por el emisor del mensaje. InstrId: un identificador de instrucción, a menudo asignado por la parte instructora para su propio seguimiento. EndToEndId: pensado para viajar sin cambios con el pago desde el deudor original hasta el acreedor final, lo que lo hace particularmente valioso para el rastreo de extremo a extremo. TxId: un identificador de transacción, a menudo asignado dentro de la cadena de clearing/settlement. Dependiendo del esquema, pueden existir referencias adicionales (como una referencia del sistema de clearing o una referencia universal de transacción de extremo a extremo).' },
       { heading: 'Por qué importa esto para la reconciliación', body: 'Debido a que un mensaje puede contener varias transacciones, y cada transacción puede llevar varios identificadores, rastrear un solo pago durante una investigación requiere saber exactamente qué identificador se garantiza que permanezca consistente entre los mensajes que estás comparando.' },
     ],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'Niveles de identificación',
+        body: 'Nivel de mensaje: identifica el mensaje en sí (por ejemplo, MsgId). Nivel de transacción: identifica una transacción individual dentro del mensaje (por ejemplo, InstrId, EndToEndId, TxId). También pueden agregarse referencias a nivel de red y a nivel de institución por las infraestructuras o instituciones a medida que el pago viaja.',
+      },
+      {
+        type: 'explanation',
+        heading: 'Roles típicos',
+        body: 'MsgId: identifica el sobre del mensaje, asignado por el emisor del mensaje. InstrId: un identificador de instrucción, a menudo asignado por la parte instructora para su propio seguimiento. EndToEndId: pensado para viajar sin cambios con el pago desde el deudor original hasta el acreedor final, lo que lo hace particularmente valioso para el rastreo de extremo a extremo. TxId: un identificador de transacción, a menudo asignado dentro de la cadena de clearing/settlement. Dependiendo del esquema, pueden existir referencias adicionales (como una referencia del sistema de clearing o una referencia universal de transacción de extremo a extremo).',
+      },
+      {
+        type: 'explanation',
+        heading: 'Por qué importa esto para la reconciliación',
+        body: 'Debido a que un mensaje puede contener varias transacciones, y cada transacción puede llevar varios identificadores, rastrear un solo pago durante una investigación requiere saber exactamente qué identificador se garantiza que permanezca consistente entre los mensajes que estás comparando.',
+      },
+      {
+        type: 'identifier-trace',
+        messages: [
+          { messageId: 'pacs.008', linkFieldId: 'EndToEndId', linkFieldLabel: 'EndToEndId' },
+          { messageId: 'pacs.002', linkFieldId: 'OrgnlEndToEndId', linkFieldLabel: 'OrgnlEndToEndId' },
+          { messageId: 'pacs.004', linkFieldId: 'OrgnlEndToEndId', linkFieldLabel: 'OrgnlEndToEndId' },
+        ],
+      },
+    ],
     commonConfusion: [
       { title: 'MsgId vs. TxId', explanation: 'MsgId identifica el sobre que puede contener potencialmente muchas transacciones. TxId identifica una transacción específica dentro de él. Responden preguntas diferentes.' },
     ],

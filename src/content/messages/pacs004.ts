@@ -20,6 +20,18 @@ const pacs004Tree: MessageFieldNode = {
           xmlTag: 'GrpHdr',
           businessMeaning: 'Common information for the whole message.',
           cardinality: '1..1',
+          children: [
+            {
+              id: 'MsgId',
+              name: 'Message Identification',
+              xmlTag: 'MsgId',
+              businessMeaning: 'Unique identifier assigned by the sender to this return message itself — distinct from the identifiers of the original payment being returned.',
+              cardinality: '1..1',
+              dataType: 'Max35Text',
+              commonMistakes: 'Assuming this MsgId relates to the original payment — it identifies this return envelope, not the original pacs.008.',
+              exampleValue: 'MSG-2026-000789',
+            },
+          ],
         },
         {
           id: 'TxInf',
@@ -35,6 +47,7 @@ const pacs004Tree: MessageFieldNode = {
               businessMeaning: 'The EndToEndId of the original payment being returned.',
               cardinality: '0..1',
               whyItMatters: 'Typically the field a "Trace original payment" action would match on first — but the full original transaction reference block below often carries additional context useful for tracing too.',
+              exampleValue: 'E2E-ALICE-BOB-0001',
             },
             {
               id: 'RtrdIntrBkSttlmAmt',

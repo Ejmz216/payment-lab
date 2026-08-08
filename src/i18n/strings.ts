@@ -342,6 +342,22 @@ export const strings = {
   'dtree.yes': { en: 'Yes', es: 'Sí' },
   'dtree.no': { en: 'No', es: 'No' },
 
+  // Identifier Tracer
+  'idtrace.title': { en: 'Identifier Tracer', es: 'Rastreador de Identificadores' },
+  'idtrace.instructions': {
+    en: 'The first message shows its real EndToEndId. For each following message, pick which value its identification field should carry.',
+    es: 'El primer mensaje muestra su EndToEndId real. Para cada mensaje siguiente, elige qué valor debería llevar su campo de identificación.',
+  },
+  'idtrace.complete': { en: 'Trace complete — the EndToEndId stays the same across all three messages, while each MsgId is unique to its own envelope.', es: 'Rastreo completo — el EndToEndId permanece igual en los tres mensajes, mientras que cada MsgId es único de su propio sobre.' },
+
+  // Trace Original Payment
+  'trace.title': { en: 'Trace original payment', es: 'Rastrear pago original' },
+  'trace.original': { en: 'ORIGINAL', es: 'ORIGINAL' },
+  'trace.returnLabel': { en: 'RETURN', es: 'DEVOLUCIÓN' },
+  'trace.references': { en: 'references', es: 'referencia' },
+  'trace.matchNote': { en: 'EndToEndId matches OrgnlEndToEndId — this is what connects the return to the original payment.', es: 'EndToEndId coincide con OrgnlEndToEndId — esto es lo que conecta la devolución con el pago original.' },
+  'trace.disclaimer': { en: 'Values shown come from this page\'s synthetic example data, not a live lookup.', es: 'Los valores mostrados provienen de los datos de ejemplo sintéticos de esta página, no de una búsqueda en vivo.' },
+
   // Not found
   'notfound.text': { en: "This page doesn't exist yet in Payment Lab.", es: 'Esta página aún no existe en Payment Lab.' },
   'notfound.back': { en: 'Back to Dashboard', es: 'Volver al Panel' },

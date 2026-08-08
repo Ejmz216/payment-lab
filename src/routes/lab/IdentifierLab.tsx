@@ -1,7 +1,14 @@
 import { Card, CardTitle } from '@/components/ui/Card'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
+import { IdentifierTracer } from '@/components/learning/IdentifierTracer'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
+
+const traceMessages = [
+  { messageId: 'pacs.008', linkFieldId: 'EndToEndId', linkFieldLabel: 'EndToEndId' },
+  { messageId: 'pacs.002', linkFieldId: 'OrgnlEndToEndId', linkFieldLabel: 'OrgnlEndToEndId' },
+  { messageId: 'pacs.004', linkFieldId: 'OrgnlEndToEndId', linkFieldLabel: 'OrgnlEndToEndId' },
+]
 
 const transactions = [
   { instrId: 'INS-001', endToEndId: 'E2E-ALICE-BOB-0001', txId: 'TX-000123-01' },
@@ -55,6 +62,8 @@ export function IdentifierLab() {
           </p>
         </details>
       </Card>
+
+      <IdentifierTracer messages={traceMessages} />
     </div>
   )
 }

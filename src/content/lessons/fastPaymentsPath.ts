@@ -488,21 +488,33 @@ export const fastPaymentsLessons: Lesson[] = [
       'Reason about which identifier to use when tracing a payment across systems.',
     ],
     mentalModel: 'A single message can carry multiple transactions. Message-level identifiers describe the envelope; transaction-level identifiers describe each individual payment inside it.',
-    sections: [
+    sections: [],
+    blocks: [
       {
+        type: 'explanation',
         heading: 'Levels of identification',
         body:
           'Message-level: identifies the message itself (e.g., MsgId). Transaction-level: identifies an individual transaction within the message (e.g., InstrId, EndToEndId, TxId). Network-level and institution-level references may also be added by infrastructures or institutions as the payment travels.',
       },
       {
+        type: 'explanation',
         heading: 'Typical roles',
         body:
           'MsgId: identifies the message envelope, assigned by the message sender. InstrId: an instruction identifier, often assigned by the instructing party for its own tracking. EndToEndId: intended to travel unchanged with the payment from the original debtor to the final creditor, which makes it particularly valuable for end-to-end tracing. TxId: a transaction identifier, often assigned within the clearing/settlement chain. Depending on the scheme, additional references (such as a clearing system reference or a universal end-to-end transaction reference) may also exist.',
       },
       {
+        type: 'explanation',
         heading: 'Why this matters for reconciliation',
         body:
           'Because a message can contain several transactions, and each transaction can carry several identifiers, tracing a single payment during an investigation requires knowing exactly which identifier is guaranteed to stay consistent across the messages you are comparing.',
+      },
+      {
+        type: 'identifier-trace',
+        messages: [
+          { messageId: 'pacs.008', linkFieldId: 'EndToEndId', linkFieldLabel: 'EndToEndId' },
+          { messageId: 'pacs.002', linkFieldId: 'OrgnlEndToEndId', linkFieldLabel: 'OrgnlEndToEndId' },
+          { messageId: 'pacs.004', linkFieldId: 'OrgnlEndToEndId', linkFieldLabel: 'OrgnlEndToEndId' },
+        ],
       },
     ],
     keyTerms: ['MsgId', 'InstrId', 'EndToEndId', 'TxId', 'message-level', 'transaction-level'],

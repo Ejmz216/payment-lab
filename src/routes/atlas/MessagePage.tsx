@@ -9,6 +9,7 @@ import { BookmarkButton } from '@/components/ui/BookmarkButton'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { MessageTree } from '@/components/messages/MessageTree'
 import { FieldDetail } from '@/components/messages/FieldDetail'
+import { TraceOriginalPayment } from '@/components/learning/TraceOriginalPayment'
 import { findParent } from '@/lib/tree'
 import { useProgressStore } from '@/store/progressStore'
 import type { MessageFieldNode } from '@/types/content'
@@ -122,6 +123,13 @@ export function MessagePage() {
           )}
         </div>
       </div>
+
+      {message.relatedMessages.some((r) => r.relation === 'returns') && (
+        <TraceOriginalPayment
+          originalMessageId={message.relatedMessages.find((r) => r.relation === 'returns')!.messageId}
+          returnMessageId={message.id}
+        />
+      )}
 
       {message.commonMistakes && message.commonMistakes.length > 0 && (
         <Card className="border-warning/30">

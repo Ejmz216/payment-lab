@@ -79,6 +79,18 @@ export interface ScenarioBlockData {
   scenarioId: string
 }
 
+export interface IdentifierTraceMessage {
+  messageId: string
+  msgIdFieldId?: string
+  linkFieldId: string
+  linkFieldLabel: string
+}
+
+export interface IdentifierTraceBlock {
+  type: 'identifier-trace'
+  messages: IdentifierTraceMessage[]
+}
+
 export interface DecisionTreeAnswer {
   label: string
   result?: string
@@ -118,6 +130,7 @@ export type LessonBlock =
   | LifecycleBlock
   | MessageInspectorBlock
   | ScenarioBlockData
+  | IdentifierTraceBlock
   | DecisionTreeBlock
   | ArchitectureBlock
   | CalloutBlock
