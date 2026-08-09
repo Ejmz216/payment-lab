@@ -230,6 +230,40 @@ export const lessonsEs: Record<string, LessonTranslation> = {
         body: 'Gross settlement: cada obligación se liquida individualmente y en su totalidad. Net settlement: las obligaciones entre participantes se compensan y solo se liquida la diferencia neta. Deferred settlement: el settlement ocurre en puntos programados en vez de inmediatamente. Real-time settlement: el settlement ocurre continuamente, cerca del momento de la transacción.',
       },
     ],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'Clearing determina la obligación',
+        body: 'Clearing intercambia y valida instrucciones de pago, y después determina las obligaciones resultantes entre participantes. En el ejemplo siguiente, BANK_A debe 100 XXX a BANK_B mientras BANK_B debe 60 XXX a BANK_A. Esas son dos obligaciones brutas. Calcular su resultado neto nos dice quién debe qué, pero no mueve valor.',
+        badge: 'reference',
+      },
+      {
+        type: 'settlement-diagram',
+        heading: 'Primero clearing. Después settlement.',
+        intro: 'Ejecuta los dos eventos por separado. Después del clearing, detente y decide si el valor realmente se movió antes de activar el settlement.',
+        parties: [
+          { id: 'bank-a', label: 'BANK_A' },
+          { id: 'bank-b', label: 'BANK_B' },
+        ],
+        obligations: [
+          { from: 'bank-a', to: 'bank-b', amount: 100 },
+          { from: 'bank-b', to: 'bank-a', amount: 60 },
+        ],
+        currency: 'XXX',
+        clearedExplanation: 'Clearing compensa las dos obligaciones brutas y produce una obligación neta: BANK_A debe 40 XXX a BANK_B. La obligación ya se conoce, pero todavía no ha sido liquidada.',
+        settledExplanation: 'Settlement cambia en 40 XXX las posiciones de settlement de los participantes y liquida la obligación neta en este modelo simplificado. Este evento interparticipante todavía no prueba, por sí solo, el crédito a la cuenta del beneficiario.',
+        notice: 'Clearing y settlement responden preguntas distintas. Primero determina la obligación; después busca evidencia separada de que el valor se movió y la obligación fue liquidada.',
+        schemeDependent: 'El sistema o esquema aplicable define si las obligaciones se liquidan de forma bruta o neta, en tiempo real o en intervalos diferidos, y cuál evento constituye settlement final.',
+        badge: 'simplified-model',
+      },
+      {
+        type: 'explanation',
+        heading: 'Los modelos de settlement usan dos ejes diferentes',
+        body: 'Gross versus net describe cómo se agrupan las obligaciones: individualmente o después de compensarlas. Real-time versus deferred describe cuándo ocurre el settlement: continuamente o en puntos programados. Estas ideas pueden combinarse. RTGS, por ejemplo, significa real-time gross settlement. No trates gross, net, real-time y deferred como cuatro etiquetas mutuamente excluyentes.',
+        badge: 'reference',
+      },
+      { type: 'scenario', scenarioId: 'clearing-not-settlement' },
+    ],
     commonConfusion: [
       { title: 'Clearing vs. Settlement', explanation: 'Clearing determina la obligación. Settlement la liquida. Un pago puede estar "cleared" sin haber sido aún liquidado ("settled").' },
     ],

@@ -140,6 +140,28 @@ scenarios.push({
 })
 
 scenarios.push({
+  id: 'clearing-not-settlement',
+  title: 'Net obligation calculated, value not moved',
+  prompt:
+    'A clearing system calculates that BANK_A owes BANK_B a net 40 XXX. Operations cannot find any posting to the participants\' settlement positions. What is the strongest conclusion?',
+  choices: [
+    { id: 'a', label: 'The obligations were cleared, but settlement is not yet proven', correct: true },
+    { id: 'b', label: 'BANK_B and its customer were both credited', correct: false },
+    { id: 'c', label: 'Settlement must have happened because the net amount is known', correct: false },
+    { id: 'd', label: 'The original payment instructions never existed', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'The net amount proves that clearing determined the resulting obligation. Without evidence that participant settlement positions changed, the discharge of that obligation remains unproven.',
+    lifecycleImpact: 'Cleared → settlement evidence still required.',
+    businessPerspective: 'Do not report that value moved or that a beneficiary was credited from a clearing result alone.',
+    technicalPerspective: 'Correlate the clearing result to an authoritative settlement event or posting before advancing the money state.',
+    dependsOnScheme: true,
+  },
+  tags: ['clearing-vs-settlement', 'payment-lifecycle'],
+})
+
+scenarios.push({
   id: 'spi-rd-message-triage',
   title: 'SPI RD: message triage',
   prompt:

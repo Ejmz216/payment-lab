@@ -86,6 +86,21 @@ scenariosEs['status-not-money'] = {
   reasoning: 'La recepción del mensaje es evidencia de comunicación. Sin evidencia de settlement o posting, operaciones debe mantener incierto el estado del dinero e investigar en vez de inferir que terminó.',
 }
 
+scenariosEs['clearing-not-settlement'] = {
+  title: 'Obligación neta calculada, valor no movido',
+  prompt: 'Un sistema de clearing calcula que BANK_A debe 40 XXX netos a BANK_B. Operaciones no encuentra ningún posting en las posiciones de settlement de los participantes. ¿Cuál es la conclusión más sólida?',
+  choices: {
+    a: 'Las obligaciones fueron compensadas, pero el settlement todavía no está probado',
+    b: 'BANK_B y su cliente fueron acreditados',
+    c: 'El settlement debió ocurrir porque ya se conoce el monto neto',
+    d: 'Las instrucciones de pago originales nunca existieron',
+  },
+  reasoning: 'El monto neto prueba que clearing determinó la obligación resultante. Sin evidencia de cambios en las posiciones de settlement, la liquidación de esa obligación sigue sin probarse.',
+  lifecycleImpact: 'Cleared → todavía se requiere evidencia de settlement.',
+  businessPerspective: 'No reportes movimiento de valor ni crédito al beneficiario usando solamente un resultado de clearing.',
+  technicalPerspective: 'Correlaciona el resultado de clearing con un evento o posting autoritativo de settlement antes de avanzar el estado del dinero.',
+}
+
 scenariosEs['spi-rd-message-triage'] = {
   title: 'SPI RD: clasificar el mensaje correcto',
   prompt: 'En una sesion de estudio sobre SPI/SGPI dominicano, BANK_A necesita consultar informacion de cuenta/balance con el administrador de transacciones antes de investigar un pago. Que concepto de mensaje ISO 20022 encaja mejor con esa consulta?',

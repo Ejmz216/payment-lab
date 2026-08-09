@@ -13,6 +13,8 @@ import { TraceOriginalPayment } from '@/components/learning/TraceOriginalPayment
 import { FourLayerExplorer } from '@/components/learning/FourLayerExplorer'
 import { EvidenceMatrix } from '@/components/learning/EvidenceMatrix'
 import { InvestigationChecklist } from '@/components/learning/InvestigationChecklist'
+import { MoneyStateDiagram } from '@/components/learning/MoneyStateDiagram'
+import { SettlementDiagram } from '@/components/learning/SettlementDiagram'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
@@ -92,6 +94,12 @@ export function LessonBlockRenderer({ block }: { block: LessonBlock }) {
           <LifecycleVisualizer stages={block.stages} />
         </Card>
       )
+
+    case 'money-state':
+      return <MoneyStateDiagram block={block} />
+
+    case 'settlement-diagram':
+      return <SettlementDiagram block={block} />
 
     case 'message-inspector':
       return <MessageInspectorView messageId={block.messageId} versionIndex={block.versionIndex} intro={block.intro} />

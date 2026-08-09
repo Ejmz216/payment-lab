@@ -362,6 +362,40 @@ export const fastPaymentsLessons: Lesson[] = [
           'Gross settlement: each obligation is settled individually and in full. Net settlement: obligations between participants are offset and only the net difference settles. Deferred settlement: settlement happens at scheduled points rather than immediately. Real-time settlement: settlement happens continuously, close to the time of the transaction.',
       },
     ],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'Clearing determines the obligation',
+        body: 'Clearing exchanges and validates payment instructions, then determines the obligations that result between participants. In the example below, BANK_A owes BANK_B 100 XXX while BANK_B owes BANK_A 60 XXX. Those are two gross obligations. Calculating their net result tells us who owes what, but it does not move value.',
+        badge: 'reference',
+      },
+      {
+        type: 'settlement-diagram',
+        heading: 'Clear first. Settle second.',
+        intro: 'Run the two events separately. After clearing, pause and decide whether value has actually moved before you trigger settlement.',
+        parties: [
+          { id: 'bank-a', label: 'BANK_A' },
+          { id: 'bank-b', label: 'BANK_B' },
+        ],
+        obligations: [
+          { from: 'bank-a', to: 'bank-b', amount: 100 },
+          { from: 'bank-b', to: 'bank-a', amount: 60 },
+        ],
+        currency: 'XXX',
+        clearedExplanation: 'Clearing offsets the two gross obligations and produces one net obligation: BANK_A owes BANK_B 40 XXX. The obligation is now known, but it has not yet been discharged.',
+        settledExplanation: 'Settlement changes the participants\' settlement positions by 40 XXX and discharges the net obligation in this simplified model. This interparticipant event still does not, by itself, prove beneficiary-account credit.',
+        notice: 'Clearing and settlement answer different questions. First determine the obligation; then seek separate evidence that value moved and the obligation was discharged.',
+        schemeDependent: 'The applicable system or scheme defines whether obligations settle gross or net, in real time or at deferred intervals, and what event constitutes final settlement.',
+        badge: 'simplified-model',
+      },
+      {
+        type: 'explanation',
+        heading: 'Settlement models use two different axes',
+        body: 'Gross versus net describes how obligations are grouped: individually or after offsetting. Real-time versus deferred describes when settlement occurs: continuously or at scheduled points. These ideas can be combined. RTGS, for example, means real-time gross settlement. Do not treat gross, net, real-time and deferred as four mutually exclusive labels.',
+        badge: 'reference',
+      },
+      { type: 'scenario', scenarioId: 'clearing-not-settlement' },
+    ],
     keyTerms: ['clearing', 'settlement', 'gross settlement', 'net settlement', 'deferred settlement', 'real-time settlement', 'finality'],
     commonConfusion: [
       { title: 'Clearing vs. Settlement', explanation: 'Clearing determines the obligation. Settlement discharges it. A payment can be cleared without yet being settled.' },
@@ -369,7 +403,7 @@ export const fastPaymentsLessons: Lesson[] = [
     relatedLessons: ['payment-lifecycle', 'payment-systems'.replace('payment-systems', 'fast-payments')],
     relatedConcepts: ['clearing', 'settlement'],
     sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
-    estimatedMinutes: 8,
+    estimatedMinutes: 11,
   },
   {
     id: 'fast-payments',

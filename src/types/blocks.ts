@@ -84,6 +84,56 @@ export interface LifecycleBlock {
   badge?: ContentBadge
 }
 
+export type MoneyZoneKind = 'party' | 'agent' | 'infrastructure'
+export type MoneyStateTone = 'available' | 'reserved' | 'settled' | 'credited' | 'uncertain'
+
+export interface MoneyStateZone {
+  id: string
+  label: string
+  kind: MoneyZoneKind
+}
+
+export interface MoneyStateStage {
+  id: string
+  label: string
+  summary: string
+  position: string
+  evidence: string
+  notProven: string
+  activeZoneIds: string[]
+  tone: MoneyStateTone
+}
+
+export interface MoneyStateBlock {
+  type: 'money-state'
+  heading: string
+  intro?: string
+  zones: MoneyStateZone[]
+  states: MoneyStateStage[]
+  schemeNote?: string
+  badge?: ContentBadge
+}
+
+export interface SettlementObligation {
+  from: string
+  to: string
+  amount: number
+}
+
+export interface SettlementDiagramBlock {
+  type: 'settlement-diagram'
+  heading: string
+  intro?: string
+  parties: [FlowActor, FlowActor]
+  obligations: SettlementObligation[]
+  currency: string
+  clearedExplanation: string
+  settledExplanation: string
+  notice: string
+  schemeDependent: string
+  badge?: ContentBadge
+}
+
 export interface MessageInspectorBlock {
   type: 'message-inspector'
   messageId: string
@@ -203,6 +253,8 @@ export type LessonBlock =
   | PredictionBlock
   | QuickCheckBlock
   | LifecycleBlock
+  | MoneyStateBlock
+  | SettlementDiagramBlock
   | MessageInspectorBlock
   | ScenarioBlockData
   | IdentifierTraceBlock
