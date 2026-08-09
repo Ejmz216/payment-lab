@@ -16,6 +16,7 @@ import { InvestigationChecklist } from '@/components/learning/InvestigationCheck
 import { MoneyStateDiagram } from '@/components/learning/MoneyStateDiagram'
 import { SettlementDiagram } from '@/components/learning/SettlementDiagram'
 import { ComparisonView } from '@/components/learning/ComparisonView'
+import { TimingComparisonView } from '@/components/learning/TimingComparisonView'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
@@ -55,6 +56,9 @@ export function LessonBlockRenderer({ block }: { block: LessonBlock }) {
 
     case 'comparison':
       return <ComparisonView block={block} />
+
+    case 'timing-comparison':
+      return <TimingComparisonView block={block} />
 
     case 'message-sequence':
       return (

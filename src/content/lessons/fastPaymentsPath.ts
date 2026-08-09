@@ -11,6 +11,7 @@ export const fastPaymentsPath: LearningPath = {
     'payment-actors',
     'payment-lifecycle',
     'clearing-vs-settlement',
+    'payment-systems',
     'fast-payments',
     'iso20022-fundamentals',
     'message-families',
@@ -47,6 +48,7 @@ export const fastPaymentsPath: LearningPath = {
         'payment-actors',
         'payment-lifecycle',
         'clearing-vs-settlement',
+        'payment-systems',
         'fast-payments',
       ],
       plannedItemCount: 6,
@@ -205,7 +207,7 @@ export const fastPaymentsLessons: Lesson[] = [
         type: 'explanation',
         heading: 'Payment rail, scheme, and network',
         body:
-          'A payment rail is the underlying infrastructure that moves payment instructions and value (for example, an instant payment system or an RTGS system). A payment scheme is the set of rules, roles and obligations that participants agree to follow when using a rail (for example, message usage rules, timing rules, liability rules). A payment network is the set of participants connected through that rail and scheme. These terms are often used loosely in the industry — treat this as a working model, not a strict taxonomy.',
+          'These terms overlap in ordinary industry speech, but they are not exact synonyms. Payment system is the broad arrangement; payment scheme emphasizes the rulebook; payment rail is informal shorthand for the underlying route or infrastructure; and payment network is context-dependent. The dedicated Payment Systems lesson teaches how to separate them.',
       },
     ],
     keyTerms: ['payment', 'payment rail', 'payment scheme', 'payment network', 'clearing system', 'settlement system'],
@@ -216,7 +218,7 @@ export const fastPaymentsLessons: Lesson[] = [
           'A payment can be accepted by every system involved and still fail to credit the beneficiary later. The instruction and the value movement are related but distinct events.',
       },
     ],
-    relatedLessons: ['payment-actors', 'payment-lifecycle'],
+    relatedLessons: ['payment-actors', 'payment-lifecycle', 'payment-systems'],
     relatedConcepts: ['clearing', 'settlement', 'payment-scheme'],
     sources: [
       {
@@ -370,7 +372,7 @@ export const fastPaymentsLessons: Lesson[] = [
         explanation: 'Debtor = the party that owes/sends funds. Debtor Agent = the institution servicing that party. Do not treat them as the same role.',
       },
     ],
-    relatedLessons: ['payment-fundamentals', 'payment-lifecycle'],
+    relatedLessons: ['payment-fundamentals', 'payment-lifecycle', 'payment-systems'],
     relatedMessages: ['pacs.008'],
     sources: [
       { sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' },
@@ -499,15 +501,265 @@ export const fastPaymentsLessons: Lesson[] = [
     commonConfusion: [
       { title: 'Clearing vs. Settlement', explanation: 'Clearing determines the obligation. Settlement discharges it. A payment can be cleared without yet being settled.' },
     ],
-    relatedLessons: ['payment-lifecycle', 'payment-systems'.replace('payment-systems', 'fast-payments')],
+    relatedLessons: ['payment-lifecycle', 'payment-systems', 'fast-payments'],
     relatedConcepts: ['clearing', 'settlement'],
     sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 11,
   },
   {
-    id: 'fast-payments',
+    id: 'payment-systems',
     pathId: 'fast-payments',
     order: 5,
+    title: 'Payment Systems and Rails',
+    subtitle: 'The infrastructure, rules, participants and time behind a payment',
+    whyItMatters:
+      'Terms such as payment system, rail, scheme and network are often mixed together. Separating them helps you identify who participates, which rules apply, where value settles and why one payment can complete in seconds while another crosses several processing windows.',
+    objectives: [
+      'Distinguish payment system, payment scheme, payment rail and payment network without treating them as exact synonyms.',
+      'Identify the customer, payment service providers, infrastructure and operator in a simple domestic payment.',
+      'Explain how cutoffs, batches, banking days, settlement windows and posting can add elapsed time.',
+      'Compare an illustrative scheduled flow with an end-to-end fast payment flow.',
+      'Relate the public 24/7 real-time behavior of the Dominican SGPI to the general model without guessing institution internals.',
+    ],
+    mentalModel:
+      'Ask four separate questions: What arrangement moves the payment? Which rulebook governs it? Who is connected? When do clearing, settlement and credit actually occur?',
+    sections: [],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'Is a payment network the same as a payment rail?',
+        body: 'Not precisely. Payment rail is informal industry shorthand for the route or infrastructure through which payment instructions and value are processed. Payment network may mean the connected participants and communication relationships, but some organizations also use it for a branded scheme or the entire payment system. When someone says network, ask whether they mean infrastructure, rules, participants, or the complete arrangement.',
+        badge: 'reference',
+      },
+      {
+        type: 'comparison',
+        heading: 'Three layers people often collapse into one word',
+        intro: 'The boundaries can vary by jurisdiction and organization. Use these as working questions, then check the terminology of the specific system you are studying.',
+        keyQuestionLabel: 'Ask',
+        examplesLabel: 'Includes',
+        notThisLabel: 'Do not reduce it to',
+        badge: 'reference',
+        items: [
+          {
+            id: 'payment-system',
+            label: 'Payment system',
+            keyQuestion: 'What complete arrangement enables funds to be transferred?',
+            summary: 'A broad arrangement combining participants, procedures, rules and the infrastructure used to transfer funds.',
+            examples: ['participants', 'procedures', 'clearing', 'settlement'],
+            notThis: 'Only the communication link carrying a message.',
+            tone: 'infrastructure',
+          },
+          {
+            id: 'payment-scheme',
+            label: 'Payment scheme',
+            keyQuestion: 'Which rulebook defines participation and acceptable behavior?',
+            summary: 'The roles, eligibility, operating rules, timing, liabilities and usage requirements agreed for the service.',
+            examples: ['eligibility', 'timeouts', 'limits', 'liability'],
+            notThis: 'Necessarily the technology platform or settlement asset.',
+            tone: 'scheme',
+          },
+          {
+            id: 'payment-rail',
+            label: 'Payment rail',
+            keyQuestion: 'Which underlying route or infrastructure carries the payment?',
+            summary: 'An informal industry term used for infrastructure or a channel such as an instant-payment, ACH or RTGS rail.',
+            examples: ['instant rail', 'ACH rail', 'RTGS rail'],
+            notThis: 'A universally standardized term with one formal boundary.',
+            tone: 'neutral',
+          },
+        ],
+      },
+      {
+        type: 'payment-flow',
+        heading: 'Actors on a simple domestic payment route',
+        badge: 'simplified-model',
+        actors: [
+          { id: 'customer-a', label: 'CUSTOMER_A', role: 'Payer / Debtor', kind: 'party' },
+          { id: 'bank-a', label: 'BANK_A', role: 'Originating PSP / Debtor Agent', kind: 'agent' },
+          { id: 'payment-system', label: 'PAYMENT_SYSTEM', role: 'Clearing / settlement service', kind: 'infrastructure' },
+          { id: 'bank-b', label: 'BANK_B', role: 'Receiving PSP / Creditor Agent', kind: 'agent' },
+          { id: 'customer-b', label: 'CUSTOMER_B', role: 'Payee / Creditor', kind: 'party' },
+        ],
+        steps: [
+          { from: 'customer-a', to: 'bank-a', label: 'authorizes', status: 'active' },
+          { from: 'bank-a', to: 'payment-system', label: 'submits', status: 'active' },
+          { from: 'payment-system', to: 'bank-b', label: 'processes', status: 'active' },
+          { from: 'bank-b', to: 'customer-b', label: 'credits', status: 'success' },
+        ],
+      },
+      {
+        type: 'explanation',
+        heading: 'The scheme and operator are not additional customers',
+        body: 'The payer and payee are parties. BANK_A and BANK_B are payment service providers and ISO 20022 agents in this simplified flow. The payment-system operator runs or administers infrastructure, while the scheme defines applicable rules. One organization may perform more than one role, but the roles remain conceptually distinct. A settlement agent or central bank may also hold the accounts or asset used for interparticipant settlement.',
+        badge: 'simplified-model',
+      },
+      {
+        type: 'timing-comparison',
+        heading: 'Where the waiting time comes from',
+        intro: 'This Friday-evening example contrasts a scheduled, batch-style design with an end-to-end fast payment. It is a teaching model, not a promise about every system.',
+        badge: 'simplified-model',
+        lanes: [
+          {
+            id: 'scheduled',
+            label: 'Scheduled or batch-style flow',
+            summary: 'Processing advances through eligible banking days, cutoffs and service windows.',
+            availability: 'Scheduled operating windows',
+            elapsed: 'May cross days',
+            tone: 'scheduled',
+            stages: [
+              {
+                id: 'scheduled-initiation',
+                label: 'Customer authorizes',
+                timing: 'FRI 18:10',
+                description: 'BANK_A records the request after the relevant service cutoff.',
+              },
+              {
+                id: 'scheduled-wait',
+                label: 'Wait for an eligible window',
+                timing: 'QUEUED',
+                description: 'A weekend or holiday may postpone the next banking-day process even though the message itself can travel electronically.',
+                wait: true,
+              },
+              {
+                id: 'scheduled-batch',
+                label: 'Originating batch',
+                timing: 'NEXT BANKING DAY',
+                description: 'BANK_A validates and submits the instruction in a scheduled file or processing cycle.',
+              },
+              {
+                id: 'scheduled-settlement',
+                label: 'Clearing and settlement window',
+                timing: 'LATER WINDOW',
+                description: 'The system determines and discharges obligations according to its own settlement design.',
+              },
+              {
+                id: 'scheduled-posting',
+                label: 'Receiving PSP posts funds',
+                timing: 'AFTER RECEIPT',
+                description: 'BANK_B applies its processing and makes funds available to CUSTOMER_B when the applicable rules and evidence allow it.',
+              },
+            ],
+          },
+          {
+            id: 'fast',
+            label: 'End-to-end fast payment',
+            summary: 'The same business checkpoints are compressed into a continuously available service.',
+            availability: 'Near 24/7 availability',
+            elapsed: 'Typically seconds',
+            tone: 'fast',
+            stages: [
+              {
+                id: 'fast-initiation',
+                label: 'Customer authorizes',
+                timing: 'FRI 18:10',
+                description: 'BANK_A receives the request while the fast-payment service is available.',
+              },
+              {
+                id: 'fast-validation',
+                label: 'Validate and decide',
+                timing: '+ MILLISECONDS',
+                description: 'Account, limits, fraud and compliance checks must run under tight time constraints.',
+              },
+              {
+                id: 'fast-processing',
+                label: 'System processes the payment',
+                timing: '+ SECONDS',
+                description: 'Routing, clearing and settlement-related events occur according to the specific system design.',
+              },
+              {
+                id: 'fast-credit',
+                label: 'Receiving PSP confirms and credits',
+                timing: 'SECONDS',
+                description: 'BANK_B receives the result and makes final funds available to CUSTOMER_B under the applicable scheme rules.',
+              },
+            ],
+          },
+        ],
+        conclusion: 'The difference is usually not that an electronic message needs days to cross a network. Waiting accumulates at processing boundaries: cutoffs, batches, banking days, settlement cycles, intermediaries and posting. A fast-payment design removes or compresses many of those waits, but settlement and account credit still remain distinct events to prove.',
+      },
+      {
+        type: 'explanation',
+        heading: 'Why could a payment take three or more days?',
+        body: 'A legacy or cross-border flow can pass through several institutions, currencies and scheduled processes. Missing a cutoff may defer submission; a weekend or holiday can delay the next banking day; clearing and settlement may occur in later windows; an intermediary or receiving institution may add validation, exception handling or posting time. Those waits can accumulate. However, do not memorize "traditional payment = 3-5 days": many modern batch payments settle the same day or within one banking day.',
+        badge: 'reference',
+      },
+      {
+        type: 'prediction',
+        context: 'CUSTOMER_A authorizes a transfer on Friday after cutoff. The next Monday is a banking holiday.',
+        question: 'What best explains why a scheduled flow may not advance until Tuesday?',
+        options: [
+          { id: 'a', label: 'Electronic messages physically need four days to travel', correct: false },
+          { id: 'b', label: 'The next eligible banking-day processing window is Tuesday', correct: true },
+          { id: 'c', label: 'ISO 20022 prohibits weekend payments', correct: false },
+          { id: 'd', label: 'Every traditional rail has a mandatory four-day delay', correct: false },
+        ],
+        explanation: 'The delay comes from the operating schedule in this example, not from the physical speed of the message or from ISO 20022. Other systems may offer same-day, next-day or continuous processing.',
+      },
+      {
+        type: 'explanation',
+        heading: 'Dominican public case: SGPI',
+        body: 'The public SIPARD regulation describes SGPI as a BCRD-administered electronic platform that enables transfers and payments in real time, 24 hours a day and every day of the year. That supports classifying its public service behavior as fast payment. It does not, by itself, establish an institution\'s internal architecture, its exact ISO 20022 message mapping, or which technical event a participant uses as settlement or credit evidence.',
+        badge: 'public-scheme',
+      },
+      {
+        type: 'quick-check',
+        question: 'A customer interface says "sent" in two seconds. Does that alone prove interparticipant settlement and beneficiary-account credit?',
+        options: [
+          { id: 'a', label: 'Yes, speed proves both events', correct: false },
+          { id: 'b', label: 'No, each event needs evidence defined by the system and institution', correct: true },
+        ],
+        explanation: 'A fast user experience does not collapse message receipt, acceptance, settlement and account credit into one event. Trace the evidence for each boundary.',
+      },
+    ],
+    keyTerms: ['payment system', 'payment rail', 'payment scheme', 'payment network', 'operator', 'participant', 'PSP', 'cutoff', 'batch', 'banking day'],
+    commonConfusion: [
+      {
+        title: 'Traditional does not always mean three to five days',
+        explanation: 'Modern batch systems can provide same-day or next-day settlement. Timing depends on the specific service, submission time, operating calendar, settlement design, intermediaries and exception state.',
+      },
+      {
+        title: 'Fast transmission does not identify the settlement model',
+        explanation: 'A system can exchange messages quickly while using a design-specific settlement mechanism. Verify finality, funds availability and evidence in the applicable system or scheme rules.',
+      },
+    ],
+    relatedLessons: ['payment-actors', 'clearing-vs-settlement', 'fast-payments', 'sgpi-public-happy-path'],
+    relatedConcepts: ['payment-rail', 'payment-scheme', 'clearing', 'settlement', 'finality'],
+    sources: [
+      {
+        sourceName: 'BIS CPMI — Fast payments: Enhancing the speed and availability of retail payments',
+        sourceType: 'official-documentation',
+        sourceReference: 'https://www.bis.org/cpmi/publ/d154.htm',
+        lastReviewed: '2026-08-09',
+        notes: 'Definition, operating availability and end-to-end characteristics of fast payments.',
+      },
+      {
+        sourceName: 'ECB — What is TIPS?',
+        sourceType: 'central-bank',
+        sourceReference: 'https://www.ecb.europa.eu/paym/target/tips/html/index.en.html',
+        lastReviewed: '2026-08-09',
+        notes: 'Public example of 24/7 settlement in central bank money and the distinction between platform and scheme.',
+      },
+      {
+        sourceName: 'Nacha — Significant Majority of ACH Payments Settle in One Business Day or Less',
+        sourceType: 'payment-scheme',
+        sourceReference: 'https://www.nacha.org/news/significant-majority-ach-payments-settle-one-business-day-or-less',
+        lastReviewed: '2026-08-09',
+        notes: 'Used to avoid the outdated assumption that every batch payment takes three to five days.',
+      },
+      {
+        sourceName: 'BCRD — Reglamento del Sistema de Pagos y Liquidación de Valores de la República Dominicana',
+        sourceType: 'central-bank',
+        sourceReference: 'https://cdn.bancentral.gov.do/documents/normativa/documents/normas_vigentes/Reglamento-SIPARD-22-05-2025.pdf?v=1758035624653',
+        lastReviewed: '2026-08-09',
+        notes: 'Public regulatory description of SGPI as a real-time, continuously available BCRD-administered platform.',
+      },
+    ],
+    estimatedMinutes: 16,
+  },
+  {
+    id: 'fast-payments',
+    pathId: 'fast-payments',
+    order: 6,
     title: 'Fast Payments',
     subtitle: 'Near real-time processing, end to end',
     whyItMatters:
@@ -544,7 +796,7 @@ export const fastPaymentsLessons: Lesson[] = [
     commonConfusion: [
       { title: 'Fast does not mean simple', explanation: 'Compressing the lifecycle into seconds increases the operational and technical complexity behind the scenes, even though the customer experience looks simple.' },
     ],
-    relatedLessons: ['payment-lifecycle', 'clearing-vs-settlement', 'iso20022-fundamentals'],
+    relatedLessons: ['payment-systems', 'payment-lifecycle', 'clearing-vs-settlement', 'iso20022-fundamentals'],
     relatedMessages: ['pacs.008', 'pacs.002'],
     sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 9,
@@ -552,7 +804,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'iso20022-fundamentals',
     pathId: 'fast-payments',
-    order: 6,
+    order: 7,
     title: 'ISO 20022 Fundamentals',
     subtitle: 'ISO 20022 is not XML',
     whyItMatters:
@@ -593,7 +845,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'message-families',
     pathId: 'fast-payments',
-    order: 7,
+    order: 8,
     title: 'Message Families',
     subtitle: 'pain, pacs, camt and friends',
     whyItMatters:
@@ -636,7 +888,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'pain-001',
     pathId: 'fast-payments',
-    order: 8,
+    order: 9,
     title: 'pain.001 Customer Initiation',
     subtitle: 'The customer-facing instruction before the interbank payment',
     whyItMatters:
@@ -718,7 +970,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'pacs-008-deep-dive',
     pathId: 'fast-payments',
-    order: 9,
+    order: 10,
     title: 'pacs.008 Deep Dive',
     subtitle: 'FIToFICustomerCreditTransfer, up close',
     whyItMatters:
@@ -791,7 +1043,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'identifiers',
     pathId: 'fast-payments',
-    order: 10,
+    order: 11,
     title: 'Identifiers',
     subtitle: 'MsgId, InstrId, EndToEndId, TxId — and why they are not interchangeable',
     whyItMatters:
@@ -843,7 +1095,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'pacs-002',
     pathId: 'fast-payments',
-    order: 11,
+    order: 12,
     title: 'pacs.002 Payment Status Report',
     subtitle: 'What happened to the original interbank instruction?',
     whyItMatters:
@@ -931,7 +1183,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'payment-status',
     pathId: 'fast-payments',
-    order: 12,
+    order: 13,
     title: 'Payment Status',
     subtitle: 'Received is not accepted; accepted is not settled; settled is not credited',
     whyItMatters:
@@ -998,7 +1250,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'reject-vs-return',
     pathId: 'fast-payments',
-    order: 13,
+    order: 14,
     title: 'Reject vs. Return',
     subtitle: 'One of the most important distinctions in payments',
     whyItMatters:
@@ -1039,7 +1291,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'pacs-004',
     pathId: 'fast-payments',
-    order: 14,
+    order: 15,
     title: 'pacs.004 Payment Return',
     subtitle: 'Returning a payment that already progressed',
     whyItMatters:
@@ -1116,7 +1368,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'cancellation-recall-reversal',
     pathId: 'fast-payments',
-    order: 15,
+    order: 16,
     title: 'Cancellation, Recall & Reversal',
     subtitle: 'Not the same as a return — and not the same as each other',
     whyItMatters:
@@ -1187,7 +1439,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'camt-003-deep-dive',
     pathId: 'fast-payments',
-    order: 23,
+    order: 24,
     title: 'camt.003 GetAccount',
     subtitle: 'Ask about an account without moving value',
     whyItMatters:
@@ -1357,7 +1609,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'camt-cash-management',
     pathId: 'fast-payments',
-    order: 24,
+    order: 25,
     title: 'camt & Cash Management',
     subtitle: 'More than "bank statements"',
     whyItMatters:
@@ -1396,7 +1648,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'reconciliation-investigations',
     pathId: 'fast-payments',
-    order: 25,
+    order: 26,
     title: 'Reconciliation & Investigations',
     subtitle: 'Matching records and chasing down exceptions',
     whyItMatters:
@@ -1436,7 +1688,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'payment-architecture',
     pathId: 'fast-payments',
-    order: 26,
+    order: 27,
     title: 'Payment Architecture',
     subtitle: 'A generic educational view of how the pieces fit together',
     whyItMatters:

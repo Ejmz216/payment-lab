@@ -60,6 +60,35 @@ export interface ComparisonBlock {
   badge?: ContentBadge
 }
 
+export type TimingLaneTone = 'scheduled' | 'fast'
+
+export interface TimingStage {
+  id: string
+  label: string
+  timing: string
+  description: string
+  wait?: boolean
+}
+
+export interface TimingLane {
+  id: string
+  label: string
+  summary: string
+  availability: string
+  elapsed: string
+  tone: TimingLaneTone
+  stages: TimingStage[]
+}
+
+export interface TimingComparisonBlock {
+  type: 'timing-comparison'
+  heading: string
+  intro?: string
+  lanes: [TimingLane, TimingLane]
+  conclusion: string
+  badge?: ContentBadge
+}
+
 export interface MessageSequenceStep {
   id: string
   from: string
@@ -277,6 +306,7 @@ export type LessonBlock =
   | ExplanationBlock
   | PaymentFlowBlock
   | ComparisonBlock
+  | TimingComparisonBlock
   | MessageSequenceBlock
   | PredictionBlock
   | QuickCheckBlock

@@ -109,7 +109,7 @@ export const sgpiLessons: Lesson[] = [
   {
     id: 'sgpi-public-happy-path',
     pathId: 'fast-payments',
-    order: 16,
+    order: 17,
     title: 'SGPI Public Happy Path',
     subtitle: 'One operation, four synchronized layers, nine public steps',
     whyItMatters: 'A message-only view hides the most important distinction in payments: communication, money and payment state can advance at different moments.',
@@ -157,7 +157,7 @@ export const sgpiLessons: Lesson[] = [
   {
     id: 'sgpi-funds-state',
     pathId: 'fast-payments',
-    order: 17,
+    order: 18,
     title: 'SGPI Funds State',
     subtitle: 'Blocked is not debited; settled is not credited',
     whyItMatters: 'Operational mistakes often come from collapsing four different money states into the word “paid.”',
@@ -245,7 +245,7 @@ export const sgpiLessons: Lesson[] = [
   {
     id: 'sgpi-approval-rejection',
     pathId: 'fast-payments',
-    order: 18,
+    order: 19,
     title: 'SGPI Approval & Rejection',
     subtitle: 'Accepted by whom, and at which layer?',
     whyItMatters: '“Accepted” is incomplete unless you name the actor and the event that actor accepted.',
@@ -293,7 +293,7 @@ export const sgpiLessons: Lesson[] = [
   {
     id: 'sgpi-settlement-status-credit',
     pathId: 'fast-payments',
-    order: 19,
+    order: 20,
     title: 'SGPI Settlement, Status & Credit',
     subtitle: 'Three events that must not collapse into one green check',
     whyItMatters: 'Customer communication and operational investigation depend on knowing which event has actually completed.',
@@ -340,7 +340,7 @@ export const sgpiLessons: Lesson[] = [
   {
     id: 'sgpi-iso-mapping',
     pathId: 'fast-payments',
-    order: 20,
+    order: 21,
     title: 'SGPI ISO Mapping: Known vs To Verify',
     subtitle: 'Use ISO semantics without inventing scheme adoption',
     whyItMatters: 'Knowing pacs.008, pacs.004 and camt.003 is valuable, but it does not prove where or whether SGPI uses them.',
@@ -384,7 +384,7 @@ export const sgpiLessons: Lesson[] = [
   {
     id: 'sgpi-exception-scenarios',
     pathId: 'fast-payments',
-    order: 21,
+    order: 22,
     title: 'SGPI Exception Scenarios',
     subtitle: 'Diagnose the stage before choosing the message',
     whyItMatters: 'Exception work becomes much easier when you first locate the last proven event, then identify the missing evidence.',
@@ -418,7 +418,7 @@ export const sgpiLessons: Lesson[] = [
   {
     id: 'sgpi-questions-to-verify',
     pathId: 'fast-payments',
-    order: 22,
+    order: 23,
     title: 'SGPI Questions to Verify',
     subtitle: 'Turn uncertainty into a disciplined investigation checklist',
     whyItMatters: 'A strong analyst does not hide unknowns. They convert each unknown into a precise question and identify the authorized source or evidence needed.',
