@@ -203,6 +203,21 @@ scenariosEs['sgpi-006-accepted-by-whom'] = {
   technicalPerspective: 'Captura actor, fuente del estado, identificador correlacionado y timestamp como campos de evidencia separados.',
 }
 
+scenariosEs['actor-role-investigation'] = {
+  title: '¿Qué actor atiende al pagador?',
+  prompt: 'Un rastreo sintético nombra a CUSTOMER_A como Debtor, BANK_A como Debtor Agent, BANK_B como Creditor Agent y CUSTOMER_B como Creditor. Operaciones necesita la institución que atiende la cuenta del pagador. ¿Qué actor debe investigar?',
+  choices: {
+    a: 'CUSTOMER_A — el Debtor',
+    b: 'BANK_A — el Debtor Agent',
+    c: 'BANK_B — el Creditor Agent',
+    d: 'CUSTOMER_B — el Creditor',
+  },
+  reasoning: 'El Debtor es la parte que debe o envía los fondos. El Debtor Agent es la institución financiera que atiende a esa parte y su cuenta en este ejemplo sintético.',
+  lifecycleImpact: 'Identifica el límite entre actores antes de investigar evidencia del lado de la cuenta.',
+  businessPerspective: 'Contactar el rol correcto evita confundir al cliente con la institución que actúa para ese cliente.',
+  technicalPerspective: 'Inspecciona el rol Debtor Agent y correlaciónalo con el participante que atiende la cuenta según el contexto autorizado del esquema.',
+}
+
 export interface QuizTranslation {
   prompt: string
   choices: Record<string, string>

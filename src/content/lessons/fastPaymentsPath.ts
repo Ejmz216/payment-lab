@@ -264,6 +264,104 @@ export const fastPaymentsLessons: Lesson[] = [
           'Clearing systems and settlement systems are not agents that own money — they are infrastructures that allow agents to exchange instructions and discharge obligations. A central bank may operate settlement infrastructure and/or hold settlement accounts for participants.',
       },
     ],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'Read the business role before the institution name',
+        body: 'ISO 20022 describes what an actor is doing in a business process. A customer can be the Debtor in one transaction and the Creditor in another. A bank can be a Debtor Agent on the customer side and an Instructing Agent on a specific interinstitution hop. Start with the role and the relationship it describes; do not infer the role from a brand or organization name.',
+        badge: 'reference',
+      },
+      {
+        type: 'payment-flow',
+        heading: 'One payment, three actor categories',
+        badge: 'simplified-model',
+        actors: [
+          { id: 'customer-a', label: 'CUSTOMER_A', role: 'Debtor', kind: 'party' },
+          { id: 'bank-a', label: 'BANK_A', role: 'Debtor Agent', kind: 'agent' },
+          { id: 'payment-system', label: 'PAYMENT_SYSTEM', role: 'Clearing / settlement infrastructure', kind: 'infrastructure' },
+          { id: 'bank-b', label: 'BANK_B', role: 'Creditor Agent', kind: 'agent' },
+          { id: 'customer-b', label: 'CUSTOMER_B', role: 'Creditor', kind: 'party' },
+        ],
+        steps: [
+          { from: 'customer-a', to: 'bank-a', label: 'customer request', status: 'active' },
+          { from: 'bank-a', to: 'payment-system', label: 'payment instruction', status: 'active' },
+          { from: 'payment-system', to: 'bank-b', label: 'scheme exchange', status: 'active' },
+          { from: 'bank-b', to: 'customer-b', label: 'account credit', status: 'success' },
+        ],
+      },
+      {
+        type: 'comparison',
+        heading: 'Party, agent, or infrastructure?',
+        intro: 'Use the question each category answers. The labels are about business responsibility, not about which box appears first in a technical architecture.',
+        badge: 'reference',
+        items: [
+          {
+            id: 'party',
+            label: 'Party',
+            keyQuestion: 'Whose obligation or economic benefit does the payment represent?',
+            summary: 'A party owes, sends, receives or ultimately benefits from the value in the underlying business transaction.',
+            examples: ['Debtor', 'Creditor', 'Ultimate Debtor', 'Ultimate Creditor'],
+            notThis: 'The financial institution that services the party or the infrastructure connecting institutions.',
+            tone: 'party',
+          },
+          {
+            id: 'agent',
+            label: 'Agent',
+            keyQuestion: 'Which financial institution acts for a party or another institution?',
+            summary: 'An agent services an account, sends or receives an instruction, and participates in the interinstitution chain.',
+            examples: ['Debtor Agent', 'Creditor Agent', 'Instructing Agent', 'Instructed Agent'],
+            notThis: 'The customer that owns the obligation or the payment system that connects participants.',
+            tone: 'agent',
+          },
+          {
+            id: 'infrastructure',
+            label: 'Infrastructure',
+            keyQuestion: 'What connects agents and supports clearing or settlement?',
+            summary: 'Infrastructure transports instructions, applies scheme processes or supports discharge of obligations between participants.',
+            examples: ['PAYMENT_SYSTEM', 'clearing system', 'settlement system'],
+            notThis: 'A customer role or an account-servicing agent. Infrastructure does not become the Debtor or Creditor merely by routing a payment.',
+            tone: 'infrastructure',
+          },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'CUSTOMER_A holds an account at BANK_A and asks it to send funds.',
+        question: 'Which role best describes BANK_A relative to CUSTOMER_A?',
+        options: [
+          { id: 'a', label: 'Debtor', correct: false },
+          { id: 'b', label: 'Debtor Agent', correct: true },
+          { id: 'c', label: 'Creditor', correct: false },
+          { id: 'd', label: 'Payment infrastructure', correct: false },
+        ],
+        explanation: 'CUSTOMER_A is the Debtor because it owes or sends the funds. BANK_A services that party and account, so BANK_A is the Debtor Agent in this payment.',
+      },
+      {
+        type: 'explanation',
+        heading: 'Ultimate parties add a second business layer',
+        body: 'Ultimate Debtor and Ultimate Creditor identify who ultimately owes or benefits when that party differs from the Debtor or Creditor named on the transaction. For example, CUSTOMER_A may submit a payment on behalf of another legal entity. These roles are optional in many contexts and should appear only when the business scenario and applicable usage rules require them.',
+        badge: 'reference',
+      },
+      {
+        type: 'message-sequence',
+        heading: 'Instructing and Instructed Agent change by hop',
+        badge: 'simplified-model',
+        steps: [
+          { id: 'hop-1', from: 'BANK_A', to: 'PAYMENT_SYSTEM', label: 'Instruction hop 1', description: 'BANK_A is the Instructing Agent; PAYMENT_SYSTEM is the Instructed Agent for this relationship.', tone: 'neutral' },
+          { id: 'hop-2', from: 'PAYMENT_SYSTEM', to: 'BANK_B', label: 'Instruction hop 2', description: 'PAYMENT_SYSTEM now instructs BANK_B, so its relative role changes on the next hop.', tone: 'neutral' },
+        ],
+      },
+      {
+        type: 'quick-check',
+        question: 'Can one institution be Instructed Agent on one hop and Instructing Agent on the next?',
+        options: [
+          { id: 'a', label: 'Yes — these roles are relative to each adjacent exchange', correct: true },
+          { id: 'b', label: 'No — an institution has one permanent agent role', correct: false },
+        ],
+        explanation: 'Instructing and Instructed Agent describe the direction of a specific exchange between adjacent actors. They are not permanent global identities.',
+      },
+      { type: 'scenario', scenarioId: 'actor-role-investigation' },
+    ],
     keyTerms: ['Debtor', 'Creditor', 'Debtor Agent', 'Creditor Agent', 'Ultimate Debtor', 'Ultimate Creditor', 'Instructing Agent', 'Instructed Agent', 'Intermediary Agent'],
     commonConfusion: [
       {
@@ -276,7 +374,7 @@ export const fastPaymentsLessons: Lesson[] = [
     sources: [
       { sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' },
     ],
-    estimatedMinutes: 7,
+    estimatedMinutes: 12,
   },
   {
     id: 'payment-lifecycle',

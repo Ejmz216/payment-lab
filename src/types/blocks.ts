@@ -3,9 +3,13 @@
 // every visualization/interaction is driven entirely by this data.
 import type { ContentBadge } from './content'
 
+export type ActorKind = 'party' | 'agent' | 'infrastructure'
+
 export interface FlowActor {
   id: string
   label: string
+  role?: string
+  kind?: ActorKind
 }
 
 export type FlowStatus = 'inactive' | 'active' | 'success' | 'failure' | 'warning'
@@ -30,6 +34,26 @@ export interface PaymentFlowBlock {
   heading?: string
   actors: FlowActor[]
   steps: FlowStep[]
+  badge?: ContentBadge
+}
+
+export type ComparisonTone = ActorKind | 'iso' | 'scheme' | 'implementation' | 'neutral'
+
+export interface ComparisonItem {
+  id: string
+  label: string
+  keyQuestion: string
+  summary: string
+  examples: string[]
+  notThis: string
+  tone: ComparisonTone
+}
+
+export interface ComparisonBlock {
+  type: 'comparison'
+  heading: string
+  intro?: string
+  items: ComparisonItem[]
   badge?: ContentBadge
 }
 
@@ -84,7 +108,7 @@ export interface LifecycleBlock {
   badge?: ContentBadge
 }
 
-export type MoneyZoneKind = 'party' | 'agent' | 'infrastructure'
+export type MoneyZoneKind = ActorKind
 export type MoneyStateTone = 'available' | 'reserved' | 'settled' | 'credited' | 'uncertain'
 
 export interface MoneyStateZone {
@@ -249,6 +273,7 @@ export interface InvestigationChecklistBlock {
 export type LessonBlock =
   | ExplanationBlock
   | PaymentFlowBlock
+  | ComparisonBlock
   | MessageSequenceBlock
   | PredictionBlock
   | QuickCheckBlock

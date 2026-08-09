@@ -313,6 +313,29 @@ scenarios.push({
   tags: ['sgpi', 'acceptance', 'status'],
 })
 
+scenarios.push({
+  id: 'actor-role-investigation',
+  title: 'Which actor services the payer?',
+  prompt:
+    'A synthetic payment trace names CUSTOMER_A as Debtor, BANK_A as Debtor Agent, BANK_B as Creditor Agent and CUSTOMER_B as Creditor. Operations needs the institution that services the payer account. Which actor should it investigate?',
+  choices: [
+    { id: 'a', label: 'CUSTOMER_A — the Debtor', correct: false },
+    { id: 'b', label: 'BANK_A — the Debtor Agent', correct: true },
+    { id: 'c', label: 'BANK_B — the Creditor Agent', correct: false },
+    { id: 'd', label: 'CUSTOMER_B — the Creditor', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'The Debtor is the party that owes or sends the funds. The Debtor Agent is the financial institution that services that party and its account in this synthetic example.',
+    lifecycleImpact: 'Identify the actor boundary before investigating account-side evidence.',
+    relatedMessages: ['pacs.008'],
+    businessPerspective: 'Contacting the correct role avoids confusing the customer with the institution that acts for the customer.',
+    technicalPerspective: 'Inspect the Debtor Agent role and correlate it with the account-servicing participant in the authorized scheme context.',
+    dependsOnScheme: true,
+  },
+  tags: ['payment-actors', 'pacs-008'],
+})
+
 export const quizQuestions: QuizQuestion[] = [
   {
     id: 'q-clearing-settlement-1',

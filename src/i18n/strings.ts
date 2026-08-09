@@ -405,6 +405,9 @@ export const strings = {
   'moneyState.zone.party': { en: 'Party', es: 'Parte' },
   'moneyState.zone.agent': { en: 'Institution', es: 'Institución' },
   'moneyState.zone.infrastructure': { en: 'Infrastructure', es: 'Infraestructura' },
+  'comparison.keyQuestion': { en: 'Key question', es: 'Pregunta clave' },
+  'comparison.examples': { en: 'Typical roles', es: 'Roles típicos' },
+  'comparison.notThis': { en: 'Do not confuse with', es: 'No lo confundas con' },
 
   // Architecture diagram
   'arch.label': { en: 'Generic educational architecture', es: 'Arquitectura educativa genérica' },
