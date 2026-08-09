@@ -13,9 +13,13 @@ export const fastPaymentsPath: LearningPath = {
     'fast-payments',
     'iso20022-fundamentals',
     'message-families',
+    'pain-001',
     'pacs-008-deep-dive',
     'identifiers',
+    'pacs-002',
+    'payment-status',
     'reject-vs-return',
+    'pacs-004',
     'cancellation-recall-reversal',
     'camt-cash-management',
     'reconciliation-investigations',
@@ -45,7 +49,7 @@ export const fastPaymentsPath: LearningPath = {
       shortTitle: 'ISO 20022',
       description: 'Connect message families, pacs.008 and identifiers to the payment process.',
       tone: 'reference',
-      lessonIds: ['iso20022-fundamentals', 'message-families', 'pacs-008-deep-dive', 'identifiers'],
+      lessonIds: ['iso20022-fundamentals', 'message-families', 'pain-001', 'pacs-008-deep-dive', 'identifiers', 'pacs-002', 'payment-status'],
       plannedItemCount: 7,
     },
     {
@@ -55,7 +59,7 @@ export const fastPaymentsPath: LearningPath = {
       shortTitle: 'Exceptions',
       description: 'Reason about rejection, return, cancellation, recall and reversal.',
       tone: 'warning',
-      lessonIds: ['reject-vs-return', 'cancellation-recall-reversal'],
+      lessonIds: ['reject-vs-return', 'pacs-004', 'cancellation-recall-reversal'],
       plannedItemCount: 3,
     },
     {
@@ -480,9 +484,91 @@ export const fastPaymentsLessons: Lesson[] = [
     estimatedMinutes: 6,
   },
   {
-    id: 'pacs-008-deep-dive',
+    id: 'pain-001',
     pathId: 'fast-payments',
     order: 8,
+    title: 'pain.001 Customer Initiation',
+    subtitle: 'The customer-facing instruction before the interbank payment',
+    whyItMatters:
+      'pain.001 helps you separate the customer request from the interbank payment. That boundary matters when you investigate whether a problem happened in the channel, at the originating institution, or after an interbank instruction was created.',
+    objectives: [
+      'Explain the purpose of pain.001 in customer-to-institution initiation.',
+      'Distinguish pain.001 from the pacs.008 interbank instruction.',
+      'Recognize that receiving pain.001 does not prove an interbank payment was sent or settled.',
+      'Inspect the Group Header, Payment Information and transaction structure.',
+    ],
+    mentalModel: 'pain.001 asks a financial institution to initiate a payment. pacs.008 carries a customer credit transfer between financial institutions.',
+    sections: [],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'Customer request, not interbank settlement',
+        body:
+          'pain.001 (CustomerCreditTransferInitiation) carries a customer instruction to a financial institution. The institution still has to validate that request and decide how to process it. A later interbank leg may use pacs.008, but the exact transformation and routing belong to the scheme and institution implementation.',
+        badge: 'reference',
+      },
+      {
+        type: 'message-sequence',
+        heading: 'From customer initiation to an interbank instruction',
+        badge: 'simplified-model',
+        steps: [
+          {
+            id: 'customer-initiation',
+            from: 'CUSTOMER_A',
+            to: 'BANK_A',
+            label: 'pain.001',
+            messageId: 'pain.001',
+            description: 'Requests one or more customer credit transfers.',
+            tone: 'pain',
+          },
+          {
+            id: 'interbank-instruction',
+            from: 'BANK_A',
+            to: 'PAYMENT_SYSTEM',
+            label: 'pacs.008 concept',
+            messageId: 'pacs.008',
+            description: 'A possible interbank instruction after validation; exact scheme usage is separate.',
+            tone: 'pacs',
+          },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'CUSTOMER_A -> BANK_A [pain.001 received]',
+        question: 'Can you conclude that the interbank payment has already been sent and settled?',
+        options: [
+          { id: 'a', label: 'Yes - pain.001 means the payment is complete', correct: false },
+          { id: 'b', label: 'No - it only proves that an initiation instruction was received', correct: true },
+        ],
+        explanation:
+          'Receiving a customer instruction is only the initiation stage. Validation, interbank messaging, acceptance, settlement and beneficiary credit are later events.',
+      },
+      {
+        type: 'message-inspector',
+        messageId: 'pain.001',
+        intro: 'Open Payment Information and identify which data belongs to the debtor side versus each individual transaction.',
+      },
+      { type: 'scenario', scenarioId: 'pain001-customer-request' },
+      {
+        type: 'callout',
+        title: 'Implementation boundary',
+        body: 'How a bank receives pain.001, validates it, maps it to an internal model and creates an interbank instruction is implementation-specific. Treat this lesson as message semantics, not an internal architecture description.',
+        tone: 'warning',
+      },
+    ],
+    keyTerms: ['pain.001', 'CustomerCreditTransferInitiation', 'PmtInf', 'customer initiation'],
+    commonConfusion: [
+      { title: 'pain.001 is not pacs.008', explanation: 'pain.001 is customer-facing initiation. pacs.008 is a financial-institution-to-financial-institution customer credit transfer.' },
+    ],
+    relatedLessons: ['message-families', 'pacs-008-deep-dive'],
+    relatedMessages: ['pain.001', 'pacs.008'],
+    sources: [{ sourceName: 'ISO 20022 official catalogue', sourceType: 'ISO', lastReviewed: '2026-08-08' }],
+    estimatedMinutes: 11,
+  },
+  {
+    id: 'pacs-008-deep-dive',
+    pathId: 'fast-payments',
+    order: 9,
     title: 'pacs.008 Deep Dive',
     subtitle: 'FIToFICustomerCreditTransfer, up close',
     whyItMatters:
@@ -555,7 +641,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'identifiers',
     pathId: 'fast-payments',
-    order: 9,
+    order: 10,
     title: 'Identifiers',
     subtitle: 'MsgId, InstrId, EndToEndId, TxId — and why they are not interchangeable',
     whyItMatters:
@@ -605,9 +691,164 @@ export const fastPaymentsLessons: Lesson[] = [
     estimatedMinutes: 8,
   },
   {
+    id: 'pacs-002',
+    pathId: 'fast-payments',
+    order: 11,
+    title: 'pacs.002 Payment Status Report',
+    subtitle: 'What happened to the original interbank instruction?',
+    whyItMatters:
+      'Operations teams rarely investigate a payment from the original instruction alone. pacs.002 provides status and correlation information that helps determine whether an instruction was accepted, rejected or remains unresolved.',
+    objectives: [
+      'Explain the purpose of pacs.002 as a status report.',
+      'Correlate the report to an original pacs.008 using original identifiers.',
+      'Distinguish the status report MsgId from identifiers of the original payment.',
+      'Explain why a reported status does not automatically prove settlement or beneficiary credit.',
+    ],
+    mentalModel: 'pacs.008 asks for the transfer. pacs.002 reports a status about that earlier instruction.',
+    sections: [],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'A report about another message',
+        body:
+          'pacs.002 (FIToFIPaymentStatusReport) reports the status of a previously received payment instruction. Its own MsgId identifies the report envelope; original message and transaction identifiers identify what the report is about.',
+        badge: 'reference',
+      },
+      {
+        type: 'message-sequence',
+        heading: 'Instruction and status response',
+        steps: [
+          {
+            id: 'original-instruction',
+            from: 'BANK_A',
+            to: 'PAYMENT_SYSTEM',
+            label: 'pacs.008',
+            messageId: 'pacs.008',
+            description: 'Original interbank customer credit transfer instruction.',
+            tone: 'pacs',
+          },
+          {
+            id: 'status-report',
+            from: 'PAYMENT_SYSTEM',
+            to: 'BANK_A',
+            label: 'pacs.002',
+            messageId: 'pacs.002',
+            description: 'Reports a status and references the original instruction or transaction.',
+            tone: 'pacs',
+          },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'pacs.002 reports an accepted status',
+        question: 'Can you conclude from that status alone that the beneficiary account was credited?',
+        options: [
+          { id: 'a', label: 'Yes - accepted always means credited', correct: false },
+          { id: 'b', label: 'No - acceptance, settlement and credit are separate events', correct: true },
+        ],
+        explanation:
+          'A status must be interpreted in its reporting context and scheme rules. Acceptance is evidence of a decision, not automatic evidence of settlement or beneficiary posting.',
+      },
+      {
+        type: 'identifier-trace',
+        messages: [
+          { messageId: 'pacs.008', linkFieldId: 'EndToEndId', linkFieldLabel: 'EndToEndId' },
+          { messageId: 'pacs.002', linkFieldId: 'OrgnlEndToEndId', linkFieldLabel: 'OrgnlEndToEndId' },
+        ],
+      },
+      {
+        type: 'message-inspector',
+        messageId: 'pacs.002',
+        intro: 'Compare the report MsgId with OrgnlEndToEndId, TxSts and Status Reason Information.',
+      },
+      { type: 'scenario', scenarioId: 'pacs002-status-correlation' },
+      {
+        type: 'callout',
+        title: 'Status meaning is contextual',
+        body: 'ISO defines the message and status-reporting semantics. A scheme defines which statuses it uses, when it sends them and what operational finality each status represents.',
+        tone: 'warning',
+      },
+    ],
+    keyTerms: ['pacs.002', 'FIToFIPaymentStatusReport', 'TxSts', 'StsRsnInf', 'OrgnlEndToEndId'],
+    commonConfusion: [
+      { title: 'Report MsgId vs. original payment identifiers', explanation: 'The pacs.002 MsgId identifies the status report itself. Original identifiers correlate it to the payment being reported.' },
+    ],
+    relatedLessons: ['pacs-008-deep-dive', 'identifiers', 'payment-status'],
+    relatedMessages: ['pacs.008', 'pacs.002'],
+    sources: [{ sourceName: 'ISO 20022 official catalogue', sourceType: 'ISO', lastReviewed: '2026-08-08' }],
+    estimatedMinutes: 12,
+  },
+  {
+    id: 'payment-status',
+    pathId: 'fast-payments',
+    order: 12,
+    title: 'Payment Status',
+    subtitle: 'Received is not accepted; accepted is not settled; settled is not credited',
+    whyItMatters:
+      'Most payment investigations become easier once you stop treating status words as interchangeable. Each status answers a different question about processing, money movement and certainty.',
+    objectives: [
+      'Distinguish received, validated, accepted, settled and credited.',
+      'Ask who assigned a status and what event it represents.',
+      'Avoid inferring money movement from message exchange alone.',
+      'Identify what additional evidence is needed when the state is uncertain.',
+    ],
+    mentalModel: 'Always ask: status of what, assigned by whom, at which stage, and supported by what evidence?',
+    sections: [],
+    blocks: [
+      {
+        type: 'lifecycle',
+        badge: 'simplified-model',
+        stages: [
+          { id: 'received', label: 'Received', description: 'A participant or infrastructure received the instruction.', canFail: 'Receipt does not prove business acceptance.' },
+          { id: 'validated', label: 'Validated', description: 'The instruction passed a defined set of checks.', canFail: 'Other business or scheme checks may still reject it.' },
+          { id: 'accepted', label: 'Accepted', description: 'A participant accepted the payment for further processing.', canFail: 'Acceptance does not by itself prove settlement.' },
+          { id: 'settled', label: 'Settled', description: 'The obligation between institutions was discharged.', canFail: 'Beneficiary posting may still be pending or fail.' },
+          { id: 'credited', label: 'Credited', description: 'The receiving institution posted funds to the beneficiary account.', canFail: 'Customer availability and notification can be separate concerns.' },
+        ],
+      },
+      {
+        type: 'quick-check',
+        question: 'A message was received successfully, but there is no settlement evidence. Can you conclude that money moved?',
+        options: [
+          { id: 'a', label: 'Yes - message receipt proves settlement', correct: false },
+          { id: 'b', label: 'No - message exchange and settlement are different events', correct: true },
+        ],
+        explanation: 'A received message is evidence about communication. Settlement requires evidence about the financial obligation and the relevant scheme or settlement system.',
+      },
+      {
+        type: 'message-sequence',
+        heading: 'Status evidence around an instruction',
+        badge: 'simplified-model',
+        steps: [
+          { id: 'instruction', from: 'BANK_A', to: 'PAYMENT_SYSTEM', label: 'pacs.008', messageId: 'pacs.008', description: 'The instruction enters processing.', tone: 'pacs' },
+          { id: 'status', from: 'PAYMENT_SYSTEM', to: 'BANK_A', label: 'pacs.002 concept', messageId: 'pacs.002', description: 'A status report provides evidence about processing, interpreted under scheme rules.', tone: 'pacs' },
+          { id: 'money-evidence', from: 'SETTLEMENT', to: 'OPERATIONS', label: 'Settlement evidence', description: 'Separate evidence is needed before concluding that value moved.', tone: 'neutral' },
+        ],
+      },
+      { type: 'scenario', scenarioId: 'status-not-money' },
+      {
+        type: 'callout',
+        title: 'Accepted by whom?',
+        body: 'A customer channel, originating institution, payment infrastructure and receiving institution can each make different decisions. Never use the word accepted without identifying the actor and stage.',
+        tone: 'warning',
+      },
+    ],
+    keyTerms: ['received', 'validated', 'accepted', 'settled', 'credited', 'uncertain state'],
+    commonConfusion: [
+      { title: 'Status is not money state', explanation: 'A processing status and the state of funds are related, but they are not the same evidence.' },
+    ],
+    relatedLessons: ['pacs-002', 'payment-lifecycle', 'clearing-vs-settlement'],
+    relatedMessages: ['pacs.002', 'pacs.008'],
+    sources: [
+      { sourceName: 'ISO 20022 official catalogue', sourceType: 'ISO', lastReviewed: '2026-08-08' },
+      { sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-08-09', notes: 'Lifecycle distinctions are a generic teaching model, not a universal scheme state machine.' },
+    ],
+    estimatedMinutes: 10,
+  },
+  {
     id: 'reject-vs-return',
     pathId: 'fast-payments',
-    order: 10,
+    order: 13,
     title: 'Reject vs. Return',
     subtitle: 'One of the most important distinctions in payments',
     whyItMatters:
@@ -646,9 +887,86 @@ export const fastPaymentsLessons: Lesson[] = [
     estimatedMinutes: 9,
   },
   {
+    id: 'pacs-004',
+    pathId: 'fast-payments',
+    order: 14,
+    title: 'pacs.004 Payment Return',
+    subtitle: 'Returning a payment that already progressed',
+    whyItMatters:
+      'pacs.004 is central to exception handling because it describes a return, not an early rejection. To investigate it correctly, you must identify the original payment, determine how far it progressed and understand why value is being sent back.',
+    objectives: [
+      'Explain the purpose of pacs.004 as a PaymentReturn.',
+      'Distinguish a return from a rejection before acceptance.',
+      'Trace original identifiers from pacs.004 back to pacs.008.',
+      'Explain why the exact return trigger and window are scheme-dependent.',
+    ],
+    mentalModel: 'pacs.004 points backward: this new return message must be understood in relation to an earlier payment.',
+    sections: [],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'A return after the payment progressed',
+        body:
+          'pacs.004 (PaymentReturn) carries a payment back toward the original debtor side and includes references to the original transaction, the amount being returned and reason information. ISO defines the message; the scheme determines when a return is allowed and which reasons apply.',
+        badge: 'reference',
+      },
+      {
+        type: 'lifecycle',
+        badge: 'simplified-model',
+        stages: [
+          { id: 'original', label: 'Original payment', description: 'A pacs.008-style instruction begins the interbank payment.' },
+          { id: 'progressed', label: 'Progressed', description: 'The payment passed the early rejection boundary and continued.', canFail: 'The exact boundary is defined by the scheme.' },
+          { id: 'settlement', label: 'Settlement', description: 'Value may have settled between participants.', canFail: 'Settlement and beneficiary credit remain distinct.' },
+          { id: 'later-problem', label: 'Later problem', description: 'A problem is discovered after the payment progressed.', canFail: 'The beneficiary may not be creditable, for example.' },
+          { id: 'returned', label: 'Returned', description: 'A return sends value or the payment back toward the original side.' },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'Settlement completed; beneficiary posting later fails',
+        question: 'Should this be investigated as an early reject or as a return?',
+        options: [
+          { id: 'a', label: 'Early reject', correct: false },
+          { id: 'b', label: 'Return, because the payment already progressed', correct: true },
+        ],
+        explanation: 'A reject prevents the payment from progressing. A later problem after acceptance or settlement has the shape of a return; exact scheme handling still needs verification.',
+      },
+      {
+        type: 'message-sequence',
+        heading: 'Original payment and later return',
+        steps: [
+          { id: 'original-payment', from: 'BANK_A', to: 'BANK_B', label: 'pacs.008', messageId: 'pacs.008', description: 'Original customer credit transfer.', tone: 'pacs' },
+          { id: 'later-event', from: 'BANK_B', to: 'OPERATIONS', label: 'Later problem', description: 'A post-acceptance issue requires exception handling.', tone: 'neutral' },
+          { id: 'return-message', from: 'BANK_B', to: 'BANK_A', label: 'pacs.004', messageId: 'pacs.004', description: 'Returns the payment and references the original transaction.', tone: 'pacs' },
+        ],
+      },
+      { type: 'trace-original-payment', originalMessageId: 'pacs.008', returnMessageId: 'pacs.004' },
+      {
+        type: 'message-inspector',
+        messageId: 'pacs.004',
+        intro: 'Inspect OrgnlEndToEndId, returned amount, return reason and original transaction reference.',
+      },
+      { type: 'scenario', scenarioId: 'reject-or-return-1' },
+      {
+        type: 'callout',
+        title: 'Scheme-dependent handling',
+        body: 'Do not infer return windows, mandatory reason codes, settlement finality or operational retry rules from ISO 20022 alone. Those belong to the selected payment scheme and institution implementation.',
+        tone: 'warning',
+      },
+    ],
+    keyTerms: ['pacs.004', 'PaymentReturn', 'OrgnlEndToEndId', 'RtrRsnInf', 'returned amount'],
+    commonConfusion: [
+      { title: 'pacs.004 does not mean accepted', explanation: 'pacs.004 is a return message. Acceptance or rejection status is a different concept commonly investigated through status reporting.' },
+    ],
+    relatedLessons: ['reject-vs-return', 'pacs-008-deep-dive', 'identifiers'],
+    relatedMessages: ['pacs.008', 'pacs.004', 'pacs.002'],
+    sources: [{ sourceName: 'ISO 20022 official catalogue', sourceType: 'ISO', lastReviewed: '2026-08-08' }],
+    estimatedMinutes: 13,
+  },
+  {
     id: 'cancellation-recall-reversal',
     pathId: 'fast-payments',
-    order: 11,
+    order: 15,
     title: 'Cancellation, Recall & Reversal',
     subtitle: 'Not the same as a return — and not the same as each other',
     whyItMatters:
@@ -719,7 +1037,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'camt-cash-management',
     pathId: 'fast-payments',
-    order: 12,
+    order: 16,
     title: 'camt & Cash Management',
     subtitle: 'More than "bank statements"',
     whyItMatters:
@@ -758,7 +1076,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'reconciliation-investigations',
     pathId: 'fast-payments',
-    order: 13,
+    order: 17,
     title: 'Reconciliation & Investigations',
     subtitle: 'Matching records and chasing down exceptions',
     whyItMatters:
@@ -798,7 +1116,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'payment-architecture',
     pathId: 'fast-payments',
-    order: 14,
+    order: 18,
     title: 'Payment Architecture',
     subtitle: 'A generic educational view of how the pieces fit together',
     whyItMatters:

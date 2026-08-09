@@ -33,6 +33,23 @@ export interface PaymentFlowBlock {
   badge?: ContentBadge
 }
 
+export interface MessageSequenceStep {
+  id: string
+  from: string
+  to: string
+  label: string
+  messageId?: string
+  description: string
+  tone?: 'pain' | 'pacs' | 'camt' | 'scheme' | 'neutral'
+}
+
+export interface MessageSequenceBlock {
+  type: 'message-sequence'
+  heading: string
+  steps: MessageSequenceStep[]
+  badge?: ContentBadge
+}
+
 export interface ChoiceOption {
   id: string
   label: string
@@ -91,6 +108,12 @@ export interface IdentifierTraceBlock {
   messages: IdentifierTraceMessage[]
 }
 
+export interface TraceOriginalPaymentBlock {
+  type: 'trace-original-payment'
+  originalMessageId: string
+  returnMessageId: string
+}
+
 export interface DecisionTreeAnswer {
   label: string
   result?: string
@@ -125,12 +148,14 @@ export interface CalloutBlock {
 export type LessonBlock =
   | ExplanationBlock
   | PaymentFlowBlock
+  | MessageSequenceBlock
   | PredictionBlock
   | QuickCheckBlock
   | LifecycleBlock
   | MessageInspectorBlock
   | ScenarioBlockData
   | IdentifierTraceBlock
+  | TraceOriginalPaymentBlock
   | DecisionTreeBlock
   | ArchitectureBlock
   | CalloutBlock

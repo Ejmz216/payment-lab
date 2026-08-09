@@ -90,7 +90,7 @@ export const pacs002: MessageDefinition = {
   ],
   tags: ['status', 'core', 'fast-payments'],
   fastPaymentsRelevance: 'critical',
-  coverage: 'detailed-reference',
+  coverage: 'full-lesson',
   versions: [
     {
       version: '001.16',

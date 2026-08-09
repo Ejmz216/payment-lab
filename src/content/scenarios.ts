@@ -21,7 +21,7 @@ export const scenarios: Scenario[] = [
       technicalPerspective: 'Look for a return-style message referencing the original EndToEndId.',
       dependsOnScheme: true,
     },
-    tags: ['reject-vs-return'],
+    tags: ['reject-vs-return', 'pacs-004'],
   },
   {
     id: 'reject-or-return-2',
@@ -79,6 +79,64 @@ scenarios.push({
     relatedMessages: ['pacs.008', 'pain.001'],
   },
   tags: ['pacs-008-deep-dive'],
+})
+
+scenarios.push({
+  id: 'pain001-customer-request',
+  title: 'Customer request reaches BANK_A',
+  prompt:
+    'CUSTOMER_A sends BANK_A a structured instruction asking it to initiate three credit transfers. Which message concept best fits this customer-to-institution step?',
+  choices: [
+    { id: 'a', label: 'pain.001', correct: true },
+    { id: 'b', label: 'pacs.008', correct: false },
+    { id: 'c', label: 'pacs.002', correct: false },
+    { id: 'd', label: 'pacs.004', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'pain.001 is the CustomerCreditTransferInitiation message. It carries a customer request to a financial institution; it is not the later interbank instruction, status report or return.',
+    relatedMessages: ['pain.001', 'pacs.008'],
+  },
+  tags: ['pain-001'],
+})
+
+scenarios.push({
+  id: 'pacs002-status-correlation',
+  title: 'Which payment does this status describe?',
+  prompt:
+    'BANK_A receives a pacs.002 with MsgId MSG-STATUS-002 and OrgnlEndToEndId E2E-001. Which value should it use first to correlate the report to the original customer transaction?',
+  choices: [
+    { id: 'a', label: 'MSG-STATUS-002', correct: false },
+    { id: 'b', label: 'E2E-001', correct: true },
+    { id: 'c', label: 'The creation timestamp only', correct: false },
+    { id: 'd', label: 'The message family name', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'The report MsgId identifies the pacs.002 envelope. OrgnlEndToEndId carries the EndToEndId of the original transaction and is the relevant correlation value in this synthetic example.',
+    relatedMessages: ['pacs.002', 'pacs.008'],
+  },
+  tags: ['pacs-002'],
+})
+
+scenarios.push({
+  id: 'status-not-money',
+  title: 'Message received, money unknown',
+  prompt:
+    'Operations can prove that BANK_B received a payment message, but has no settlement confirmation and no beneficiary posting evidence. What can it safely conclude?',
+  choices: [
+    { id: 'a', label: 'The beneficiary was credited', correct: false },
+    { id: 'b', label: 'The payment settled', correct: false },
+    { id: 'c', label: 'Only that the message was received; money state remains unproven', correct: true },
+    { id: 'd', label: 'A pacs.004 must already exist', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'Message receipt is communication evidence. Without settlement or posting evidence, operations should keep the money state uncertain and investigate rather than infer completion.',
+    relatedMessages: ['pacs.008', 'pacs.002'],
+    dependsOnScheme: true,
+  },
+  tags: ['payment-status'],
 })
 
 scenarios.push({

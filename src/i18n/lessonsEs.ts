@@ -580,4 +580,196 @@ export const lessonsEs: Record<string, LessonTranslation> = {
       },
     ],
   },
+  'pain-001': {
+    title: 'pain.001 Iniciación del Cliente',
+    subtitle: 'La instrucción del cliente antes del pago interbancario',
+    whyItMatters: 'pain.001 te ayuda a separar la solicitud del cliente del pago interbancario. Ese límite importa para investigar si un problema ocurrió en el canal, en la entidad originadora o después de crear una instrucción interbancaria.',
+    objectives: [
+      'Explicar el propósito de pain.001 en la iniciación cliente-a-institución.',
+      'Distinguir pain.001 de la instrucción interbancaria pacs.008.',
+      'Reconocer que recibir pain.001 no prueba que un pago interbancario fue enviado o liquidado.',
+      'Inspeccionar Group Header, Payment Information y la estructura de transacciones.',
+    ],
+    mentalModel: 'pain.001 solicita a una institución financiera iniciar un pago. pacs.008 lleva una transferencia de crédito de cliente entre instituciones financieras.',
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'Solicitud del cliente, no settlement interbancario',
+        body: 'pain.001 (CustomerCreditTransferInitiation) lleva una instrucción del cliente hacia una institución financiera. La institución todavía debe validar esa solicitud y decidir cómo procesarla. Un tramo interbancario posterior puede usar pacs.008, pero la transformación y el enrutamiento exactos pertenecen al esquema y a la implementación de la institución.',
+        badge: 'reference',
+      },
+      {
+        type: 'message-sequence',
+        heading: 'De la iniciación del cliente a una instrucción interbancaria',
+        badge: 'simplified-model',
+        steps: [
+          { id: 'customer-initiation', from: 'CUSTOMER_A', to: 'BANK_A', label: 'pain.001', messageId: 'pain.001', description: 'Solicita una o más transferencias de crédito de cliente.', tone: 'pain' },
+          { id: 'interbank-instruction', from: 'BANK_A', to: 'PAYMENT_SYSTEM', label: 'concepto pacs.008', messageId: 'pacs.008', description: 'Una posible instrucción interbancaria después de validar; el uso exacto depende del esquema.', tone: 'pacs' },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'CUSTOMER_A -> BANK_A [pain.001 recibido]',
+        question: '¿Puedes concluir que el pago interbancario ya fue enviado y liquidado?',
+        options: [
+          { id: 'a', label: 'Sí; pain.001 significa que el pago está completo', correct: false },
+          { id: 'b', label: 'No; solo prueba que se recibió una instrucción de iniciación', correct: true },
+        ],
+        explanation: 'Recibir una instrucción del cliente es solamente la etapa de iniciación. Validación, mensajería interbancaria, aceptación, settlement y crédito al beneficiario son eventos posteriores.',
+      },
+      { type: 'message-inspector', messageId: 'pain.001', intro: 'Abre Payment Information e identifica qué datos pertenecen al lado deudor y cuáles a cada transacción individual.' },
+      { type: 'scenario', scenarioId: 'pain001-customer-request' },
+      { type: 'callout', title: 'Límite de implementación', body: 'La forma en que un banco recibe pain.001, lo valida, lo mapea a un modelo interno y crea una instrucción interbancaria es específica de la implementación. Trata esta lección como semántica del mensaje, no como descripción de arquitectura interna.', tone: 'warning' },
+    ],
+    commonConfusion: [
+      { title: 'pain.001 no es pacs.008', explanation: 'pain.001 es iniciación de cara al cliente. pacs.008 es una transferencia de crédito de cliente entre instituciones financieras.' },
+    ],
+  },
+  'pacs-002': {
+    title: 'pacs.002 Reporte de Estado del Pago',
+    subtitle: '¿Qué ocurrió con la instrucción interbancaria original?',
+    whyItMatters: 'Los equipos de operaciones rara vez investigan un pago usando solamente la instrucción original. pacs.002 aporta estado y correlación para determinar si una instrucción fue aceptada, rechazada o continúa sin resolverse.',
+    objectives: [
+      'Explicar el propósito de pacs.002 como reporte de estado.',
+      'Correlacionar el reporte con un pacs.008 original mediante identificadores originales.',
+      'Distinguir el MsgId del reporte de los identificadores del pago original.',
+      'Explicar por qué un estado reportado no prueba automáticamente settlement o crédito al beneficiario.',
+    ],
+    mentalModel: 'pacs.008 solicita la transferencia. pacs.002 reporta un estado sobre esa instrucción anterior.',
+    blocks: [
+      { type: 'explanation', heading: 'Un reporte sobre otro mensaje', body: 'pacs.002 (FIToFIPaymentStatusReport) reporta el estado de una instrucción de pago recibida previamente. Su propio MsgId identifica el sobre del reporte; los identificadores originales del mensaje y de la transacción identifican aquello sobre lo que se informa.', badge: 'reference' },
+      {
+        type: 'message-sequence',
+        heading: 'Instrucción y respuesta de estado',
+        steps: [
+          { id: 'original-instruction', from: 'BANK_A', to: 'PAYMENT_SYSTEM', label: 'pacs.008', messageId: 'pacs.008', description: 'Instrucción interbancaria original de transferencia de crédito.', tone: 'pacs' },
+          { id: 'status-report', from: 'PAYMENT_SYSTEM', to: 'BANK_A', label: 'pacs.002', messageId: 'pacs.002', description: 'Reporta un estado y referencia la instrucción o transacción original.', tone: 'pacs' },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'pacs.002 reporta un estado aceptado',
+        question: '¿Puedes concluir solo con ese estado que la cuenta del beneficiario fue acreditada?',
+        options: [
+          { id: 'a', label: 'Sí; aceptado siempre significa acreditado', correct: false },
+          { id: 'b', label: 'No; aceptación, settlement y crédito son eventos separados', correct: true },
+        ],
+        explanation: 'Un estado debe interpretarse dentro de su contexto de reporte y las reglas del esquema. La aceptación evidencia una decisión, no necesariamente settlement o posting al beneficiario.',
+      },
+      {
+        type: 'identifier-trace',
+        messages: [
+          { messageId: 'pacs.008', linkFieldId: 'EndToEndId', linkFieldLabel: 'EndToEndId' },
+          { messageId: 'pacs.002', linkFieldId: 'OrgnlEndToEndId', linkFieldLabel: 'OrgnlEndToEndId' },
+        ],
+      },
+      { type: 'message-inspector', messageId: 'pacs.002', intro: 'Compara el MsgId del reporte con OrgnlEndToEndId, TxSts y Status Reason Information.' },
+      { type: 'scenario', scenarioId: 'pacs002-status-correlation' },
+      { type: 'callout', title: 'El significado del estado depende del contexto', body: 'ISO define el mensaje y la semántica del reporte de estado. El esquema define qué estados usa, cuándo los envía y qué finalidad operativa representa cada estado.', tone: 'warning' },
+    ],
+    commonConfusion: [
+      { title: 'MsgId del reporte vs. identificadores originales', explanation: 'El MsgId de pacs.002 identifica el reporte. Los identificadores originales lo correlacionan con el pago reportado.' },
+    ],
+  },
+  'payment-status': {
+    title: 'Estado del Pago',
+    subtitle: 'Recibido no es aceptado; aceptado no es settled; settled no es acreditado',
+    whyItMatters: 'La mayoría de las investigaciones se vuelven más claras cuando dejas de tratar los estados como sinónimos. Cada estado responde una pregunta diferente sobre procesamiento, movimiento de dinero y certeza.',
+    objectives: [
+      'Distinguir recibido, validado, aceptado, settled y acreditado.',
+      'Preguntar quién asignó un estado y qué evento representa.',
+      'Evitar inferir movimiento de dinero a partir del intercambio de mensajes.',
+      'Identificar qué evidencia adicional hace falta cuando el estado es incierto.',
+    ],
+    mentalModel: 'Pregunta siempre: ¿estado de qué, asignado por quién, en qué etapa y respaldado por qué evidencia?',
+    blocks: [
+      {
+        type: 'lifecycle',
+        badge: 'simplified-model',
+        stages: [
+          { id: 'received', label: 'Recibido', description: 'Un participante o infraestructura recibió la instrucción.', canFail: 'La recepción no prueba aceptación de negocio.' },
+          { id: 'validated', label: 'Validado', description: 'La instrucción pasó un conjunto definido de validaciones.', canFail: 'Otras reglas de negocio o esquema todavía pueden rechazarla.' },
+          { id: 'accepted', label: 'Aceptado', description: 'Un participante aceptó el pago para continuar procesándolo.', canFail: 'La aceptación por sí sola no prueba settlement.' },
+          { id: 'settled', label: 'Settled', description: 'La obligación entre instituciones fue liquidada.', canFail: 'El posting al beneficiario todavía puede estar pendiente o fallar.' },
+          { id: 'credited', label: 'Acreditado', description: 'La entidad receptora registró los fondos en la cuenta del beneficiario.', canFail: 'La disponibilidad para el cliente y la notificación pueden ser asuntos separados.' },
+        ],
+      },
+      {
+        type: 'quick-check',
+        question: 'Un mensaje fue recibido correctamente, pero no existe evidencia de settlement. ¿Puedes concluir que el dinero se movió?',
+        options: [
+          { id: 'a', label: 'Sí; recibir el mensaje prueba settlement', correct: false },
+          { id: 'b', label: 'No; intercambio de mensajes y settlement son eventos distintos', correct: true },
+        ],
+        explanation: 'Un mensaje recibido aporta evidencia de comunicación. Settlement requiere evidencia sobre la obligación financiera y el esquema o sistema de liquidación relevante.',
+      },
+      {
+        type: 'message-sequence',
+        heading: 'Evidencia de estado alrededor de una instrucción',
+        badge: 'simplified-model',
+        steps: [
+          { id: 'instruction', from: 'BANK_A', to: 'PAYMENT_SYSTEM', label: 'pacs.008', messageId: 'pacs.008', description: 'La instrucción entra a procesamiento.', tone: 'pacs' },
+          { id: 'status', from: 'PAYMENT_SYSTEM', to: 'BANK_A', label: 'concepto pacs.002', messageId: 'pacs.002', description: 'Un reporte aporta evidencia de procesamiento interpretada bajo las reglas del esquema.', tone: 'pacs' },
+          { id: 'money-evidence', from: 'SETTLEMENT', to: 'OPERATIONS', label: 'Evidencia de settlement', description: 'Se necesita evidencia separada antes de concluir que el valor se movió.', tone: 'neutral' },
+        ],
+      },
+      { type: 'scenario', scenarioId: 'status-not-money' },
+      { type: 'callout', title: '¿Aceptado por quién?', body: 'Un canal, la entidad originadora, la infraestructura de pagos y la entidad receptora pueden tomar decisiones diferentes. Nunca uses la palabra aceptado sin identificar actor y etapa.', tone: 'warning' },
+    ],
+    commonConfusion: [
+      { title: 'Estado de procesamiento no es estado del dinero', explanation: 'Un estado de procesamiento y el estado de los fondos están relacionados, pero no constituyen la misma evidencia.' },
+    ],
+  },
+  'pacs-004': {
+    title: 'pacs.004 Devolución del Pago',
+    subtitle: 'Devolver un pago que ya progresó',
+    whyItMatters: 'pacs.004 es central en el manejo de excepciones porque describe una devolución, no un rechazo temprano. Para investigarlo debes identificar el pago original, determinar cuánto progresó y entender por qué el valor regresa.',
+    objectives: [
+      'Explicar el propósito de pacs.004 como PaymentReturn.',
+      'Distinguir una devolución de un rechazo antes de la aceptación.',
+      'Rastrear identificadores originales desde pacs.004 hasta pacs.008.',
+      'Explicar por qué el disparador y la ventana exactos dependen del esquema.',
+    ],
+    mentalModel: 'pacs.004 apunta hacia atrás: este nuevo mensaje de devolución debe entenderse en relación con un pago anterior.',
+    blocks: [
+      { type: 'explanation', heading: 'Una devolución después de que el pago progresó', body: 'pacs.004 (PaymentReturn) lleva un pago de vuelta hacia el lado del deudor original e incluye referencias a la transacción original, monto devuelto y motivo. ISO define el mensaje; el esquema determina cuándo se permite una devolución y qué razones aplican.', badge: 'reference' },
+      {
+        type: 'lifecycle',
+        badge: 'simplified-model',
+        stages: [
+          { id: 'original', label: 'Pago original', description: 'Una instrucción tipo pacs.008 inicia el pago interbancario.' },
+          { id: 'progressed', label: 'Progresó', description: 'El pago pasó el límite de rechazo temprano y continuó.', canFail: 'El límite exacto lo define el esquema.' },
+          { id: 'settlement', label: 'Settlement', description: 'El valor puede haberse liquidado entre participantes.', canFail: 'Settlement y crédito al beneficiario siguen siendo distintos.' },
+          { id: 'later-problem', label: 'Problema posterior', description: 'Se descubre un problema después de que el pago progresó.', canFail: 'Por ejemplo, puede no ser posible acreditar al beneficiario.' },
+          { id: 'returned', label: 'Devuelto', description: 'Una devolución envía el valor o el pago hacia el lado original.' },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'Settlement completado; el posting al beneficiario falla después',
+        question: '¿Debe investigarse como rechazo temprano o como devolución?',
+        options: [
+          { id: 'a', label: 'Rechazo temprano', correct: false },
+          { id: 'b', label: 'Devolución, porque el pago ya progresó', correct: true },
+        ],
+        explanation: 'Un rechazo impide que el pago progrese. Un problema posterior a aceptación o settlement tiene la forma de una devolución; el manejo exacto del esquema todavía debe verificarse.',
+      },
+      {
+        type: 'message-sequence',
+        heading: 'Pago original y devolución posterior',
+        steps: [
+          { id: 'original-payment', from: 'BANK_A', to: 'BANK_B', label: 'pacs.008', messageId: 'pacs.008', description: 'Transferencia de crédito original.', tone: 'pacs' },
+          { id: 'later-event', from: 'BANK_B', to: 'OPERATIONS', label: 'Problema posterior', description: 'Un problema posterior a la aceptación requiere manejo de excepción.', tone: 'neutral' },
+          { id: 'return-message', from: 'BANK_B', to: 'BANK_A', label: 'pacs.004', messageId: 'pacs.004', description: 'Devuelve el pago y referencia la transacción original.', tone: 'pacs' },
+        ],
+      },
+      { type: 'trace-original-payment', originalMessageId: 'pacs.008', returnMessageId: 'pacs.004' },
+      { type: 'message-inspector', messageId: 'pacs.004', intro: 'Inspecciona OrgnlEndToEndId, monto devuelto, motivo de devolución y original transaction reference.' },
+      { type: 'scenario', scenarioId: 'reject-or-return-1' },
+      { type: 'callout', title: 'Manejo dependiente del esquema', body: 'No infieras ventanas de devolución, códigos obligatorios, finalidad de settlement ni reglas operativas de reintento usando solamente ISO 20022. Eso pertenece al esquema seleccionado y a la implementación de la institución.', tone: 'warning' },
+    ],
+    commonConfusion: [
+      { title: 'pacs.004 no significa aceptado', explanation: 'pacs.004 es un mensaje de devolución. El estado de aceptación o rechazo es otro concepto, normalmente investigado mediante reportes de estado.' },
+    ],
+  },
 }

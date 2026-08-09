@@ -60,6 +60,32 @@ scenariosEs['pacs008-choose-message'] = {
   reasoning: 'pain.001 (si se usa) es el mensaje de iniciación de cara al cliente. El tramo interbancario — instruir a BANK_B a acreditar al beneficiario — se lleva mediante pacs.008, una FIToFICustomerCreditTransfer. pacs.002 reporta el estado después, y camt.053 es un estado de cuenta, no una instrucción.',
 }
 
+scenariosEs['pain001-customer-request'] = {
+  title: 'La solicitud del cliente llega a BANK_A',
+  prompt: 'CUSTOMER_A envía a BANK_A una instrucción estructurada para iniciar tres transferencias de crédito. ¿Qué concepto de mensaje encaja mejor con este paso cliente-a-institución?',
+  choices: { a: 'pain.001', b: 'pacs.008', c: 'pacs.002', d: 'pacs.004' },
+  reasoning: 'pain.001 es CustomerCreditTransferInitiation. Lleva una solicitud del cliente hacia una institución financiera; no es la instrucción interbancaria posterior, el reporte de estado ni la devolución.',
+}
+
+scenariosEs['pacs002-status-correlation'] = {
+  title: '¿Qué pago describe este estado?',
+  prompt: 'BANK_A recibe un pacs.002 con MsgId MSG-STATUS-002 y OrgnlEndToEndId E2E-001. ¿Qué valor debe usar primero para correlacionar el reporte con la transacción original?',
+  choices: { a: 'MSG-STATUS-002', b: 'E2E-001', c: 'Solo la fecha de creación', d: 'El nombre de la familia del mensaje' },
+  reasoning: 'El MsgId del reporte identifica el sobre pacs.002. OrgnlEndToEndId lleva el EndToEndId de la transacción original y es el valor de correlación relevante en este ejemplo sintético.',
+}
+
+scenariosEs['status-not-money'] = {
+  title: 'Mensaje recibido, dinero desconocido',
+  prompt: 'Operaciones puede probar que BANK_B recibió un mensaje de pago, pero no tiene confirmación de settlement ni evidencia de posting al beneficiario. ¿Qué puede concluir con seguridad?',
+  choices: {
+    a: 'El beneficiario fue acreditado',
+    b: 'El pago fue settled',
+    c: 'Solamente que el mensaje fue recibido; el estado del dinero no está probado',
+    d: 'Ya debe existir un pacs.004',
+  },
+  reasoning: 'La recepción del mensaje es evidencia de comunicación. Sin evidencia de settlement o posting, operaciones debe mantener incierto el estado del dinero e investigar en vez de inferir que terminó.',
+}
+
 scenariosEs['spi-rd-message-triage'] = {
   title: 'SPI RD: clasificar el mensaje correcto',
   prompt: 'En una sesion de estudio sobre SPI/SGPI dominicano, BANK_A necesita consultar informacion de cuenta/balance con el administrador de transacciones antes de investigar un pago. Que concepto de mensaje ISO 20022 encaja mejor con esa consulta?',

@@ -49,7 +49,7 @@ export const pain001: MessageDefinition = {
   relatedMessages: [{ messageId: 'pacs.008', relation: 'commonly-precedes' }],
   tags: ['initiation', 'customer-facing'],
   fastPaymentsRelevance: 'high',
-  coverage: 'basic-reference',
+  coverage: 'full-lesson',
   versions: [
     {
       version: '001.13',

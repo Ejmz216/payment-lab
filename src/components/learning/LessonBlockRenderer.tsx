@@ -8,6 +8,8 @@ import { MessageInspectorView } from '@/components/learning/MessageInspectorView
 import { DecisionTreeView } from '@/components/learning/DecisionTreeView'
 import { IdentifierTracer } from '@/components/learning/IdentifierTracer'
 import { ArchitectureDiagram } from '@/components/learning/ArchitectureDiagram'
+import { MessageSequenceView } from '@/components/learning/MessageSequenceView'
+import { TraceOriginalPayment } from '@/components/learning/TraceOriginalPayment'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
@@ -42,6 +44,17 @@ export function LessonBlockRenderer({ block }: { block: LessonBlock }) {
             </div>
           )}
           <PaymentFlowVisualizer actors={block.actors} steps={block.steps} />
+        </Card>
+      )
+
+    case 'message-sequence':
+      return (
+        <Card className="technical-surface">
+          <div className="mb-3 flex items-center gap-2">
+            <CardTitle className="mb-0">{block.heading}</CardTitle>
+            {block.badge && <Badge type={block.badge} />}
+          </div>
+          <MessageSequenceView steps={block.steps} />
         </Card>
       )
 
@@ -88,6 +101,9 @@ export function LessonBlockRenderer({ block }: { block: LessonBlock }) {
 
     case 'identifier-trace':
       return <IdentifierTracer messages={block.messages} />
+
+    case 'trace-original-payment':
+      return <TraceOriginalPayment originalMessageId={block.originalMessageId} returnMessageId={block.returnMessageId} />
 
     case 'decision-tree':
       return <DecisionTreeView root={block.root} label={t('dtree.label')} />

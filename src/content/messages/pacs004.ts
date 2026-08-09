@@ -97,7 +97,7 @@ export const pacs004: MessageDefinition = {
   ],
   tags: ['return', 'exception', 'core', 'fast-payments'],
   fastPaymentsRelevance: 'critical',
-  coverage: 'detailed-reference',
+  coverage: 'full-lesson',
   versions: [
     {
       version: '001.15',
