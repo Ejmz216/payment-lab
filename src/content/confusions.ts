@@ -73,6 +73,14 @@ export const confusions: Confusion[] = [
     relatedLessons: ['message-families'],
   },
   {
+    id: 'pacs004-camt004',
+    title: 'pacs.004 vs. camt.004',
+    left: 'pacs.004',
+    right: 'camt.004',
+    explanation: 'pacs.004 is PaymentReturn: it sends a progressed payment back. camt.004 is ReturnAccount: it returns account or balance information, commonly after camt.003 GetAccount. Same number, different family, different business meaning.',
+    relatedLessons: ['reject-vs-return'],
+  },
+  {
     id: 'status-settlement',
     title: 'Status vs. Settlement',
     left: 'Status',

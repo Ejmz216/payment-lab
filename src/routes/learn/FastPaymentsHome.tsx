@@ -33,6 +33,15 @@ export function FastPaymentsHome() {
         <h1 className="text-2xl font-semibold">{t('fp.title')}</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted">{t('fp.description')}</p>
       </div>
+      <Card variant="public-scheme" className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="text-sm font-semibold">SPI Republica Dominicana Study Pack</div>
+          <p className="mt-1 text-sm text-muted">Ruta corta para pacs.008, pacs.004 y camt.003 con etiquetas PUBLIC SCHEME / ISO / TO VERIFY.</p>
+        </div>
+        <Link to="/learn/spi-dominicana" className="rounded-md border border-scheme/40 px-3 py-1.5 text-sm font-medium text-scheme hover:bg-scheme/10">
+          Abrir
+        </Link>
+      </Card>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[16rem_1fr]">
         <div className="flex flex-col gap-2">
           {visiblePhases.map((phase) => {

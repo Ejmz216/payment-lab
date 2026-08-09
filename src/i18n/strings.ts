@@ -10,6 +10,7 @@ export const strings = {
   'nav.practiceGroup': { en: 'Practice', es: 'Practica' },
   'nav.progressGroup': { en: 'Progress', es: 'Progreso' },
   'nav.fastPayments': { en: 'Fast Payments', es: 'Pagos Instantáneos' },
+  'nav.spiDominicana': { en: 'Dominican SPI', es: 'SPI Dominicana' },
   'nav.atlas': { en: 'ISO 20022 Atlas', es: 'Atlas ISO 20022' },
   'nav.messageCatalog': { en: 'Message Catalog', es: 'Catalogo de Mensajes' },
   'nav.lab': { en: 'Lab', es: 'Laboratorio' },

@@ -5,6 +5,8 @@ import { pacs004 } from './pacs004'
 import { pain001 } from './pain001'
 import { camt053 } from './camt053'
 import { camt029 } from './camt029'
+import { camt003 } from './camt003'
+import { camt004 } from './camt004'
 import { pacs003 } from './pacs003'
 import { pain002 } from './pain002'
 import { pacs028 } from './pacs028'
@@ -18,6 +20,8 @@ export const messages: MessageDefinition[] = [
   pacs004,
   camt053,
   camt029,
+  camt003,
+  camt004,
   pacs003,
   pain002,
   pacs028,

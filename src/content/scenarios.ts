@@ -81,6 +81,26 @@ scenarios.push({
   tags: ['pacs-008-deep-dive'],
 })
 
+scenarios.push({
+  id: 'spi-rd-message-triage',
+  title: 'SPI RD: message triage',
+  prompt:
+    'In a Dominican SPI/SGPI study session, BANK_A needs to check account/balance information with the transaction administrator before investigating a payment. Which ISO 20022 message concept is the best fit for that query?',
+  choices: [
+    { id: 'a', label: 'pacs.008', correct: false },
+    { id: 'b', label: 'pacs.004', correct: false },
+    { id: 'c', label: 'camt.003', correct: true },
+    { id: 'd', label: 'pain.001', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'camt.003 GetAccount is the account-information query. pacs.008 is for an interbank customer credit transfer, while pacs.004 is a payment return. For the public Dominican SPI/SGPI case study, the exact scheme use of camt.003 remains TO VERIFY unless an authorized implementation guide says so.',
+    relatedMessages: ['camt.003', 'camt.004', 'pacs.008', 'pacs.004'],
+    dependsOnScheme: true,
+  },
+  tags: ['spi-rd', 'camt-003', 'message-triage'],
+})
+
 export const quizQuestions: QuizQuestion[] = [
   {
     id: 'q-clearing-settlement-1',

@@ -4,6 +4,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { Dashboard } from '@/routes/Dashboard'
 import { FastPaymentsHome } from '@/routes/learn/FastPaymentsHome'
 import { LessonPage } from '@/routes/learn/LessonPage'
+import { SpiDominicanaStudy } from '@/routes/learn/SpiDominicanaStudy'
 import { AtlasHome } from '@/routes/atlas/AtlasHome'
 import { DomainOverview } from '@/routes/atlas/DomainOverview'
 import { MessageCatalog } from '@/routes/atlas/MessageCatalog'
@@ -40,6 +41,7 @@ export default function App() {
 
         <Route path="/learn/fast-payments" element={<FastPaymentsHome />} />
         <Route path="/learn/fast-payments/:lessonId" element={<LessonPage />} />
+        <Route path="/learn/spi-dominicana" element={<SpiDominicanaStudy />} />
 
         <Route path="/atlas" element={<AtlasHome />} />
         <Route path="/atlas/domains/:domainId" element={<DomainOverview />} />

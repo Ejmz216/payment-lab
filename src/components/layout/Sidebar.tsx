@@ -10,6 +10,7 @@ import {
   Map,
   Route,
   Search,
+  Zap,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useT, type StringKey } from '@/i18n/strings'
@@ -17,7 +18,10 @@ import { useT, type StringKey } from '@/i18n/strings'
 const navGroups: { groupKey: StringKey; items: { to: string; labelKey: StringKey; icon: typeof Route; accent: string }[] }[] = [
   {
     groupKey: 'nav.study',
-    items: [{ to: '/learn/fast-payments', labelKey: 'nav.fastPayments', icon: Route, accent: 'text-primary' }],
+    items: [
+      { to: '/learn/fast-payments', labelKey: 'nav.fastPayments', icon: Route, accent: 'text-primary' },
+      { to: '/learn/spi-dominicana', labelKey: 'nav.spiDominicana', icon: Zap, accent: 'text-scheme' },
+    ],
   },
   {
     groupKey: 'nav.reference',

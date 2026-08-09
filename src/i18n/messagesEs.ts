@@ -56,6 +56,27 @@ export const messagesEs: Record<string, MessageTranslation> = {
     whatComesAfter: 'La parte que abrió la investigación actúa según la resolución — cerrando el caso, informando al cliente, o desencadenando una acción adicional como una devolución.',
     cardinalityNotes: 'Estructura ilustrativa con fines educativos; esta es una entrada de catálogo/referencia básica, no un análisis profundo completo.',
   },
+  'camt.003': {
+    shortDescription: 'Solicita informacion de cuenta o balance; es una consulta de gestion de efectivo, no una instruccion de pago.',
+    purpose: 'Se usa para pedir informacion sobre una o mas cuentas, incluyendo detalles de cuenta y saldos. En un contexto operativo de pagos instantaneos sirve para visibilidad de liquidez/estado de cuenta, no para mover fondos de clientes.',
+    whatComesBefore: 'Una necesidad operativa de conocer detalles de cuenta, balance, liquidez o estado de cuenta. Para el caso SPI/SGPI de Republica Dominicana, si camt.003 forma parte del flujo publico del esquema queda como TO VERIFY.',
+    whatComesAfter: 'Una respuesta ReturnAccount, comunmente camt.004, puede devolver los detalles o saldos solicitados. Este camt.004 no es pacs.004 PaymentReturn.',
+    commonMistakes: [
+      { title: 'Confundir consulta de cuenta con movimiento de pago', explanation: 'camt.003 pide informacion de cuenta. No instruye a BANK_B a acreditar a CUSTOMER_B; ese concepto interbancario corresponde a pacs.008-style.' },
+      { title: 'Confundir camt.004 con pacs.004', explanation: 'camt.004 es ReturnAccount, respuesta de una consulta de cuenta. pacs.004 es PaymentReturn, usado para devolver un pago que ya progreso.' },
+    ],
+    cardinalityNotes: 'Esqueleto educativo ilustrativo basado en referencias publicas ISO/ECB. Confirma la version exacta de camt.003 y el XSD completo contra el catalogo oficial ISO o la guia tecnica del esquema antes de usarlo tecnicamente. Ninguna fuente publica BCRD revisada aqui confirma uso de camt.003 dentro de SPI/SGPI.',
+  },
+  'camt.004': {
+    shortDescription: 'Devuelve informacion de cuenta o balance, comunmente como respuesta a camt.003 GetAccount.',
+    purpose: 'Proporciona informacion sobre una o mas cuentas mantenidas por un administrador de transacciones o servicer de cuenta, incluyendo detalles y saldos. Puede responder a camt.003 o enviarse como notificacion de cuenta en algunos esquemas.',
+    whatComesBefore: 'Una solicitud GetAccount, comunmente camt.003, o un disparador de notificacion de cuenta definido por el esquema.',
+    whatComesAfter: 'El receptor usa la informacion de cuenta o balance para monitoreo, investigacion, gestion de liquidez o reconciliacion.',
+    commonMistakes: [
+      { title: 'Mismo numero, familia distinta', explanation: 'camt.004 ReturnAccount y pacs.004 PaymentReturn son mensajes de negocio distintos. Siempre lee el prefijo de familia antes de interpretar el numero.' },
+    ],
+    cardinalityNotes: 'Esqueleto educativo ilustrativo basado en referencias publicas ISO/ECB. Confirma version exacta y estructura contra el catalogo oficial ISO o la guia tecnica del esquema.',
+  },
   'pain.001': {
     shortDescription: 'Un cliente instruye a su institución financiera a iniciar una o más transferencias de crédito.',
     purpose: 'Lleva la instrucción de un cliente a su institución financiera para mover fondos a uno o más acreedores. Este es el paso de iniciación de cara al cliente, distinto de la transferencia interbancaria que le sigue.',

@@ -128,6 +128,16 @@ export function Dashboard() {
         </Card>
       </div>
 
+      <Card variant="public-scheme">
+        <CardTitle>SPI Republica Dominicana Study Pack</CardTitle>
+        <p className="mt-1 text-sm text-muted">
+          Estudia pacs.008, pacs.004 y camt.003 desde el caso publico dominicano, separando ISO, esquema publico y preguntas TO VERIFY.
+        </p>
+        <Link to="/learn/spi-dominicana" className="mt-3 inline-block rounded-md border border-scheme/40 px-3 py-1.5 text-sm text-scheme hover:bg-scheme/10">
+          Abrir pack SPI
+        </Link>
+      </Card>
+
       <Card variant="study">
         <CardTitle>{fastPaymentsPath.title === 'Fast Payments Path' ? t('fp.title') : fastPaymentsPath.title}</CardTitle>
         <p className="mt-1 text-sm text-muted">{t('fp.description')}</p>

@@ -60,6 +60,18 @@ scenariosEs['pacs008-choose-message'] = {
   reasoning: 'pain.001 (si se usa) es el mensaje de iniciación de cara al cliente. El tramo interbancario — instruir a BANK_B a acreditar al beneficiario — se lleva mediante pacs.008, una FIToFICustomerCreditTransfer. pacs.002 reporta el estado después, y camt.053 es un estado de cuenta, no una instrucción.',
 }
 
+scenariosEs['spi-rd-message-triage'] = {
+  title: 'SPI RD: clasificar el mensaje correcto',
+  prompt: 'En una sesion de estudio sobre SPI/SGPI dominicano, BANK_A necesita consultar informacion de cuenta/balance con el administrador de transacciones antes de investigar un pago. Que concepto de mensaje ISO 20022 encaja mejor con esa consulta?',
+  choices: {
+    a: 'pacs.008',
+    b: 'pacs.004',
+    c: 'camt.003',
+    d: 'pain.001',
+  },
+  reasoning: 'camt.003 GetAccount es la consulta de informacion de cuenta. pacs.008 es para una transferencia de credito interbancaria de cliente, mientras pacs.004 es una devolucion de pago. Para el caso publico SPI/SGPI dominicano, el uso exacto de camt.003 queda como TO VERIFY salvo que una guia autorizada lo indique.',
+}
+
 export interface QuizTranslation {
   prompt: string
   choices: Record<string, string>
