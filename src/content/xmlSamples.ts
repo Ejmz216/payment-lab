@@ -49,6 +49,41 @@ export const xmlSamples: XmlSample[] = [
 </Document>
 `,
   },
+  {
+    id: 'camt003-account-query',
+    messageId: 'camt.003',
+    title: 'camt.003 - synthetic account query',
+    xml: `<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.003.001.08">
+  <GetAcct>
+    <MsgHdr>
+      <MsgId>MSG-ACCT-QUERY-001</MsgId>
+      <ReqTp>
+        <Prtry>
+          <Id>BALANCE_QUERY</Id>
+        </Prtry>
+      </ReqTp>
+    </MsgHdr>
+    <AcctQryDef>
+      <AcctCrit>
+        <NewCrit>
+          <SchCrit>
+            <AcctId>
+              <EQ>
+                <Othr>
+                  <Id>ACCOUNT-001</Id>
+                </Othr>
+              </EQ>
+            </AcctId>
+            <Ccy>XXX</Ccy>
+          </SchCrit>
+        </NewCrit>
+      </AcctCrit>
+    </AcctQryDef>
+  </GetAcct>
+</Document>
+`,
+  },
 ]
 
 export interface BrokenSample {

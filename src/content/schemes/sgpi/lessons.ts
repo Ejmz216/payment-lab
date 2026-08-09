@@ -376,7 +376,7 @@ export const sgpiLessons: Lesson[] = [
       { title: 'ISO 20022 ≠ SGPI', explanation: 'ISO defines semantics. SGPI is a Dominican public payment scheme with its own authorized rules and implementation material.' },
       { title: 'pacs.004 ≠ camt.004', explanation: 'pacs.004 is PaymentReturn. camt.004 is ReturnAccount, the conceptual response to camt.003.' },
     ],
-    relatedLessons: ['pacs-008-deep-dive', 'pacs-004', 'camt-cash-management'],
+    relatedLessons: ['pacs-008-deep-dive', 'pacs-004', 'camt-003-deep-dive'],
     relatedMessages: ['pacs.008', 'pacs.002', 'pacs.004', 'camt.003', 'camt.004'],
     sources: sgpiAndIsoSources,
     estimatedMinutes: 13,

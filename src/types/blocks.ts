@@ -37,7 +37,7 @@ export interface PaymentFlowBlock {
   badge?: ContentBadge
 }
 
-export type ComparisonTone = ActorKind | 'iso' | 'scheme' | 'implementation' | 'neutral'
+export type ComparisonTone = ActorKind | 'iso' | 'pacs' | 'camt' | 'scheme' | 'implementation' | 'neutral'
 
 export interface ComparisonItem {
   id: string
@@ -53,6 +53,9 @@ export interface ComparisonBlock {
   type: 'comparison'
   heading: string
   intro?: string
+  keyQuestionLabel?: string
+  examplesLabel?: string
+  notThisLabel?: string
   items: ComparisonItem[]
   badge?: ContentBadge
 }

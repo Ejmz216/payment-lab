@@ -95,7 +95,7 @@ export function StudyRail({ path, lessons, activeItemId }: { path: LearningPath;
                   )}
                   {phaseState.plannedCount > 0 && (
                     <div className="mt-1 border-t border-border/60 px-2 pt-2 text-[10px] text-muted">
-                      {phaseState.plannedCount} {t('study.morePlanned')}
+                      {phaseState.plannedCount} {t(phaseState.plannedCount === 1 ? 'study.oneMorePlanned' : 'study.morePlanned')}
                     </div>
                   )}
                 </div>

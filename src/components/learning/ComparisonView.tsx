@@ -1,9 +1,11 @@
 import {
   Ban,
+  ArrowLeftRight,
   Braces,
   Building2,
   CircleDot,
   CircleHelp,
+  FileSearch,
   Landmark,
   Tags,
   UserRound,
@@ -20,6 +22,8 @@ const toneIcons: Record<ComparisonTone, typeof UserRound> = {
   agent: Building2,
   infrastructure: Landmark,
   iso: Braces,
+  pacs: ArrowLeftRight,
+  camt: FileSearch,
   scheme: Landmark,
   implementation: Wrench,
   neutral: CircleDot,
@@ -30,6 +34,8 @@ const toneStyles: Record<ComparisonTone, string> = {
   agent: 'border-agent/40 bg-agent/10 text-agent',
   infrastructure: 'border-infra/40 bg-infra/10 text-infra',
   iso: 'border-iso/40 bg-iso/10 text-iso',
+  pacs: 'border-pacs/40 bg-pacs/10 text-pacs',
+  camt: 'border-camt/40 bg-camt/10 text-camt',
   scheme: 'border-scheme/40 bg-scheme/10 text-scheme',
   implementation: 'border-warning/40 bg-warning/10 text-warning',
   neutral: 'border-border bg-surface2 text-text',
@@ -68,13 +74,13 @@ export function ComparisonView({ block }: { block: ComparisonBlock }) {
 
               <div className="mt-4 flex items-start gap-2 text-xs font-semibold uppercase tracking-wide text-primary">
                 <CircleHelp size={14} className="mt-0.5 shrink-0" />
-                <span>{t('comparison.keyQuestion')}</span>
+                <span>{block.keyQuestionLabel ?? t('comparison.keyQuestion')}</span>
               </div>
               <p className="mt-1 text-sm font-medium leading-relaxed">{item.keyQuestion}</p>
               <p className="mt-2 text-sm leading-relaxed text-text/75">{item.summary}</p>
 
               <div className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted">
-                <Tags size={14} /> {t('comparison.examples')}
+                <Tags size={14} /> {block.examplesLabel ?? t('comparison.examples')}
               </div>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {item.examples.map((example) => (
@@ -86,7 +92,7 @@ export function ComparisonView({ block }: { block: ComparisonBlock }) {
 
               <div className="mt-4 border-t border-border pt-3">
                 <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-warning">
-                  <Ban size={14} /> {t('comparison.notThis')}
+                  <Ban size={14} /> {block.notThisLabel ?? t('comparison.notThis')}
                 </div>
                 <p className="mt-1 text-sm leading-relaxed text-text/75">{item.notThis}</p>
               </div>

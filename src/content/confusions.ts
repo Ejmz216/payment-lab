@@ -22,7 +22,7 @@ export const confusions: Confusion[] = [
     left: 'Reject',
     right: 'Return',
     explanation: 'A reject means the payment never progressed past validation/acceptance. A return means it did progress, and is now being sent back after the fact.',
-    relatedLessons: ['reject-vs-return'],
+    relatedLessons: ['reject-vs-return', 'camt-003-deep-dive'],
   },
   {
     id: 'debtor-debtor-agent',

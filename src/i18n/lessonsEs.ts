@@ -632,6 +632,148 @@ export const lessonsEs: Record<string, LessonTranslation> = {
       },
     ],
   },
+  'camt-003-deep-dive': {
+    title: 'camt.003 GetAccount',
+    subtitle: 'Consultar una cuenta sin mover valor',
+    whyItMatters:
+      'Los equipos de operaciones deben distinguir una consulta de información de cuenta de una instrucción o devolución de pago. camt.003 hace concreto ese límite: solicita datos a un servicer de cuenta o administrador de transacciones y comúnmente puede ser seguido por una respuesta camt.004.',
+    objectives: [
+      'Explicar el propósito de camt.003 GetAccount y quién lo intercambia.',
+      'Distinguir la consulta camt.003 de la respuesta camt.004 y de la devolución de pago pacs.004.',
+      'Leer MsgHdr, MsgId, ReqTp y la ruta de criterios de cuenta en camt.003.001.08.',
+      'Explicar por qué enviar camt.003 no prueba un saldo, no mueve fondos ni resuelve una investigación de pago.',
+      'Indicar qué queda TO VERIFY antes de relacionar camt.003 con el esquema SPI/SGPI dominicano.',
+    ],
+    mentalModel: 'camt.003 hace una pregunta sobre una cuenta. camt.004 puede responderla. Ninguno es una instrucción de transferencia de crédito de cliente.',
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'Una consulta sobre una cuenta, no una orden de pago',
+        body:
+          'camt.003 (GetAccount) transporta una solicitud de información de cuenta seleccionada mediante criterios de búsqueda. Perfiles públicos de infraestructuras de pago utilizan este concepto para consultas orientadas a cuenta, balance o liquidez. ISO define la semántica; el perfil del servicio o esquema aplicable define qué tipos de solicitud y criterios admite.',
+        badge: 'reference',
+      },
+      {
+        type: 'message-sequence',
+        heading: 'Solicitud y respuesta son evidencia separada',
+        badge: 'simplified-model',
+        steps: [
+          {
+            id: 'get-account-request',
+            from: 'BANK_A',
+            to: 'ACCOUNT_SERVICER',
+            label: 'camt.003',
+            messageId: 'camt.003',
+            description: 'Solicita información de cuenta usando un identificador de mensaje, un tipo de solicitud y criterios de cuenta.',
+            tone: 'camt',
+          },
+          {
+            id: 'return-account-response',
+            from: 'ACCOUNT_SERVICER',
+            to: 'BANK_A',
+            label: 'camt.004',
+            messageId: 'camt.004',
+            description: 'Puede devolver los datos de cuenta solicitados bajo el perfil seleccionado.',
+            tone: 'camt',
+          },
+        ],
+      },
+      {
+        type: 'comparison',
+        heading: 'La trampa 003/004: lee siempre la familia y el verbo de negocio',
+        intro: 'El número por sí solo no basta. Get, ReturnAccount y PaymentReturn representan acciones de negocio diferentes.',
+        examplesLabel: 'Campos / conceptos clave',
+        badge: 'reference',
+        items: [
+          {
+            id: 'camt003',
+            label: 'camt.003 GetAccount',
+            keyQuestion: '¿Qué información de cuenta necesito?',
+            summary: 'Envía criterios de búsqueda para solicitar información admitida de cuenta, balance o liquidez.',
+            examples: ['MsgHdr', 'MsgId', 'ReqTp', 'AcctQryDef'],
+            notThis: 'No transfiere fondos de clientes y no prueba el saldo solicitado.',
+            tone: 'camt',
+          },
+          {
+            id: 'camt004',
+            label: 'camt.004 ReturnAccount',
+            keyQuestion: '¿Qué información de cuenta se está devolviendo?',
+            summary: 'Proporciona información de cuenta como respuesta o notificación definida por el perfil.',
+            examples: ['detalles de cuenta', 'balances', 'respuesta de consulta'],
+            notThis: 'No es la devolución de una transferencia de crédito de cliente.',
+            tone: 'camt',
+          },
+          {
+            id: 'pacs004',
+            label: 'pacs.004 PaymentReturn',
+            keyQuestion: '¿Por qué se devuelve el valor de un pago que ya progresó?',
+            summary: 'Devuelve un pago y referencia la transacción de pago original.',
+            examples: ['OrgnlEndToEndId', 'RtrdIntrBkSttlmAmt', 'RtrRsnInf'],
+            notThis: 'No responde una consulta de cuenta aunque comparta el número 004.',
+            tone: 'pacs',
+          },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'BANK_A envió camt.003 MSG-ACCT-QUERY-001; todavía no llegó respuesta.',
+        question: '¿Puede operaciones concluir que ACCOUNT-001 tiene saldo cero?',
+        options: [
+          { id: 'a', label: 'Sí: ausencia de respuesta significa saldo cero', correct: false },
+          { id: 'b', label: 'No: la solicitud solo prueba que se envió una consulta', correct: true },
+        ],
+        explanation:
+          'Una solicitud camt.003 contiene una pregunta y sus criterios de búsqueda. Los datos solicitados requieren evidencia de respuesta, comúnmente un camt.004 bajo el perfil aplicable. Sin respuesta significa desconocido, no cero.',
+      },
+      {
+        type: 'message-inspector',
+        messageId: 'camt.003',
+        intro: 'Sigue la ruta seleccionada de V08 desde MsgHdr y MsgId hasta AcctQryDef, AcctCrit y los criterios de búsqueda de cuenta.',
+      },
+      {
+        type: 'quick-check',
+        question: '¿Qué parte indica al receptor qué información de cuenta debe buscar?',
+        options: [
+          { id: 'a', label: 'MsgHdr / MsgId', correct: false },
+          { id: 'b', label: 'AcctQryDef / AcctCrit', correct: true },
+          { id: 'c', label: 'Un EndToEndId de pacs.008', correct: false },
+        ],
+        explanation:
+          'MsgId identifica el mensaje de consulta. AcctQryDef y sus criterios describen qué buscar. Un EndToEndId de pago no es la clave de cuenta de GetAccount.',
+      },
+      {
+        type: 'investigation-checklist',
+        heading: 'Qué verificar en un intercambio camt.003 real',
+        intro: 'Separa la evidencia de la solicitud, la evidencia de la respuesta y las reglas específicas del perfil.',
+        groups: [
+          {
+            title: 'Evidencia de solicitud',
+            items: ['Emisor y receptor', 'versión de camt.003', 'MsgId', 'tipo de solicitud', 'criterios de búsqueda', 'hora de envío'],
+          },
+          {
+            title: 'Evidencia de respuesta',
+            items: ['Si llegó camt.004', 'correlación de consulta', 'cuenta encontrada', 'balance o estado devuelto', 'evidencia de error o rechazo'],
+          },
+          {
+            title: 'Preguntas del perfil',
+            items: ['Tipos de solicitud admitidos', 'criterios obligatorios', 'reglas de autorización', 'manejo de timeout', 'versión seleccionada de camt.004'],
+          },
+        ],
+      },
+      { type: 'scenario', scenarioId: 'spi-rd-message-triage' },
+      {
+        type: 'callout',
+        title: 'Límite SPI/SGPI dominicano',
+        body:
+          'camt.003 es conocimiento ISO útil, pero el material público del BCRD revisado para este laboratorio no establece que SGPI lo utilice. El servicio exacto, la versión, los tipos de solicitud, los actores y el perfil de respuesta quedan TO VERIFY contra documentación autorizada del esquema o de la institución.',
+        tone: 'warning',
+      },
+    ],
+    commonConfusion: [
+      { title: 'Consulta enviada no significa saldo conocido', explanation: 'camt.003 prueba que se creó o envió una consulta. Los datos de cuenta requieren una respuesta u otra evidencia autoritativa.' },
+      { title: 'camt.004 no es pacs.004', explanation: 'camt.004 devuelve información de cuenta. pacs.004 devuelve un pago que ya progresó.' },
+    ],
+  },
   'camt-cash-management': {
     title: 'camt y Gestión de Efectivo',
     subtitle: 'Más que "estados de cuenta"',

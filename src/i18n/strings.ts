@@ -83,6 +83,7 @@ export const strings = {
   'study.planned': { en: 'Planned', es: 'Planificada' },
   'study.plannedPhase': { en: 'Content planned for a future iteration', es: 'Contenido planificado para una próxima iteración' },
   'study.morePlanned': { en: 'more items planned', es: 'contenidos adicionales planificados' },
+  'study.oneMorePlanned': { en: 'more item planned', es: 'contenido adicional planificado' },
   'study.phase': { en: 'Phase', es: 'Fase' },
   'study.lesson': { en: 'Lesson', es: 'Lección' },
   'study.of': { en: 'of', es: 'de' },

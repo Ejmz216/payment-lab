@@ -29,6 +29,7 @@ export const fastPaymentsPath: LearningPath = {
     'sgpi-iso-mapping',
     'sgpi-exception-scenarios',
     'sgpi-questions-to-verify',
+    'camt-003-deep-dive',
     'camt-cash-management',
     'reconciliation-investigations',
     'payment-architecture',
@@ -106,7 +107,7 @@ export const fastPaymentsPath: LearningPath = {
       shortTitle: 'Operations',
       description: 'Investigate, reconcile and reason about the systems around a payment.',
       tone: 'investigation',
-      lessonIds: ['camt-cash-management', 'reconciliation-investigations', 'payment-architecture'],
+      lessonIds: ['camt-003-deep-dive', 'camt-cash-management', 'reconciliation-investigations', 'payment-architecture'],
       plannedItemCount: 5,
     },
     {
@@ -1184,9 +1185,179 @@ export const fastPaymentsLessons: Lesson[] = [
     estimatedMinutes: 8,
   },
   {
-    id: 'camt-cash-management',
+    id: 'camt-003-deep-dive',
     pathId: 'fast-payments',
     order: 23,
+    title: 'camt.003 GetAccount',
+    subtitle: 'Ask about an account without moving value',
+    whyItMatters:
+      'Operations teams need to distinguish an account-information query from a payment instruction or return. camt.003 makes that boundary concrete: it asks an account servicer or transaction administrator for account data, commonly followed by a camt.004 response.',
+    objectives: [
+      'Explain the purpose of camt.003 GetAccount and who exchanges it.',
+      'Distinguish the query camt.003 from the response camt.004 and the payment return pacs.004.',
+      'Read MsgHdr, MsgId, ReqTp and the account search-criteria path in camt.003.001.08.',
+      'Explain why sending camt.003 does not prove a balance, move funds or resolve a payment investigation.',
+      'State what remains TO VERIFY before mapping camt.003 to the Dominican SPI/SGPI scheme.',
+    ],
+    mentalModel: 'camt.003 asks an account question. camt.004 may answer it. Neither message is a customer credit-transfer instruction.',
+    sections: [],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'A query about an account, not a payment order',
+        body:
+          'camt.003 (GetAccount) carries a request for account information selected by search criteria. Public payment-infrastructure profiles use this message concept for account, balance or liquidity-oriented queries. ISO defines the message semantics; the applicable service or scheme profile defines which request types and criteria are supported.',
+        badge: 'reference',
+      },
+      {
+        type: 'message-sequence',
+        heading: 'Request and response are separate evidence',
+        badge: 'simplified-model',
+        steps: [
+          {
+            id: 'get-account-request',
+            from: 'BANK_A',
+            to: 'ACCOUNT_SERVICER',
+            label: 'camt.003',
+            messageId: 'camt.003',
+            description: 'Requests account information using a message identifier, request type and account criteria.',
+            tone: 'camt',
+          },
+          {
+            id: 'return-account-response',
+            from: 'ACCOUNT_SERVICER',
+            to: 'BANK_A',
+            label: 'camt.004',
+            messageId: 'camt.004',
+            description: 'May return the requested account data under the selected profile.',
+            tone: 'camt',
+          },
+        ],
+      },
+      {
+        type: 'comparison',
+        heading: 'The 003/004 trap: always read the family and business verb',
+        intro: 'The number alone is not enough. Get, ReturnAccount and PaymentReturn represent different business actions.',
+        examplesLabel: 'Key fields / concepts',
+        badge: 'reference',
+        items: [
+          {
+            id: 'camt003',
+            label: 'camt.003 GetAccount',
+            keyQuestion: 'What account information do I need?',
+            summary: 'Sends account search criteria to request supported account, balance or liquidity information.',
+            examples: ['MsgHdr', 'MsgId', 'ReqTp', 'AcctQryDef'],
+            notThis: 'It does not transfer customer funds and does not prove the requested balance.',
+            tone: 'camt',
+          },
+          {
+            id: 'camt004',
+            label: 'camt.004 ReturnAccount',
+            keyQuestion: 'What account information is being returned?',
+            summary: 'Provides account information as a response or profile-defined notification.',
+            examples: ['account details', 'balances', 'query response'],
+            notThis: 'It is not a return of a customer credit-transfer payment.',
+            tone: 'camt',
+          },
+          {
+            id: 'pacs004',
+            label: 'pacs.004 PaymentReturn',
+            keyQuestion: 'Why is value from a progressed payment being sent back?',
+            summary: 'Returns a payment and references the original payment transaction.',
+            examples: ['OrgnlEndToEndId', 'RtrdIntrBkSttlmAmt', 'RtrRsnInf'],
+            notThis: 'It does not answer an account-information query, despite sharing the number 004.',
+            tone: 'pacs',
+          },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'BANK_A sent camt.003 MSG-ACCT-QUERY-001; no response has arrived.',
+        question: 'Can operations conclude that ACCOUNT-001 has a zero balance?',
+        options: [
+          { id: 'a', label: 'Yes - no response means the balance is zero', correct: false },
+          { id: 'b', label: 'No - the request proves only that a query was sent', correct: true },
+        ],
+        explanation:
+          'A camt.003 request contains a question and its search criteria. The requested account data requires response evidence, commonly a camt.004 under the applicable profile. Missing response means unknown, not zero.',
+      },
+      {
+        type: 'message-inspector',
+        messageId: 'camt.003',
+        intro: 'Trace the selected V08 path from MsgHdr and MsgId into AcctQryDef, AcctCrit and the account search criteria.',
+      },
+      {
+        type: 'quick-check',
+        question: 'Which part tells the receiver what account information to search for?',
+        options: [
+          { id: 'a', label: 'MsgHdr / MsgId', correct: false },
+          { id: 'b', label: 'AcctQryDef / AcctCrit', correct: true },
+          { id: 'c', label: 'A pacs.008 EndToEndId', correct: false },
+        ],
+        explanation:
+          'MsgId identifies the query message. AcctQryDef and its account criteria describe what to search for. A payment EndToEndId is not the account key for GetAccount.',
+      },
+      {
+        type: 'investigation-checklist',
+        heading: 'What to verify in a real camt.003 exchange',
+        intro: 'Separate evidence in the request, evidence in the response and profile-specific rules.',
+        groups: [
+          {
+            title: 'Request evidence',
+            items: ['Sender and receiver', 'camt.003 version', 'MsgId', 'request type', 'account search criteria', 'send timestamp'],
+          },
+          {
+            title: 'Response evidence',
+            items: ['Whether camt.004 arrived', 'query correlation', 'matched account', 'returned balance or account state', 'error or rejection evidence'],
+          },
+          {
+            title: 'Profile questions',
+            items: ['Supported request types', 'mandatory criteria', 'authorization rules', 'timeout behavior', 'selected camt.004 version'],
+          },
+        ],
+      },
+      { type: 'scenario', scenarioId: 'spi-rd-message-triage' },
+      {
+        type: 'callout',
+        title: 'Dominican SPI/SGPI boundary',
+        body:
+          'camt.003 is useful ISO knowledge, but public BCRD material reviewed for this lab does not establish that SGPI uses it. The exact service, message version, request types, actors and response profile remain TO VERIFY against authorized scheme or institution documentation.',
+        tone: 'warning',
+      },
+    ],
+    keyTerms: ['camt.003', 'GetAccount', 'MsgId', 'ReqTp', 'AcctQryDef', 'AcctCrit', 'camt.004'],
+    commonConfusion: [
+      { title: 'Request sent does not mean balance known', explanation: 'camt.003 proves a query was created or sent. Account data requires a response or other authoritative evidence.' },
+      { title: 'camt.004 is not pacs.004', explanation: 'camt.004 returns account information. pacs.004 returns a progressed payment.' },
+    ],
+    relatedLessons: ['camt-cash-management', 'reconciliation-investigations', 'sgpi-iso-mapping'],
+    relatedMessages: ['camt.003', 'camt.004', 'pacs.004', 'pacs.008'],
+    sources: [
+      {
+        sourceName: 'ISO 20022 official catalogue - Cash Management',
+        sourceType: 'ISO',
+        sourceReference: 'https://www.iso20022.org/iso-20022-message-definitions?search=cash+management',
+        lastReviewed: '2026-08-09',
+      },
+      {
+        sourceName: 'Eurosystem ESMIG User Detailed Functional Specifications R2026.JUN',
+        sourceType: 'official-documentation',
+        sourceReference: 'https://www.bundesbank.de/resource/blob/914244/2316c2e2d1502875253c77b851f8b0f0/472B63F073F071307366337C94F8C870/udfs-esmig-r2026jun-data.pdf',
+        lastReviewed: '2026-08-09',
+      },
+      {
+        sourceName: 'Banco Central de la Republica Dominicana - SGPI public information',
+        sourceType: 'central-bank',
+        sourceReference: 'https://www.bancentral.gov.do/a/d/6142-sistema-de-gestion-de-pagos-instantaneos-sgpi',
+        lastReviewed: '2026-08-09',
+      },
+    ],
+    estimatedMinutes: 16,
+  },
+  {
+    id: 'camt-cash-management',
+    pathId: 'fast-payments',
+    order: 24,
     title: 'camt & Cash Management',
     subtitle: 'More than "bank statements"',
     whyItMatters:
@@ -1217,15 +1388,15 @@ export const fastPaymentsLessons: Lesson[] = [
     commonConfusion: [
       { title: 'camt is not just statements', explanation: 'Statements are one part of camt. Notifications, reporting requests, and investigation messages are also part of the family.' },
     ],
-    relatedLessons: ['message-families', 'reconciliation-investigations'],
-    relatedMessages: ['camt.053', 'camt.029'],
+    relatedLessons: ['message-families', 'camt-003-deep-dive', 'reconciliation-investigations'],
+    relatedMessages: ['camt.003', 'camt.004', 'camt.053', 'camt.029'],
     sources: [{ sourceName: 'ISO 20022 official catalogue', sourceType: 'ISO', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 6,
   },
   {
     id: 'reconciliation-investigations',
     pathId: 'fast-payments',
-    order: 24,
+    order: 25,
     title: 'Reconciliation & Investigations',
     subtitle: 'Matching records and chasing down exceptions',
     whyItMatters:
@@ -1265,7 +1436,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'payment-architecture',
     pathId: 'fast-payments',
-    order: 25,
+    order: 26,
     title: 'Payment Architecture',
     subtitle: 'A generic educational view of how the pieces fit together',
     whyItMatters:
