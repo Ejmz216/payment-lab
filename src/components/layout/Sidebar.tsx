@@ -2,8 +2,10 @@ import { NavLink } from 'react-router-dom'
 import {
   Bookmark,
   BookOpen,
+  Bug,
+  Code2,
   Dumbbell,
-  FlaskConical,
+  Fingerprint,
   LayoutDashboard,
   LineChart,
   ListTree,
@@ -29,30 +31,35 @@ const navGroups: { groupKey: StringKey; items: NavItem[] }[] = [
     ],
   },
   {
-    groupKey: 'nav.reference',
-    items: [
-      { to: '/atlas', labelKey: 'nav.atlas', icon: Map, accent: 'text-iso' },
-      { to: '/atlas/messages', labelKey: 'nav.messageCatalog', icon: ListTree, accent: 'text-camt' },
-      { to: '/glossary', labelKey: 'nav.glossary', icon: BookOpen, accent: 'text-party' },
-    ],
-  },
-  {
     groupKey: 'nav.lab',
-    items: [{ to: '/lab', labelKey: 'nav.lab', icon: FlaskConical, accent: 'text-camt' }],
+    items: [
+      { to: '/lab/simulator', labelKey: 'lab.simulatorTitle', icon: Route, accent: 'text-camt' },
+      { to: '/lab/debugger', labelKey: 'lab.debuggerTitle', icon: Bug, accent: 'text-warning' },
+      { to: '/lab/xml', labelKey: 'lab.xmlTitle', icon: Code2, accent: 'text-pacs' },
+      { to: '/lab/identifiers', labelKey: 'lab.identifierTitle', icon: Fingerprint, accent: 'text-party' },
+    ],
   },
   {
     groupKey: 'nav.practiceGroup',
     items: [
-      { to: '/practice', labelKey: 'nav.practice', icon: Dumbbell, accent: 'text-success' },
+      { to: '/practice/session', labelKey: 'practice.session', icon: Dumbbell, accent: 'text-success' },
+      { to: '/practice/scenarios', labelKey: 'practice.scenarioTrainer', icon: Search, accent: 'text-camt' },
       { to: '/confusions', labelKey: 'nav.confusions', icon: Search, accent: 'text-warning' },
     ],
   },
   {
     groupKey: 'nav.progressGroup',
     items: [
-      { to: '/', labelKey: 'nav.dashboard', icon: LayoutDashboard, accent: 'text-primary' },
       { to: '/progress', labelKey: 'nav.progress', icon: LineChart, accent: 'text-success' },
       { to: '/saved', labelKey: 'nav.saved', icon: Bookmark, accent: 'text-warning' },
+    ],
+  },
+  {
+    groupKey: 'nav.reference',
+    items: [
+      { to: '/atlas', labelKey: 'nav.atlas', icon: Map, accent: 'text-iso' },
+      { to: '/atlas/messages', labelKey: 'nav.messageCatalog', icon: ListTree, accent: 'text-camt' },
+      { to: '/glossary', labelKey: 'nav.glossary', icon: BookOpen, accent: 'text-party' },
     ],
   },
 ]
@@ -75,6 +82,17 @@ export function Sidebar() {
         </div>
       </div>
       <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) => clsx(
+            'mb-4 flex items-center gap-2.5 rounded-md border px-2.5 py-2.5 text-sm font-medium transition-colors',
+            isActive ? 'border-primary/40 bg-primary/15 text-primary' : 'border-border bg-bg/35 text-text hover:bg-surface2',
+          )}
+        >
+          <LayoutDashboard size={16} className="text-primary" />
+          {t('nav.dashboard')}
+        </NavLink>
         {navGroups.map((group) => (
           <div key={group.groupKey} className="mb-5">
             <div className="mb-1.5 px-2 text-xs font-semibold uppercase tracking-wider text-muted">{t(group.groupKey)}</div>

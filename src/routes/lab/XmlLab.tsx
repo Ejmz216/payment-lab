@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AlertTriangle, ChevronRight } from 'lucide-react'
 import { Card, CardTitle } from '@/components/ui/Card'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { XmlEditor } from '@/components/xml/XmlEditor'
 import { MessageTree } from '@/components/messages/MessageTree'
 import { xmlSamples } from '@/content/xmlSamples'
@@ -46,7 +45,6 @@ export function XmlLab() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('nav.lab'), to: '/lab' }, { label: t('xmllab.title') }]} />
 
       <div>
         <h1 className="text-2xl font-semibold">{t('xmllab.title')}</h1>

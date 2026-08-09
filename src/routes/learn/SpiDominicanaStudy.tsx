@@ -1,10 +1,8 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, BadgeCheck, Building2, CheckCircle2, CircleHelp, Landmark, Layers3, Route, SearchCheck, UserRound } from 'lucide-react'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { Card, CardTitle, type CardVariant } from '@/components/ui/Card'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { useUIStore } from '@/store/uiStore'
-import { useT } from '@/i18n/strings'
 import { getScenarios } from '@/lib/i18nContent'
 import { useProgressStore } from '@/store/progressStore'
 
@@ -78,7 +76,6 @@ function TruthLabel({ children, tone }: { children: string; tone: 'iso' | 'schem
 
 export function SpiDominicanaStudy() {
   const lang = useUIStore((s) => s.lang)
-  const t = useT()
   const isEs = lang === 'es'
   const triageScenario = getScenarios(lang).find((scenario) => scenario.id === 'spi-rd-message-triage')
   const completedModules = useProgressStore((state) => state.completedModules ?? [])
@@ -87,8 +84,6 @@ export function SpiDominicanaStudy() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('fp.title'), to: '/learn/fast-payments' }, { label: 'SGPI República Dominicana' }]} />
-
       <section className="technical-surface rounded-lg border border-scheme/35 bg-scheme/10 p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>

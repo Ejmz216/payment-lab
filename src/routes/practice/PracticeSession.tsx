@@ -5,7 +5,6 @@ import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 import { getLessons, getScenarios, getQuizQuestions } from '@/lib/i18nContent'
 import { Card, CardTitle } from '@/components/ui/Card'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { QuizQuestionCard } from '@/components/practice/QuizQuestionCard'
@@ -105,7 +104,6 @@ export function PracticeSession() {
 
     return (
       <div className="flex flex-col gap-6">
-        <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('nav.practice'), to: '/practice' }, { label: t('practice.sessionReview') }]} />
         <div>
           <h1 className="text-2xl font-semibold">{t('practice.sessionReview')}</h1>
           <p className="mt-1 text-sm text-muted">{t('practice.sessionComplete')} {t('practice.scoreLabel')}: {totalCorrect} / {answers.length}</p>
@@ -146,7 +144,6 @@ export function PracticeSession() {
     const current = items[index]
     return (
       <div className="flex flex-col gap-6">
-        <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('nav.practice'), to: '/practice' }, { label: t('practice.session') }]} />
         <div>
           <h1 className="text-2xl font-semibold">{t('practice.session')}</h1>
           <p className="mt-1 text-sm text-muted">{t('practice.focus')}: {focusOptions.find((f) => f.id === focus)?.label ?? t('practice.mixedReview')}</p>
@@ -174,7 +171,6 @@ export function PracticeSession() {
   // Config
   return (
     <div className="flex flex-col gap-6">
-      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('nav.practice'), to: '/practice' }, { label: t('practice.session') }]} />
       <div>
         <h1 className="text-2xl font-semibold">{t('practice.session')}</h1>
         <p className="mt-1 max-w-2xl text-sm text-muted">{t('practice.sessionDesc')}</p>

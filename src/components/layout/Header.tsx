@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { BookOpen, Dumbbell, FlaskConical, Languages, LineChart, Map, Menu, Moon, Route, Search, ShieldCheck, Sun, X } from 'lucide-react'
+import { BookOpen, Dumbbell, FlaskConical, Languages, LayoutDashboard, LineChart, Menu, Moon, Route, Search, ShieldCheck, Sun, X } from 'lucide-react'
 import { useUIStore } from '@/store/uiStore'
 import { useProgressStore } from '@/store/progressStore'
 import { useT } from '@/i18n/strings'
@@ -30,12 +30,12 @@ export function Header() {
   }, [location.pathname])
 
   const mobileNav = [
+    { to: '/', label: t('nav.dashboard'), icon: LayoutDashboard, color: 'text-primary' },
     { to: continueRoute, label: t('nav.continueLearning'), icon: Route, color: 'text-primary' },
-    { to: '/learn/fast-payments', label: t('nav.learningMap'), icon: Map, color: 'text-primary' },
-    { to: '/atlas', label: t('nav.atlas'), icon: BookOpen, color: 'text-iso' },
-    { to: '/lab', label: t('nav.lab'), icon: FlaskConical, color: 'text-camt' },
-    { to: '/practice', label: t('nav.practice'), icon: Dumbbell, color: 'text-success' },
+    { to: '/lab/simulator', label: t('lab.simulatorTitle'), icon: FlaskConical, color: 'text-camt' },
+    { to: '/practice/session', label: t('practice.session'), icon: Dumbbell, color: 'text-success' },
     { to: '/progress', label: t('nav.progress'), icon: LineChart, color: 'text-warning' },
+    { to: '/atlas', label: t('nav.atlas'), icon: BookOpen, color: 'text-iso' },
   ]
 
   return (

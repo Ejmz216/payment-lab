@@ -4,7 +4,6 @@ import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 import { getMessages } from '@/lib/i18nContent'
 import { Card } from '@/components/ui/Card'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import clsx from 'clsx'
 
 const familyColor: Record<string, string> = { pain: 'text-pain border-pain/40', pacs: 'text-pacs border-pacs/40', camt: 'text-camt border-camt/40', admi: 'text-pacs border-pacs/40', head: 'text-pacs border-pacs/40', remt: 'text-pain border-pain/40' }
@@ -24,7 +23,6 @@ export function MessageCatalog() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('atlas.title'), to: '/atlas' }, { label: t('catalog.title') }]} />
       <div>
         <h1 className="text-2xl font-semibold">{t('catalog.title')}</h1>
         <p className="mt-1 text-sm text-muted">{t('catalog.description')}</p>

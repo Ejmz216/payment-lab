@@ -15,7 +15,7 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
           {item.to ? (
             <Link to={item.to} className="hover:text-text">{item.label}</Link>
           ) : (
-            <span aria-current="page" className="text-text">{item.label}</span>
+            <span aria-current={i === items.length - 1 ? 'page' : undefined} className="text-text">{item.label}</span>
           )}
         </span>
       ))}

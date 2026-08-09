@@ -6,7 +6,6 @@ import { getMessage } from '@/lib/i18nContent'
 import { relationLabelsEs } from '@/i18n/messagesEs'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { BookmarkButton } from '@/components/ui/BookmarkButton'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { MessageTree } from '@/components/messages/MessageTree'
 import { FieldDetail } from '@/components/messages/FieldDetail'
 import { TraceOriginalPayment } from '@/components/learning/TraceOriginalPayment'
@@ -42,15 +41,6 @@ export function MessagePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Breadcrumbs
-        items={[
-          { label: t('nav.dashboard'), to: '/' },
-          { label: t('atlas.title'), to: '/atlas' },
-          { label: t('catalog.title'), to: '/atlas/messages' },
-          { label: message.id },
-        ]}
-      />
-
       <div>
         <div className="flex items-start justify-between gap-4">
           <h1 className={clsx('text-2xl font-semibold', familyColor[message.family])}>{message.id}</h1>

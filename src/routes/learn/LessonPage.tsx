@@ -5,7 +5,6 @@ import { getFastPaymentsPath, getLessons, getScenarios } from '@/lib/i18nContent
 import { useProgressStore } from '@/store/progressStore'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { BookmarkButton } from '@/components/ui/BookmarkButton'
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { LessonBlockRenderer } from '@/components/learning/LessonBlockRenderer'
 import { LessonContextHeader } from '@/components/learning/LessonContextHeader'
@@ -29,8 +28,6 @@ export function LessonPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('fp.title'), to: '/learn/fast-payments' }, { label: lesson.title }]} />
-
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">
         <Link to="/learn/fast-payments" className="flex min-h-11 items-center justify-between gap-3 rounded-md border border-border bg-surface px-3 py-2 text-sm lg:hidden">
           <span className="flex min-w-0 items-center gap-2"><Map size={15} className="shrink-0 text-primary" /><span className="truncate">{t('study.learningMap')}</span></span>
