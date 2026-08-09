@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, BadgeCheck, CheckCircle2, CircleHelp, Landmark, Layers3, Route, SearchCheck } from 'lucide-react'
+import { ArrowRight, BadgeCheck, Building2, CheckCircle2, CircleHelp, Landmark, Layers3, Route, SearchCheck, UserRound } from 'lucide-react'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { Card, CardTitle, type CardVariant } from '@/components/ui/Card'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
@@ -22,9 +22,9 @@ const messageCards: {
     id: 'pacs.008',
     family: 'pacs',
     title: 'FIToFICustomerCreditTransfer',
-    role: 'Instruccion interbancaria para mover una transferencia de credito de CUSTOMER_A hacia CUSTOMER_B.',
+    role: 'Instrucción interbancaria para mover una transferencia de crédito de CUSTOMER_A hacia CUSTOMER_B.',
     when: 'Cuando BANK_A necesita instruir a BANK_B o a la infraestructura de pagos para procesar el pago.',
-    notThis: 'No prueba por si solo que el pago fue aceptado, liquidado o acreditado.',
+    notThis: 'No prueba por sí solo que el pago fue aceptado, liquidado o acreditado.',
     variant: 'simulation',
     accent: 'text-pacs',
   },
@@ -32,9 +32,9 @@ const messageCards: {
     id: 'pacs.004',
     family: 'pacs',
     title: 'PaymentReturn',
-    role: 'Devolucion de un pago que ya progreso y debe regresar al lado originador.',
-    when: 'Despues de aceptacion/progreso del pago, cuando algo impide completar o mantener el credito final.',
-    notThis: 'No es un rechazo temprano. No es una consulta de cuenta.',
+    role: 'Devolución de un pago que ya progresó y debe regresar al lado originador.',
+    when: 'Después de aceptación/progreso del pago, cuando algo impide completar o mantener el crédito final.',
+    notThis: 'No es un rechazo temprano ni una consulta de cuenta.',
     variant: 'warning',
     accent: 'text-danger',
   },
@@ -42,7 +42,7 @@ const messageCards: {
     id: 'camt.003',
     family: 'camt',
     title: 'GetAccount',
-    role: 'Consulta de informacion de cuenta o balance; sirve para visibilidad operativa, no para mover dinero.',
+    role: 'Consulta de información de cuenta o balance; sirve para visibilidad operativa, no para mover dinero.',
     when: 'Cuando un participante o administrador necesita consultar estado de cuenta, liquidez o detalles de cuenta.',
     notThis: 'No instruye un pago. Su respuesta natural puede ser camt.004 ReturnAccount, no pacs.004.',
     variant: 'reference',
@@ -50,21 +50,21 @@ const messageCards: {
   },
 ]
 
-const publicSteps = [
-  'Cliente inicia un pago o transferencia en un canal autorizado.',
-  'La entidad originadora recibe y valida la instruccion del cliente.',
-  'El esquema SPI/SGPI publico permite pagos instantaneos entre entidades participantes.',
-  'La entidad receptora recibe informacion suficiente para decidir si acredita o rechaza.',
-  'El cliente beneficiario debe ver disponibilidad de fondos cuando el pago se completa correctamente.',
+const actorRoles = [
+  { label: 'CUSTOMER_A', role: 'Pagador', detail: 'Inicia la solicitud desde un canal ofrecido por un participante.', tone: 'border-party/35 bg-party/10 text-party' },
+  { label: 'BANK_A', role: 'Participante originador', detail: 'Recibe la solicitud, controla los fondos y presenta la operación al esquema.', tone: 'border-agent/35 bg-agent/10 text-agent' },
+  { label: 'SGPI / BCRD', role: 'Infraestructura pública', detail: 'El BCRD administra la plataforma que conecta y enruta operaciones entre participantes.', tone: 'border-scheme/40 bg-scheme/10 text-scheme' },
+  { label: 'BANK_B', role: 'Participante receptor', detail: 'Decide sobre la operación y, cuando corresponde, acredita al beneficiario.', tone: 'border-agent/35 bg-agent/10 text-agent' },
+  { label: 'CUSTOMER_B', role: 'Beneficiario', detail: 'Recibe disponibilidad de los fondos cuando el crédito se completa.', tone: 'border-party/35 bg-party/10 text-party' },
 ]
 
 const verifyQuestions = [
-  'Que mensaje exacto usa el SPI/SGPI dominicano para la instruccion interbancaria?',
-  'Donde aparece pacs.008 si el esquema lo adopta: banco a infraestructura, infraestructura a banco receptor, o ambos?',
-  'Que evento publico marca aceptacion del esquema versus aceptacion de la entidad receptora?',
-  'Cuando aplica una devolucion tipo pacs.004 y que codigos/motivos permite el esquema?',
-  'camt.003 se usa en SPI/SGPI para liquidez/cuenta, o solo en otro modulo operativo?',
-  'La respuesta a camt.003 se hace con camt.004 ReturnAccount y en que version?',
+  '¿Qué mensaje exacto usa el SGPI dominicano para la instrucción interbancaria?',
+  '¿Dónde aparece pacs.008 si el esquema lo adopta: banco a infraestructura, infraestructura a banco receptor, o ambos?',
+  '¿Qué evento público marca aceptación del esquema versus aceptación de la entidad receptora?',
+  '¿Cuándo aplica una devolución tipo pacs.004 y qué códigos/motivos permite el esquema?',
+  '¿camt.003 se usa en SGPI para liquidez/cuenta, o solo en otro módulo operativo?',
+  '¿La respuesta a camt.003 se hace con camt.004 ReturnAccount y en qué versión?',
 ]
 
 function TruthLabel({ children, tone }: { children: string; tone: 'iso' | 'scheme' | 'verify' }) {
@@ -73,7 +73,7 @@ function TruthLabel({ children, tone }: { children: string; tone: 'iso' | 'schem
     scheme: 'border-scheme/40 bg-scheme/10 text-scheme',
     verify: 'border-warning/40 bg-warning/10 text-warning',
   }[tone]
-  return <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${style}`}>{children}</span>
+  return <span className={`rounded border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${style}`}>{children}</span>
 }
 
 export function SpiDominicanaStudy() {
@@ -87,7 +87,7 @@ export function SpiDominicanaStudy() {
 
   return (
     <div className="flex flex-col gap-6">
-      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('fp.title'), to: '/learn/fast-payments' }, { label: 'SPI Republica Dominicana' }]} />
+      <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('fp.title'), to: '/learn/fast-payments' }, { label: 'SGPI República Dominicana' }]} />
 
       <section className="technical-surface rounded-lg border border-scheme/35 bg-scheme/10 p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -97,11 +97,11 @@ export function SpiDominicanaStudy() {
               <TruthLabel tone="iso">ISO 20022</TruthLabel>
               <TruthLabel tone="verify">TO VERIFY</TruthLabel>
             </div>
-            <h1 className="mt-3 text-2xl font-semibold">SPI / SGPI Republica Dominicana</h1>
+            <h1 className="mt-3 text-2xl font-semibold">Actores y rol del SGPI</h1>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-text/90">
               {isEs
-                ? 'Ruta corta para estudiar pacs.008, pacs.004 y camt.003 usando el sistema dominicano como caso publico. La regla principal: separar lo que ISO define, lo que el BCRD publica sobre el esquema, y lo que aun tendrias que confirmar en una guia tecnica autorizada.'
-                : 'A short study path for pacs.008, pacs.004 and camt.003 using the Dominican instant-payments system as a public case study. The key rule: separate what ISO defines, what BCRD publicly says about the scheme, and what still needs confirmation from an authorized technical guide.'}
+                ? 'Empieza ubicando a cada actor del pago instantáneo dominicano. Luego separa lo que ISO define, lo que el BCRD publica sobre el esquema y lo que todavía exige una guía técnica autorizada.'
+                : 'Start by locating each actor in the Dominican instant-payment flow. Then separate what ISO defines, what BCRD publicly says about the scheme, and what still requires an authorized technical guide.'}
             </p>
           </div>
           <Landmark className="text-scheme" size={34} />
@@ -114,21 +114,21 @@ export function SpiDominicanaStudy() {
             <Layers3 size={17} className="text-iso" />
             <CardTitle className="mb-0">1. ISO</CardTitle>
           </div>
-          <p className="text-sm text-text/90">Define mensajes y semantica: pacs.008 mueve una instruccion de credito, pacs.004 devuelve un pago, camt.003 consulta informacion de cuenta.</p>
+          <p className="text-sm text-text/90">Define mensajes y semántica: pacs.008 lleva una instrucción de crédito, pacs.004 devuelve un pago y camt.003 consulta información de cuenta.</p>
         </Card>
         <Card variant="public-scheme">
           <div className="mb-2 flex items-center gap-2">
             <Route size={17} className="text-scheme" />
-            <CardTitle className="mb-0">2. SPI / SGPI publico</CardTitle>
+            <CardTitle className="mb-0">2. SGPI público</CardTitle>
           </div>
-          <p className="text-sm text-text/90">El BCRD presenta el SGPI/SPI como plataforma de pagos instantaneos. Esta app solo usa esa informacion publica como contexto del caso.</p>
+          <p className="text-sm text-text/90">El BCRD presenta el SGPI como plataforma de pagos instantáneos. Esta app usa únicamente esa información pública como contexto del caso.</p>
         </Card>
         <Card variant="investigation">
           <div className="mb-2 flex items-center gap-2">
             <CircleHelp size={17} className="text-warning" />
             <CardTitle className="mb-0">3. Implementacion</CardTitle>
           </div>
-          <p className="text-sm text-text/90">Versiones, endpoints, reglas de timeout, codigos, SLAs y mapeos exactos quedan como preguntas de verificacion, no como afirmaciones.</p>
+          <p className="text-sm text-text/90">Versiones, endpoints, reglas de timeout, códigos, SLA y mapeos exactos quedan como preguntas de verificación, no como afirmaciones.</p>
         </Card>
       </div>
 
@@ -145,11 +145,11 @@ export function SpiDominicanaStudy() {
                 <span className="rounded border border-border bg-surface/70 px-2 py-1 text-[10px] uppercase tracking-wide text-muted">{message.family}</span>
               </div>
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-muted">Que hace</div>
+                <div className="text-xs font-semibold uppercase tracking-wide text-muted">Qué hace</div>
                 <p className="mt-1 text-sm text-text/90">{message.role}</p>
               </div>
               <div>
-                <div className="text-xs font-semibold uppercase tracking-wide text-muted">Cuando aparece</div>
+                <div className="text-xs font-semibold uppercase tracking-wide text-muted">Cuándo aparece</div>
                 <p className="mt-1 text-sm text-text/90">{message.when}</p>
               </div>
               <div>
@@ -168,18 +168,23 @@ export function SpiDominicanaStudy() {
         <Card variant="public-scheme">
           <div className="mb-3 flex items-center gap-2">
             <BadgeCheck size={17} className="text-scheme" />
-            <CardTitle className="mb-0">Modelo publico simplificado del SPI/SGPI</CardTitle>
+            <CardTitle className="mb-0">Actores del flujo público</CardTitle>
           </div>
           <ol className="flex flex-col gap-2">
-            {publicSteps.map((step, index) => (
-              <li key={step} className="flex gap-3 rounded-md border border-border bg-surface/50 p-2 text-sm">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-scheme/20 text-xs font-bold text-scheme">{index + 1}</span>
-                <span>{step}</span>
+            {actorRoles.map((actor, index) => (
+              <li key={actor.label} className={`grid grid-cols-[2rem_minmax(0,1fr)] gap-3 rounded-md border p-3 ${actor.tone}`}>
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-current/30">
+                  {index === 0 || index === actorRoles.length - 1 ? <UserRound size={14} /> : index === 2 ? <Landmark size={14} /> : <Building2 size={14} />}
+                </span>
+                <div>
+                  <div className="flex flex-wrap items-baseline gap-2"><span className="font-mono text-sm font-semibold">{actor.label}</span><span className="text-xs text-text/70">{actor.role}</span></div>
+                  <p className="mt-1 text-sm text-text/85">{actor.detail}</p>
+                </div>
               </li>
             ))}
           </ol>
           <p className="mt-3 text-xs text-muted">
-            PUBLIC SCHEME: este flujo es conceptual y publico. No afirma arquitectura interna, colas, APIs, retries ni versiones ISO usadas por participantes.
+            PUBLIC SCHEME: el BCRD administra el SGPI. La arquitectura, componentes y procesos internos de cada participante siguen como preguntas de implementación.
           </p>
         </Card>
 
@@ -203,8 +208,8 @@ export function SpiDominicanaStudy() {
         <CardTitle>La confusion critica</CardTitle>
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="rounded-md border border-danger/30 bg-danger/10 p-3">
-            <div className="font-mono text-sm font-semibold text-danger">pacs.004 PaymentReturn</div>
-            <p className="mt-1 text-sm text-text/90">Devuelve una transferencia que ya progreso. Se entiende mirando el pago original, usualmente pacs.008-style.</p>
+              <div className="font-mono text-sm font-semibold text-danger">pacs.004 PaymentReturn</div>
+            <p className="mt-1 text-sm text-text/90">Devuelve una transferencia que ya progresó. Se entiende mirando el pago original, normalmente de tipo pacs.008.</p>
           </div>
           <div className="rounded-md border border-camt/30 bg-camt/10 p-3">
             <div className="font-mono text-sm font-semibold text-camt">camt.004 ReturnAccount</div>
@@ -215,12 +220,12 @@ export function SpiDominicanaStudy() {
 
       {triageScenario && (
         <section>
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">Micro-practica</h2>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">Micropráctica</h2>
           <ScenarioCard scenario={triageScenario} />
         </section>
       )}
 
-      <div className="flex justify-end border-t border-border pt-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
         {moduleComplete ? (
           <div className="flex items-center gap-2 text-sm font-medium text-success"><CheckCircle2 size={17} /> {isEs ? 'Módulo completado' : 'Module complete'}</div>
         ) : (
@@ -228,6 +233,9 @@ export function SpiDominicanaStudy() {
             {isEs ? 'Marcar módulo como completado' : 'Mark module complete'}
           </button>
         )}
+        <Link to="/learn/fast-payments/sgpi-public-happy-path" className="inline-flex min-h-10 items-center gap-2 rounded-md border border-scheme/45 bg-scheme/10 px-4 py-2 text-sm font-medium text-scheme hover:bg-scheme/15">
+          {isEs ? 'Continuar: Happy Path público' : 'Continue: Public happy path'} <ArrowRight size={15} />
+        </Link>
       </div>
     </div>
   )

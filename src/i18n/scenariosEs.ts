@@ -98,6 +98,96 @@ scenariosEs['spi-rd-message-triage'] = {
   reasoning: 'camt.003 GetAccount es la consulta de informacion de cuenta. pacs.008 es para una transferencia de credito interbancaria de cliente, mientras pacs.004 es una devolucion de pago. Para el caso publico SPI/SGPI dominicano, el uso exacto de camt.003 queda como TO VERIFY salvo que una guia autorizada lo indique.',
 }
 
+scenariosEs['sgpi-001-happy-path'] = {
+  title: 'SGPI-001: Evidencia del happy path',
+  prompt: 'BANK_A tiene un estado exitoso del esquema y evidencia de settlement final. BANK_B también registró 500 XXX en la cuenta de CUSTOMER_B. ¿Qué afirmación está completamente respaldada?',
+  choices: {
+    a: 'La instrucción solamente fue recibida',
+    b: 'El pago fue liquidado y el beneficiario fue acreditado',
+    c: 'Hay una devolución pendiente',
+    d: 'Ya conocemos el perfil ISO exacto del SGPI',
+  },
+  reasoning: 'La evidencia de settlement prueba el evento monetario entre participantes, y la evidencia de posting de BANK_B prueba por separado el crédito al beneficiario. Ninguno de esos hechos revela el perfil ISO exacto usado por el SGPI.',
+  lifecycleImpact: 'Settled → Acreditado.',
+  businessPerspective: 'El resultado puede comunicarse como completado porque existen evidencias de settlement y de crédito al beneficiario.',
+  technicalPerspective: 'Correlaciona el evento de settlement y el posting del beneficiario con identificadores sintéticos como E2E-001 y TX-001.',
+}
+
+scenariosEs['sgpi-002-reject-before-settlement'] = {
+  title: 'SGPI-002: Rechazo antes de settlement',
+  prompt: 'BANK_B rechaza una operación antes de settlement. BANK_A había reservado los fondos del pagador. ¿Cuál es el diagnóstico más seguro?',
+  choices: {
+    a: 'Debe crearse una devolución posterior a settlement',
+    b: 'Es un rechazo temprano; no hubo settlement y debe verificarse qué ocurre con la reserva',
+    c: 'El beneficiario fue acreditado y luego se hizo reversal',
+    d: 'Un camt.003 devolvió los fondos',
+  },
+  reasoning: 'La decisión receptora detuvo el pago antes de settlement, por lo que tiene forma de rechazo, no de devolución. El evento exacto que libera los fondos reservados pertenece a las reglas autorizadas del esquema y a la implementación institucional.',
+  lifecycleImpact: 'Reservado → Rechazado antes de settlement → liberación TO VERIFY.',
+  businessPerspective: 'No informes a CUSTOMER_A que el dinero regresó desde BANK_B; no se probó settlement entre participantes.',
+  technicalPerspective: 'Correlaciona el rechazo con la instrucción original y verifica el evento autoritativo de liberación de la reserva.',
+}
+
+scenariosEs['sgpi-003-timeout-before-approval'] = {
+  title: 'SGPI-003: Timeout antes de aprobación',
+  prompt: 'BANK_A puede probar el envío y la reserva de fondos, pero no recibe aprobación ni rechazo antes de que venza su temporizador local. ¿Qué estado del pago está justificado?',
+  choices: {
+    a: 'Rechazado',
+    b: 'Settled',
+    c: 'Incierto; debe obtenerse el estado autoritativo del esquema antes de decidir el resultado',
+    d: 'Reintentar automáticamente con un EndToEndId nuevo',
+  },
+  reasoning: 'Un timeout local solo prueba que falta evidencia oportuna. No revela si el lado receptor aprobó, rechazó o siguió procesando la operación.',
+  lifecycleImpact: 'Enviado / reservado → resultado incierto.',
+  businessPerspective: 'La comunicación al cliente debe reconocer la investigación pendiente, sin afirmar fallo o éxito.',
+  technicalPerspective: 'Consulta o reconcilia usando los identificadores originales. El comportamiento de retry e idempotencia debe venir de reglas autorizadas.',
+}
+
+scenariosEs['sgpi-004-problem-after-settlement'] = {
+  title: 'SGPI-004: Problema después de settlement',
+  prompt: 'El settlement final está probado, pero BANK_B informa que no pudo acreditar a CUSTOMER_B. ¿Qué debe investigar primero operaciones?',
+  choices: {
+    a: 'Un rechazo temprano antes de aceptación',
+    b: 'Una excepción posterior a settlement y un posible flujo de devolución según reglas SGPI',
+    c: 'Solamente una nueva iniciación de cliente',
+    d: 'Si la instrucción original fue enviada alguna vez',
+  },
+  reasoning: 'El settlement ya ocurrió, por lo que la investigación empieza después del límite de rechazo temprano. pacs.004 es conceptualmente relevante para devolver un pago que progresó, pero su uso exacto, plazo y códigos SGPI siguen como TO VERIFY.',
+  lifecycleImpact: 'Settled → falló el crédito al beneficiario → excepción posterior a settlement.',
+  businessPerspective: 'El lado originador necesita evidencia de cómo se manejará el valor liquidado antes de actualizar a CUSTOMER_A.',
+  technicalPerspective: 'Rastrea el EndToEndId original y la evidencia de settlement; luego busca un registro autorizado de devolución o excepción.',
+}
+
+scenariosEs['sgpi-005-message-vs-money'] = {
+  title: 'SGPI-005: Mensaje versus dinero',
+  prompt: 'El componente que se conecta con SGPI registra que una instrucción fue entregada al actor siguiente. No hay evento de settlement ni posting al beneficiario. ¿Qué está probado?',
+  choices: {
+    a: 'Solo la entrega del mensaje; el dinero y el estado final siguen sin probarse',
+    b: 'La obligación entre participantes fue liquidada',
+    c: 'CUSTOMER_B puede usar los fondos',
+    d: 'Se requiere un pacs.004',
+  },
+  reasoning: 'La evidencia de comunicación no sustituye evidencia de settlement o posting. Mantén explícitamente desconocidos el estado del dinero y el estado final hasta probar los eventos correspondientes.',
+  lifecycleImpact: 'Mensaje entregado; eventos monetarios posteriores sin probar.',
+  businessPerspective: 'Evita decirle a cualquiera de los clientes que la transferencia terminó.',
+  technicalPerspective: 'Continúa el rastreo con identificadores estables y evidencia específica de cada evento.',
+}
+
+scenariosEs['sgpi-006-accepted-by-whom'] = {
+  title: 'SGPI-006: ¿Aceptado por quién?',
+  prompt: 'Un dashboard muestra ACCEPTED, pero no identifica actor, evento ni timestamp. ¿Cuál es la mejor pregunta siguiente?',
+  choices: {
+    a: '¿Qué actor aceptó qué evento y existe evidencia separada de settlement?',
+    b: '¿Qué color debe tener el badge de estado?',
+    c: '¿Podemos asumir que CUSTOMER_B fue acreditado?',
+    d: '¿Debemos reemplazar el EndToEndId?',
+  },
+  reasoning: 'Accepted solo tiene significado con sujeto y límite: recibido por SGPI, validado por el esquema, aprobado por BANK_B o aceptado para otro evento. Settlement y crédito siguen siendo eventos separados.',
+  lifecycleImpact: 'Aceptación ambigua → identificar actor y evento → evaluar evidencia posterior.',
+  businessPerspective: 'Un estado accepted genérico no basta para determinar el resultado final del cliente.',
+  technicalPerspective: 'Captura actor, fuente del estado, identificador correlacionado y timestamp como campos de evidencia separados.',
+}
+
 export interface QuizTranslation {
   prompt: string
   choices: Record<string, string>

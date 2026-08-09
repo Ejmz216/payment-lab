@@ -1,4 +1,5 @@
 import type { Lesson, LearningPath } from '@/types/content'
+import { sgpiLessons } from '@/content/schemes/sgpi/lessons'
 
 export const fastPaymentsPath: LearningPath = {
   id: 'fast-payments',
@@ -21,6 +22,13 @@ export const fastPaymentsPath: LearningPath = {
     'reject-vs-return',
     'pacs-004',
     'cancellation-recall-reversal',
+    'sgpi-public-happy-path',
+    'sgpi-funds-state',
+    'sgpi-approval-rejection',
+    'sgpi-settlement-status-credit',
+    'sgpi-iso-mapping',
+    'sgpi-exception-scenarios',
+    'sgpi-questions-to-verify',
     'camt-cash-management',
     'reconciliation-investigations',
     'payment-architecture',
@@ -69,17 +77,26 @@ export const fastPaymentsPath: LearningPath = {
       shortTitle: 'SGPI',
       description: 'Apply payment concepts to the Dominican public scheme while keeping implementation questions explicit.',
       tone: 'public-scheme',
-      lessonIds: [],
+      lessonIds: [
+        'sgpi-public-happy-path',
+        'sgpi-funds-state',
+        'sgpi-approval-rejection',
+        'sgpi-settlement-status-credit',
+        'sgpi-iso-mapping',
+        'sgpi-exception-scenarios',
+        'sgpi-questions-to-verify',
+      ],
       modules: [
         {
           id: 'spi-dominicana-overview',
-          title: 'Dominican SPI / SGPI study pack',
-          description: 'Study pacs.008, pacs.004 and camt.003 through public scheme context and questions to verify.',
+          title: 'SGPI Actors & Role',
+          description: 'Meet the customer, participants and BCRD-administered infrastructure before tracing a payment.',
           route: '/learn/spi-dominicana',
           estimatedMinutes: 18,
           truthLabel: 'PUBLIC SCHEME',
         },
       ],
+      modulesFirst: true,
       plannedItemCount: 8,
     },
     {
@@ -1037,7 +1054,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'camt-cash-management',
     pathId: 'fast-payments',
-    order: 16,
+    order: 23,
     title: 'camt & Cash Management',
     subtitle: 'More than "bank statements"',
     whyItMatters:
@@ -1076,7 +1093,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'reconciliation-investigations',
     pathId: 'fast-payments',
-    order: 17,
+    order: 24,
     title: 'Reconciliation & Investigations',
     subtitle: 'Matching records and chasing down exceptions',
     whyItMatters:
@@ -1116,7 +1133,7 @@ export const fastPaymentsLessons: Lesson[] = [
   {
     id: 'payment-architecture',
     pathId: 'fast-payments',
-    order: 18,
+    order: 25,
     title: 'Payment Architecture',
     subtitle: 'A generic educational view of how the pieces fit together',
     whyItMatters:
@@ -1164,4 +1181,5 @@ export const fastPaymentsLessons: Lesson[] = [
     sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 6,
   },
+  ...sgpiLessons,
 ]

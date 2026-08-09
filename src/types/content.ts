@@ -2,7 +2,14 @@
 
 export type CoverageLevel = 'full-lesson' | 'detailed-reference' | 'basic-reference' | 'catalog-only'
 export type FastPaymentsRelevance = 'critical' | 'high' | 'medium' | 'low' | 'not-covered'
-export type ContentBadge = 'reference' | 'simplified-model' | 'simulation' | 'scheme-dependent'
+export type ContentBadge =
+  | 'reference'
+  | 'public-scheme'
+  | 'simplified-model'
+  | 'simulation'
+  | 'scheme-dependent'
+  | 'to-verify'
+  | 'implementation-question'
 export type Perspective = 'business' | 'ba-bsa' | 'developer' | 'qa' | 'operations'
 
 export interface SourceMetadata {
@@ -66,6 +73,7 @@ export interface LearningPhase {
   tone: LearningPhaseTone
   lessonIds: string[]
   modules?: StudyModule[]
+  modulesFirst?: boolean
   plannedItemCount: number
 }
 

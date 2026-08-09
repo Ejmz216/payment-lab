@@ -10,6 +10,9 @@ import { IdentifierTracer } from '@/components/learning/IdentifierTracer'
 import { ArchitectureDiagram } from '@/components/learning/ArchitectureDiagram'
 import { MessageSequenceView } from '@/components/learning/MessageSequenceView'
 import { TraceOriginalPayment } from '@/components/learning/TraceOriginalPayment'
+import { FourLayerExplorer } from '@/components/learning/FourLayerExplorer'
+import { EvidenceMatrix } from '@/components/learning/EvidenceMatrix'
+import { InvestigationChecklist } from '@/components/learning/InvestigationChecklist'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
@@ -122,6 +125,36 @@ export function LessonBlockRenderer({ block }: { block: LessonBlock }) {
         <Card className={block.tone === 'warning' ? 'border-warning/30' : 'border-primary/30'}>
           <CardTitle>{block.title}</CardTitle>
           <p className="text-sm text-text/90">{block.body}</p>
+        </Card>
+      )
+
+    case 'four-layer-explorer':
+      return (
+        <Card variant="public-scheme" className="technical-surface">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <CardTitle className="mb-0">{block.heading}</CardTitle>
+            {block.badge && <Badge type={block.badge} />}
+          </div>
+          {block.intro && <p className="mb-4 text-sm leading-relaxed text-text/85">{block.intro}</p>}
+          <FourLayerExplorer steps={block.steps} />
+        </Card>
+      )
+
+    case 'evidence-matrix':
+      return (
+        <Card variant="reference" className="technical-surface">
+          <CardTitle>{block.heading}</CardTitle>
+          {block.intro && <p className="mb-4 text-sm leading-relaxed text-text/85">{block.intro}</p>}
+          <EvidenceMatrix rows={block.rows} />
+        </Card>
+      )
+
+    case 'investigation-checklist':
+      return (
+        <Card variant="investigation" className="technical-surface">
+          <CardTitle>{block.heading}</CardTitle>
+          {block.intro && <p className="mb-4 text-sm leading-relaxed text-text/85">{block.intro}</p>}
+          <InvestigationChecklist groups={block.groups} />
         </Card>
       )
 

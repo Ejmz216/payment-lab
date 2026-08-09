@@ -1,0 +1,448 @@
+import type { FourLayerStep } from '@/types/blocks'
+import type { Lesson, SourceMetadata } from '@/types/content'
+
+const BCRD_PROJECT_URL = 'https://cdn.bancentral.gov.do/documents/sistema-de-pagos/informacion-general/documents/Proyecto_SGPI_Angel_Gonzalez.pdf'
+const BCRD_REGULATION_URL = 'https://cdn.bancentral.gov.do/documents/normativa/documents/2da-Res-JM-28-08-2025-Mod-Reglamento-SIPARD.pdf'
+const ISO_CATALOGUE_URL = 'https://www.iso20022.org/iso-20022-message-definitions'
+
+const bcrdSources: SourceMetadata[] = [
+  {
+    sourceName: 'BCRD — Proyecto Sistema de Gestión de Pagos Instantáneos',
+    sourceType: 'central-bank',
+    sourceReference: BCRD_PROJECT_URL,
+    lastReviewed: '2026-08-09',
+  },
+  {
+    sourceName: 'BCRD — Reglamento de Sistemas de Pago, arts. 60–62',
+    sourceType: 'official-documentation',
+    sourceReference: BCRD_REGULATION_URL,
+    lastReviewed: '2026-08-09',
+  },
+]
+
+const sgpiAndIsoSources: SourceMetadata[] = [
+  ...bcrdSources,
+  {
+    sourceName: 'ISO 20022 official message catalogue',
+    sourceType: 'ISO',
+    sourceReference: ISO_CATALOGUE_URL,
+    lastReviewed: '2026-08-09',
+  },
+]
+
+export const sgpiPublicFlowSteps: FourLayerStep[] = [
+  {
+    id: 'customer-initiates',
+    title: 'Customer initiates',
+    actor: { label: 'CUSTOMER_A', detail: 'The payer starts a transfer through an authorized participant channel.', badge: 'public-scheme' },
+    message: { label: 'Customer request', detail: 'The channel payload and any customer-to-bank ISO message are institution choices.', badge: 'implementation-question' },
+    money: { label: 'Available at origin', detail: 'No interparticipant movement of value has been proven yet.', badge: 'simplified-model' },
+    payment: { label: 'Initiated', detail: 'The customer has requested a payment; the scheme has not accepted it.', badge: 'simplified-model' },
+  },
+  {
+    id: 'originator-sends',
+    title: 'Originator sends',
+    actor: { label: 'BANK_A', detail: 'The originating participant sends a payment instruction toward SGPI.', badge: 'public-scheme' },
+    message: { label: 'Payment instruction', detail: 'pacs.008 is conceptually relevant; the exact SGPI message, version and leg remain TO VERIFY.', badge: 'to-verify' },
+    money: { label: 'Not settled', detail: 'Sending an instruction is not settlement and does not prove beneficiary credit.', badge: 'simplified-model' },
+    payment: { label: 'Submitted', detail: 'The instruction has left the originating participant in this public model.', badge: 'simplified-model' },
+  },
+  {
+    id: 'funds-reserved',
+    title: 'Funds reserved',
+    actor: { label: 'BANK_A', detail: 'The originating side controls the payer funds before the payment can continue.', badge: 'public-scheme' },
+    message: { label: 'Reservation evidence', detail: 'The internal command, event or ledger entry is an institution implementation detail.', badge: 'implementation-question' },
+    money: { label: 'Blocked / reserved', detail: 'Reserved funds are unavailable for another use, but this is not yet definitive interparticipant settlement.', badge: 'simplified-model' },
+    payment: { label: 'Pending routing', detail: 'The payment is progressing, but approval and settlement are still ahead.', badge: 'simplified-model' },
+  },
+  {
+    id: 'sgpi-routes',
+    title: 'SGPI routes',
+    actor: { label: 'SGPI / BCRD', detail: 'The BCRD-administered platform routes the operation between participating entities.', badge: 'public-scheme' },
+    message: { label: 'Scheme exchange', detail: 'Public material supports a message flow, but the exact ISO message on this arrow remains TO VERIFY.', badge: 'to-verify' },
+    money: { label: 'Reserved at origin', detail: 'Routing evidence alone does not prove settlement.', badge: 'simplified-model' },
+    payment: { label: 'Routed', detail: 'The operation is presented to the receiving side.', badge: 'simplified-model' },
+  },
+  {
+    id: 'receiver-decides',
+    title: 'Receiver decides',
+    actor: { label: 'BANK_B', detail: 'The receiving participant approves or rejects the operation.', badge: 'public-scheme' },
+    message: { label: 'Approval / rejection', detail: 'Status concepts are relevant, but the exact SGPI message and codes remain TO VERIFY.', badge: 'to-verify' },
+    money: { label: 'Conditional', detail: 'Reject implies release in this model; approval allows settlement to continue.', badge: 'simplified-model' },
+    payment: { label: 'Approved or rejected', detail: 'Approval by BANK_B is not the same evidence as settlement or beneficiary credit.', badge: 'simplified-model' },
+  },
+  {
+    id: 'settlement',
+    title: 'Settlement',
+    actor: { label: 'Settlement infrastructure', detail: 'The obligation between participants is discharged at the settlement stage.', badge: 'public-scheme' },
+    message: { label: 'Settlement event', detail: 'A message exchange may support the event, but the event and the message are not the same thing.', badge: 'to-verify' },
+    money: { label: 'Settled between participants', detail: 'Value has moved at the interparticipant layer in this public model.', badge: 'public-scheme' },
+    payment: { label: 'Settled', detail: 'Settlement is strong money-state evidence, but it still does not prove posting to CUSTOMER_B.', badge: 'simplified-model' },
+  },
+  {
+    id: 'status-originator',
+    title: 'Originator gets status',
+    actor: { label: 'SGPI → BANK_A', detail: 'The originating participant receives payment status.', badge: 'public-scheme' },
+    message: { label: 'Payment status', detail: 'pacs.002 is conceptually relevant; exact SGPI usage and status codes remain TO VERIFY.', badge: 'to-verify' },
+    money: { label: 'Settled', detail: 'A status can report the event, but it does not create settlement by itself.', badge: 'simplified-model' },
+    payment: { label: 'Status reported', detail: 'BANK_A can update its view according to the status evidence it received.', badge: 'simplified-model' },
+  },
+  {
+    id: 'status-receiver',
+    title: 'Receiver gets status',
+    actor: { label: 'SGPI → BANK_B', detail: 'The receiving participant receives payment status.', badge: 'public-scheme' },
+    message: { label: 'Payment status', detail: 'The exact message, direction and correlation fields remain TO VERIFY.', badge: 'to-verify' },
+    money: { label: 'Settled', detail: 'Beneficiary posting remains a separate institution event.', badge: 'simplified-model' },
+    payment: { label: 'Ready for final credit', detail: 'The receiving participant has scheme evidence to continue its customer-side processing.', badge: 'simplified-model' },
+  },
+  {
+    id: 'beneficiary-credited',
+    title: 'Beneficiary credited',
+    actor: { label: 'BANK_B → CUSTOMER_B', detail: 'The receiving participant credits the beneficiary account.', badge: 'public-scheme' },
+    message: { label: 'Credit confirmation', detail: 'Public material describes confirming credit; the institution event and exact message remain TO VERIFY.', badge: 'to-verify' },
+    money: { label: 'Available to CUSTOMER_B', detail: 'The beneficiary can use the credited funds.', badge: 'public-scheme' },
+    payment: { label: 'Credited / completed', detail: 'Only now does this model have evidence of beneficiary credit.', badge: 'simplified-model' },
+  },
+]
+
+export const sgpiLessons: Lesson[] = [
+  {
+    id: 'sgpi-public-happy-path',
+    pathId: 'fast-payments',
+    order: 16,
+    title: 'SGPI Public Happy Path',
+    subtitle: 'One operation, four synchronized layers, nine public steps',
+    whyItMatters: 'A message-only view hides the most important distinction in payments: communication, money and payment state can advance at different moments.',
+    objectives: [
+      'Walk through the nine-step SGPI public model from initiation to beneficiary credit.',
+      'Describe the actor, message evidence, money state and payment state at each step.',
+      'Identify every point where an exact ISO mapping still requires authorized scheme material.',
+    ],
+    mentalModel: 'Keep four clocks visible: who is acting, what is communicated, where the money is, and what state you can prove.',
+    sections: [],
+    blocks: [
+      {
+        type: 'explanation',
+        heading: 'Public flow, explicit boundaries',
+        body: 'The BCRD publicly describes SGPI as a BCRD-administered platform for real-time transfers and payments, available 24/7. The sequence below is a simplified public learning model. It does not claim internal APIs, queues, retry behavior, SLAs or institution architecture.',
+        badge: 'public-scheme',
+      },
+      {
+        type: 'four-layer-explorer',
+        heading: 'SGPI Four-Layer Explorer',
+        intro: 'Select a step and compare the four layers. A TO VERIFY label means the public source reviewed does not establish the exact message or implementation behavior.',
+        steps: sgpiPublicFlowSteps,
+        badge: 'simplified-model',
+      },
+      {
+        type: 'quick-check',
+        question: 'SGPI routed the operation to BANK_B. What has been proven at this point?',
+        options: [
+          { id: 'a', label: 'CUSTOMER_B was credited', correct: false },
+          { id: 'b', label: 'Interparticipant settlement completed', correct: false },
+          { id: 'c', label: 'The operation reached the receiving side in this model', correct: true },
+        ],
+        explanation: 'Routing proves progress in communication. Approval, settlement and beneficiary credit remain separate events that require their own evidence.',
+      },
+    ],
+    keyTerms: ['SGPI', 'public scheme', 'message state', 'money state', 'payment state'],
+    commonConfusion: [
+      { title: 'Routed ≠ settled', explanation: 'The infrastructure can route an operation before the settlement event occurs.' },
+    ],
+    relatedLessons: ['sgpi-funds-state', 'sgpi-settlement-status-credit'],
+    relatedMessages: ['pacs.008', 'pacs.002'],
+    sources: bcrdSources,
+    estimatedMinutes: 14,
+  },
+  {
+    id: 'sgpi-funds-state',
+    pathId: 'fast-payments',
+    order: 17,
+    title: 'SGPI Funds State',
+    subtitle: 'Blocked is not debited; settled is not credited',
+    whyItMatters: 'Operational mistakes often come from collapsing four different money states into the word “paid.”',
+    objectives: [
+      'Distinguish available, blocked/reserved, settled and credited funds.',
+      'Explain why a reservation is not definitive interparticipant settlement.',
+      'Choose the evidence needed before telling a customer that funds arrived.',
+    ],
+    mentalModel: 'Ask where the value is and what evidence proves it. Never derive money state from a message name alone.',
+    sections: [],
+    blocks: [
+      {
+        type: 'lifecycle',
+        badge: 'simplified-model',
+        stages: [
+          { id: 'available', label: 'Available', description: 'Funds are available to CUSTOMER_A before the operation.', canFail: 'Availability does not prove the participant has accepted the payment request.' },
+          { id: 'blocked', label: 'Blocked / reserved', description: 'Funds are held for this operation at the originating side.', canFail: 'Blocked does not mean a final debit or interparticipant settlement.' },
+          { id: 'settled', label: 'Settled', description: 'The obligation between participants has been discharged.', canFail: 'The beneficiary account may still not be credited.' },
+          { id: 'credited', label: 'Credited', description: 'BANK_B posts the funds so they are available to CUSTOMER_B.', canFail: 'Posting evidence belongs to the receiving institution layer.' },
+        ],
+      },
+      {
+        type: 'callout',
+        title: 'The operational sentence to avoid',
+        body: '“We sent the message, so the money arrived” combines communication evidence with money-state conclusions. Replace it with: “We have evidence of X; settlement and/or credit still need Y evidence.”',
+        tone: 'warning',
+      },
+      { type: 'scenario', scenarioId: 'sgpi-005-message-vs-money' },
+    ],
+    keyTerms: ['reservation', 'blocked funds', 'settlement', 'beneficiary credit'],
+    commonConfusion: [
+      { title: 'Blocked ≠ definitive debit', explanation: 'A reservation restricts the originator’s funds but does not itself prove final interparticipant movement of value.' },
+      { title: 'Settled ≠ credited', explanation: 'Settlement concerns participants; credit concerns the beneficiary account.' },
+    ],
+    relatedLessons: ['sgpi-public-happy-path', 'sgpi-settlement-status-credit'],
+    sources: bcrdSources,
+    estimatedMinutes: 9,
+  },
+  {
+    id: 'sgpi-approval-rejection',
+    pathId: 'fast-payments',
+    order: 18,
+    title: 'SGPI Approval & Rejection',
+    subtitle: 'Accepted by whom, and at which layer?',
+    whyItMatters: '“Accepted” is incomplete unless you name the actor and the event that actor accepted.',
+    objectives: [
+      'Separate receipt, scheme validation, receiving-participant approval and settlement.',
+      'Explain how an early rejection differs from a post-settlement return.',
+      'Ask for actor-specific status evidence instead of relying on a generic accepted flag.',
+    ],
+    mentalModel: 'Every status needs a subject: accepted by whom, for what, and before or after which money event?',
+    sections: [],
+    blocks: [
+      {
+        type: 'evidence-matrix',
+        heading: 'Acceptance has layers',
+        intro: 'These rows show what each event can prove and what still needs authorized implementation evidence.',
+        rows: [
+          { id: 'received', topic: 'Received', publicEvidence: 'The next actor has the operation.', isoRelevance: 'Message receipt or technical acknowledgement may be relevant.', implementationQuestion: 'Which acknowledgement, identifier and timestamp prove receipt?', badge: 'simplified-model' },
+          { id: 'scheme', topic: 'Scheme accepted', publicEvidence: 'SGPI allows the operation to continue in the public model.', isoRelevance: 'A status concept is relevant; exact code is not established here.', implementationQuestion: 'Which public/authorized status means scheme acceptance?', badge: 'to-verify' },
+          { id: 'receiver', topic: 'BANK_B approved', publicEvidence: 'The receiving participant approves or rejects.', isoRelevance: 'pacs.002 semantics may be relevant to status reporting.', implementationQuestion: 'Who creates the status, and which reason codes apply?', badge: 'public-scheme' },
+          { id: 'settled', topic: 'Settled', publicEvidence: 'The obligation between participants is discharged.', isoRelevance: 'Settlement is a business event, not merely a message label.', implementationQuestion: 'Which evidence establishes final settlement for this operation?', badge: 'public-scheme' },
+        ],
+      },
+      {
+        type: 'prediction',
+        context: 'BANK_B approved the operation; no settlement evidence is available yet.',
+        question: 'Can operations report the payment as settled?',
+        options: [
+          { id: 'a', label: 'Yes, approval always equals settlement', correct: false },
+          { id: 'b', label: 'No, approval and settlement require separate evidence', correct: true },
+        ],
+        explanation: 'Approval allows the operation to continue. It does not prove that value moved between participants.',
+      },
+      { type: 'scenario', scenarioId: 'sgpi-006-accepted-by-whom' },
+    ],
+    keyTerms: ['received', 'accepted', 'approved', 'rejected', 'actor-specific status'],
+    commonConfusion: [
+      { title: 'Received ≠ accepted', explanation: 'Receipt proves delivery to an actor. Acceptance is a separate decision.' },
+      { title: 'Reject ≠ return', explanation: 'A rejection stops progression before settlement; a return addresses a payment that already progressed.' },
+    ],
+    relatedLessons: ['reject-vs-return', 'sgpi-exception-scenarios'],
+    relatedMessages: ['pacs.002', 'pacs.004'],
+    sources: sgpiAndIsoSources,
+    estimatedMinutes: 11,
+  },
+  {
+    id: 'sgpi-settlement-status-credit',
+    pathId: 'fast-payments',
+    order: 19,
+    title: 'SGPI Settlement, Status & Credit',
+    subtitle: 'Three events that must not collapse into one green check',
+    whyItMatters: 'Customer communication and operational investigation depend on knowing which event has actually completed.',
+    objectives: [
+      'Distinguish settlement, status reporting and beneficiary credit.',
+      'Explain why a status message reports an event rather than causing it by itself.',
+      'Identify the evidence gap in a “settled but not credited” case.',
+    ],
+    mentalModel: 'Settlement changes value between participants. Status communicates evidence. Credit changes the beneficiary account.',
+    sections: [],
+    blocks: [
+      {
+        type: 'message-sequence',
+        heading: 'Late-stage public model',
+        badge: 'simplified-model',
+        steps: [
+          { id: 'settlement-event', from: 'SETTLEMENT', to: 'PARTICIPANTS', label: 'Settlement event', description: 'Interparticipant value is discharged; exact technical evidence is TO VERIFY.', tone: 'scheme' },
+          { id: 'origin-status', from: 'SGPI', to: 'BANK_A', label: 'Payment status', description: 'The originating participant receives status; exact ISO message is TO VERIFY.', tone: 'scheme' },
+          { id: 'receiver-status', from: 'SGPI', to: 'BANK_B', label: 'Payment status', description: 'The receiving participant receives status; exact ISO message is TO VERIFY.', tone: 'scheme' },
+          { id: 'credit', from: 'BANK_B', to: 'CUSTOMER_B', label: 'Beneficiary credit', description: 'The receiving institution posts funds to the beneficiary account.', tone: 'neutral' },
+        ],
+      },
+      {
+        type: 'quick-check',
+        question: 'You have final settlement evidence but no beneficiary posting evidence. What is the best status?',
+        options: [
+          { id: 'a', label: 'Completed and credited', correct: false },
+          { id: 'b', label: 'Settled; beneficiary credit still unproven', correct: true },
+          { id: 'c', label: 'Rejected', correct: false },
+        ],
+        explanation: 'The money event between participants is proven. The receiving institution’s customer posting remains a separate event to investigate.',
+      },
+      { type: 'scenario', scenarioId: 'sgpi-001-happy-path' },
+    ],
+    keyTerms: ['settlement evidence', 'payment status', 'beneficiary posting', 'credit confirmation'],
+    commonConfusion: [
+      { title: 'Message exchange ≠ settlement', explanation: 'Messages can instruct or report an event. Settlement is the actual discharge of the obligation.' },
+    ],
+    relatedLessons: ['sgpi-funds-state', 'payment-status'],
+    relatedMessages: ['pacs.002'],
+    sources: bcrdSources,
+    estimatedMinutes: 10,
+  },
+  {
+    id: 'sgpi-iso-mapping',
+    pathId: 'fast-payments',
+    order: 20,
+    title: 'SGPI ISO Mapping: Known vs To Verify',
+    subtitle: 'Use ISO semantics without inventing scheme adoption',
+    whyItMatters: 'Knowing pacs.008, pacs.004 and camt.003 is valuable, but it does not prove where or whether SGPI uses them.',
+    objectives: [
+      'Separate ISO message semantics from SGPI public behavior.',
+      'Describe conceptual relevance without claiming exact message adoption.',
+      'List the version, leg, status and reason-code questions an authorized guide must answer.',
+    ],
+    mentalModel: 'ISO tells you what a message means. The scheme tells you whether, where and how it is used.',
+    sections: [],
+    blocks: [
+      {
+        type: 'evidence-matrix',
+        heading: 'Known, relevant, and still unknown',
+        intro: 'No exact ISO message is assigned to an SGPI arrow unless the reviewed public material establishes it.',
+        rows: [
+          { id: 'instruction', topic: 'Payment instruction', publicEvidence: 'SGPI enables real-time transfers and payments between participants.', isoRelevance: 'pacs.008 carries a FI-to-FI customer credit transfer.', implementationQuestion: 'Is pacs.008 used? Which version, leg, profile and mandatory fields?', badge: 'to-verify' },
+          { id: 'status', topic: 'Approval / status', publicEvidence: 'The public model includes receiving-participant approval/rejection and participant statuses.', isoRelevance: 'pacs.002 reports status on a payment instruction.', implementationQuestion: 'Is pacs.002 used? Which actor sends it and which statuses/reasons are valid?', badge: 'to-verify' },
+          { id: 'return', topic: 'Post-progress return', publicEvidence: 'Exception handling is required, but public material reviewed does not define an ISO return profile.', isoRelevance: 'pacs.004 returns a payment and references the original transaction.', implementationQuestion: 'Is pacs.004 used? What return window, reason codes and settlement treatment apply?', badge: 'to-verify' },
+          { id: 'account-query', topic: 'Account query', publicEvidence: 'Public SGPI material reviewed does not establish camt.003 usage.', isoRelevance: 'camt.003 GetAccount requests account information.', implementationQuestion: 'Is camt.003 in SGPI scope or another BCRD operational service? Which account and version?', badge: 'to-verify' },
+          { id: 'account-response', topic: 'Account response', publicEvidence: 'No exact SGPI mapping is established in the reviewed public material.', isoRelevance: 'camt.004 ReturnAccount responds to GetAccount; it is not pacs.004 PaymentReturn.', implementationQuestion: 'If camt.003 is used, is camt.004 its response and which profile applies?', badge: 'to-verify' },
+        ],
+      },
+      {
+        type: 'callout',
+        title: 'The safe way to say it',
+        body: '“pacs.008 is conceptually relevant to the interbank credit-transfer instruction; exact SGPI adoption and mapping are TO VERIFY.” This preserves useful ISO reasoning without turning a guess into scheme documentation.',
+      },
+      { type: 'scenario', scenarioId: 'spi-rd-message-triage' },
+    ],
+    keyTerms: ['conceptual mapping', 'message profile', 'scheme-selected version', 'TO VERIFY'],
+    commonConfusion: [
+      { title: 'ISO 20022 ≠ SGPI', explanation: 'ISO defines semantics. SGPI is a Dominican public payment scheme with its own authorized rules and implementation material.' },
+      { title: 'pacs.004 ≠ camt.004', explanation: 'pacs.004 is PaymentReturn. camt.004 is ReturnAccount, the conceptual response to camt.003.' },
+    ],
+    relatedLessons: ['pacs-008-deep-dive', 'pacs-004', 'camt-cash-management'],
+    relatedMessages: ['pacs.008', 'pacs.002', 'pacs.004', 'camt.003', 'camt.004'],
+    sources: sgpiAndIsoSources,
+    estimatedMinutes: 13,
+  },
+  {
+    id: 'sgpi-exception-scenarios',
+    pathId: 'fast-payments',
+    order: 21,
+    title: 'SGPI Exception Scenarios',
+    subtitle: 'Diagnose the stage before choosing the message',
+    whyItMatters: 'Exception work becomes much easier when you first locate the last proven event, then identify the missing evidence.',
+    objectives: [
+      'Diagnose a rejection before settlement, a timeout before approval and a problem after settlement.',
+      'Keep uncertain state explicit when evidence stops mid-flow.',
+      'Choose an investigation direction without inventing retry or return rules.',
+    ],
+    mentalModel: 'Start from the last proven event. Everything after it is unknown until evidence closes the gap.',
+    sections: [],
+    blocks: [
+      { type: 'scenario', scenarioId: 'sgpi-002-reject-before-settlement' },
+      { type: 'scenario', scenarioId: 'sgpi-003-timeout-before-approval' },
+      { type: 'scenario', scenarioId: 'sgpi-004-problem-after-settlement' },
+      {
+        type: 'callout',
+        title: 'Timeout means uncertain, not failed',
+        body: 'Without an authoritative status, a timeout leaves the business outcome uncertain. Do not infer automatic retry, reversal or failure; those are scheme and institution questions.',
+        tone: 'warning',
+      },
+    ],
+    keyTerms: ['last proven event', 'uncertain state', 'timeout', 'reject', 'return'],
+    commonConfusion: [
+      { title: 'Timeout ≠ rejection', explanation: 'A timeout describes missing timely evidence, not the business outcome itself.' },
+    ],
+    relatedLessons: ['sgpi-approval-rejection', 'sgpi-questions-to-verify'],
+    relatedMessages: ['pacs.002', 'pacs.004'],
+    sources: bcrdSources,
+    estimatedMinutes: 14,
+  },
+  {
+    id: 'sgpi-questions-to-verify',
+    pathId: 'fast-payments',
+    order: 22,
+    title: 'SGPI Questions to Verify',
+    subtitle: 'Turn uncertainty into a disciplined investigation checklist',
+    whyItMatters: 'A strong analyst does not hide unknowns. They convert each unknown into a precise question and identify the authorized source or evidence needed.',
+    objectives: [
+      'Prepare a focused SGPI implementation-discovery checklist.',
+      'Separate scheme questions from institution architecture questions.',
+      'Avoid collecting customer, production or confidential data while learning.',
+    ],
+    mentalModel: 'TO VERIFY is not a dead end. It is a prompt to name the missing authority, artifact or event evidence.',
+    sections: [],
+    blocks: [
+      {
+        type: 'investigation-checklist',
+        heading: 'Authorized SGPI discovery checklist',
+        intro: 'Use this with public BCRD material or authorized institution documentation. Keep all examples synthetic.',
+        groups: [
+          {
+            title: 'Scheme and ISO profile',
+            items: [
+              'Which ISO 20022 messages and versions are selected by SGPI?',
+              'Which actor sends each message on each scheme leg?',
+              'Which status and reason codes are allowed at approval, rejection and return?',
+              'Which identifiers must remain stable across instruction, status and return?',
+            ],
+          },
+          {
+            title: 'Money and payment events',
+            items: [
+              'Which event proves funds are blocked or released at the originating side?',
+              'Which evidence proves final interparticipant settlement?',
+              'Which event proves beneficiary credit rather than merely settlement?',
+              'How is uncertain state resolved after a missing approval or status?',
+            ],
+          },
+          {
+            title: 'Institution implementation',
+            items: [
+              'Where are scheme identifiers correlated to institution transaction identifiers?',
+              'Which authorized logs or records prove receive, approve, settle and credit events?',
+              'How are duplicates detected and what idempotency key is authoritative?',
+              'Which operational team owns each gap in the four-layer explorer?',
+            ],
+          },
+          {
+            title: 'Safety boundary',
+            items: [
+              'Use only synthetic identifiers such as MSG-001, E2E-001 and TX-001.',
+              'Do not paste customer, production, proprietary or internal implementation data into Payment Lab.',
+              'Record an unknown as TO VERIFY instead of guessing.',
+            ],
+          },
+        ],
+      },
+      {
+        type: 'quick-check',
+        question: 'An authorized SGPI guide is unavailable. What should you put beside the exact pacs.008 version?',
+        options: [
+          { id: 'a', label: 'The newest ISO version, assumed', correct: false },
+          { id: 'b', label: 'TO VERIFY, plus the source needed to confirm it', correct: true },
+          { id: 'c', label: 'The version used by an unrelated payment scheme', correct: false },
+        ],
+        explanation: 'A scheme selects and profiles message versions. Without authorized evidence, the exact selection remains TO VERIFY.',
+      },
+    ],
+    keyTerms: ['implementation question', 'authorized source', 'evidence gap', 'privacy boundary'],
+    commonConfusion: [
+      { title: 'Unknown ≠ arbitrary', explanation: 'An unknown should produce a verification question, not a convenient guess.' },
+    ],
+    relatedLessons: ['sgpi-iso-mapping', 'reconciliation-investigations'],
+    sources: sgpiAndIsoSources,
+    estimatedMinutes: 12,
+  },
+]

@@ -159,6 +159,138 @@ scenarios.push({
   tags: ['spi-rd', 'camt-003', 'message-triage'],
 })
 
+scenarios.push({
+  id: 'sgpi-001-happy-path',
+  title: 'SGPI-001: Happy path evidence',
+  prompt:
+    'BANK_A has a successful scheme status and final settlement evidence. BANK_B has also posted 500 XXX to CUSTOMER_B. Which statement is fully supported?',
+  choices: [
+    { id: 'a', label: 'The instruction was only received', correct: false },
+    { id: 'b', label: 'The payment settled and the beneficiary was credited', correct: true },
+    { id: 'c', label: 'A return is pending', correct: false },
+    { id: 'd', label: 'The exact SGPI ISO profile is now known', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'Settlement evidence proves the interparticipant money event, and BANK_B posting evidence separately proves beneficiary credit. Neither fact, however, reveals the exact ISO message profile used by SGPI.',
+    lifecycleImpact: 'Settled → Credited.',
+    businessPerspective: 'The customer outcome can be reported as completed because both settlement and beneficiary credit have evidence.',
+    technicalPerspective: 'Keep the settlement event and beneficiary posting event correlated through synthetic identifiers such as E2E-001 and TX-001.',
+    dependsOnScheme: true,
+  },
+  tags: ['sgpi', 'happy-path', 'settlement', 'credit'],
+})
+
+scenarios.push({
+  id: 'sgpi-002-reject-before-settlement',
+  title: 'SGPI-002: Reject before settlement',
+  prompt:
+    'BANK_B rejects an operation before settlement. BANK_A had reserved the payer funds. What is the safest diagnosis?',
+  choices: [
+    { id: 'a', label: 'A post-settlement return must be created', correct: false },
+    { id: 'b', label: 'An early rejection; settlement did not occur and the reservation outcome must be verified', correct: true },
+    { id: 'c', label: 'The beneficiary was credited and then reversed', correct: false },
+    { id: 'd', label: 'A camt.003 moved the funds back', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'The receiving decision stopped the payment before settlement, so this has the shape of a rejection, not a return. The exact event that releases reserved funds belongs to the authorized scheme and institution implementation.',
+    lifecycleImpact: 'Reserved → Rejected before settlement → release outcome TO VERIFY.',
+    businessPerspective: 'Do not tell CUSTOMER_A that money was returned from BANK_B; no interparticipant settlement was proven.',
+    technicalPerspective: 'Correlate the rejection to the original instruction and verify the authoritative reservation-release event.',
+    dependsOnScheme: true,
+  },
+  tags: ['sgpi', 'reject', 'pre-settlement'],
+})
+
+scenarios.push({
+  id: 'sgpi-003-timeout-before-approval',
+  title: 'SGPI-003: Timeout before approval',
+  prompt:
+    'BANK_A can prove submission and funds reservation, but receives no approval or rejection before its local timer expires. What payment state is justified?',
+  choices: [
+    { id: 'a', label: 'Rejected', correct: false },
+    { id: 'b', label: 'Settled', correct: false },
+    { id: 'c', label: 'Uncertain; obtain authoritative scheme status before deciding the outcome', correct: true },
+    { id: 'd', label: 'Automatically retry with a new EndToEndId', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'A local timeout proves only that timely evidence is missing. It does not reveal whether the receiving side approved, rejected or continued processing the operation.',
+    lifecycleImpact: 'Submitted / reserved → outcome uncertain.',
+    businessPerspective: 'Customer communication should acknowledge the pending investigation rather than claim failure or success.',
+    technicalPerspective: 'Query or reconcile using the original identifiers. Retry and idempotency behavior must come from authorized rules, not inference.',
+    dependsOnScheme: true,
+  },
+  tags: ['sgpi', 'timeout', 'uncertain-state'],
+})
+
+scenarios.push({
+  id: 'sgpi-004-problem-after-settlement',
+  title: 'SGPI-004: Problem after settlement',
+  prompt:
+    'Final settlement is proven, but BANK_B reports that CUSTOMER_B could not be credited. What should operations investigate first?',
+  choices: [
+    { id: 'a', label: 'An early rejection before acceptance', correct: false },
+    { id: 'b', label: 'A post-settlement exception and possible return flow under SGPI rules', correct: true },
+    { id: 'c', label: 'A new customer initiation only', correct: false },
+    { id: 'd', label: 'Whether the original message was ever submitted', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'Settlement already occurred, so the investigation starts after the early-rejection boundary. pacs.004 is conceptually relevant to returning a progressed payment, but exact SGPI usage, timing and reason codes remain TO VERIFY.',
+    lifecycleImpact: 'Settled → beneficiary credit failed → post-settlement exception.',
+    businessPerspective: 'The originating side needs evidence of how the settled value will be handled before updating CUSTOMER_A.',
+    technicalPerspective: 'Trace the original EndToEndId and settlement evidence, then look for an authorized return or exception record.',
+    dependsOnScheme: true,
+  },
+  tags: ['sgpi', 'post-settlement', 'return'],
+})
+
+scenarios.push({
+  id: 'sgpi-005-message-vs-money',
+  title: 'SGPI-005: Message versus money',
+  prompt:
+    'The SGPI-facing component records that a payment instruction was delivered to the next actor. There is no settlement event and no beneficiary posting. What is proven?',
+  choices: [
+    { id: 'a', label: 'Only message delivery; money and final payment state remain unproven', correct: true },
+    { id: 'b', label: 'The participant obligation was settled', correct: false },
+    { id: 'c', label: 'CUSTOMER_B can use the funds', correct: false },
+    { id: 'd', label: 'A pacs.004 is required', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'Communication evidence cannot substitute for settlement or posting evidence. Keep the money state and final payment state explicitly unknown until the corresponding events are proven.',
+    lifecycleImpact: 'Message delivered; later money events unproven.',
+    businessPerspective: 'Avoid telling either customer that the transfer completed.',
+    technicalPerspective: 'Continue the trace using stable identifiers and event-specific evidence.',
+    dependsOnScheme: true,
+  },
+  tags: ['sgpi', 'message-state', 'money-state'],
+})
+
+scenarios.push({
+  id: 'sgpi-006-accepted-by-whom',
+  title: 'SGPI-006: Accepted by whom?',
+  prompt:
+    'A dashboard shows ACCEPTED but does not identify the actor, event or timestamp. What is the best next question?',
+  choices: [
+    { id: 'a', label: 'Which actor accepted what event, and does separate settlement evidence exist?', correct: true },
+    { id: 'b', label: 'Which color should the status badge use?', correct: false },
+    { id: 'c', label: 'Can we assume CUSTOMER_B was credited?', correct: false },
+    { id: 'd', label: 'Should we replace the EndToEndId?', correct: false },
+  ],
+  explanation: {
+    reasoning:
+      'Accepted is meaningful only with a subject and boundary: received by SGPI, validated by the scheme, approved by BANK_B, or accepted for another event. Settlement and credit remain separate.',
+    lifecycleImpact: 'Ambiguous acceptance → identify actor and event → evaluate later evidence.',
+    businessPerspective: 'A generic accepted flag is not enough for a final customer outcome.',
+    technicalPerspective: 'Capture actor, status source, correlated identifier and event timestamp as separate evidence fields.',
+    dependsOnScheme: true,
+  },
+  tags: ['sgpi', 'acceptance', 'status'],
+})
+
 export const quizQuestions: QuizQuestion[] = [
   {
     id: 'q-clearing-settlement-1',

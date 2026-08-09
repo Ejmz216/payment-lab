@@ -145,6 +145,57 @@ export interface CalloutBlock {
   tone?: 'info' | 'warning'
 }
 
+export interface FourLayerValue {
+  label: string
+  detail: string
+  badge?: ContentBadge
+}
+
+export interface FourLayerStep {
+  id: string
+  title: string
+  actor: FourLayerValue
+  message: FourLayerValue
+  money: FourLayerValue
+  payment: FourLayerValue
+}
+
+export interface FourLayerExplorerBlock {
+  type: 'four-layer-explorer'
+  heading: string
+  intro?: string
+  steps: FourLayerStep[]
+  badge?: ContentBadge
+}
+
+export interface EvidenceMatrixRow {
+  id: string
+  topic: string
+  publicEvidence: string
+  isoRelevance: string
+  implementationQuestion: string
+  badge: ContentBadge
+}
+
+export interface EvidenceMatrixBlock {
+  type: 'evidence-matrix'
+  heading: string
+  intro?: string
+  rows: EvidenceMatrixRow[]
+}
+
+export interface InvestigationChecklistGroup {
+  title: string
+  items: string[]
+}
+
+export interface InvestigationChecklistBlock {
+  type: 'investigation-checklist'
+  heading: string
+  intro?: string
+  groups: InvestigationChecklistGroup[]
+}
+
 export type LessonBlock =
   | ExplanationBlock
   | PaymentFlowBlock
@@ -159,3 +210,6 @@ export type LessonBlock =
   | DecisionTreeBlock
   | ArchitectureBlock
   | CalloutBlock
+  | FourLayerExplorerBlock
+  | EvidenceMatrixBlock
+  | InvestigationChecklistBlock

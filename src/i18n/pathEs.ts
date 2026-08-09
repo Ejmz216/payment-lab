@@ -29,8 +29,8 @@ export const fastPaymentsPathEs = {
       description: 'Aplica conceptos de pagos al esquema público dominicano y mantiene explícitas las preguntas de implementación.',
       modules: {
         'spi-dominicana-overview': {
-          title: 'Pack de estudio SPI / SGPI dominicano',
-          description: 'Estudia pacs.008, pacs.004 y camt.003 con contexto público y preguntas por verificar.',
+          title: 'Actores y rol del SGPI',
+          description: 'Conoce al cliente, los participantes y la infraestructura administrada por el BCRD antes de rastrear un pago.',
         },
       },
     },

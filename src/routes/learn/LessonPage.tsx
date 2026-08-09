@@ -10,7 +10,7 @@ import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { LessonBlockRenderer } from '@/components/learning/LessonBlockRenderer'
 import { LessonContextHeader } from '@/components/learning/LessonContextHeader'
 import { StudyRail } from '@/components/learning/StudyRail'
-import { CheckCircle2, Map } from 'lucide-react'
+import { CheckCircle2, ExternalLink, Map } from 'lucide-react'
 
 export function LessonPage() {
   const { lessonId } = useParams()
@@ -127,7 +127,12 @@ export function LessonPage() {
         <ul className="mt-1 flex flex-col gap-1 text-xs text-muted">
           {lesson.sources.map((s) => (
             <li key={s.sourceName}>
-              {s.sourceName} ({s.sourceType}) — {t('lesson.lastReviewed')} {s.lastReviewed}
+              {s.sourceReference ? (
+                <a className="inline-flex items-center gap-1 text-primary hover:underline" href={s.sourceReference} target="_blank" rel="noreferrer">
+                  {s.sourceName} <ExternalLink size={11} />
+                </a>
+              ) : s.sourceName}{' '}
+              ({s.sourceType}) — {t('lesson.lastReviewed')} {s.lastReviewed}
               {s.notes ? ` — ${s.notes}` : ''}
             </li>
           ))}

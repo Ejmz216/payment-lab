@@ -3,6 +3,7 @@
 // keyTerms are intentionally left untranslated (ISO 20022 role/field names
 // are used internationally in English in real documentation and conversation).
 import type { LessonBlock } from '@/types/blocks'
+import { sgpiLessonsEs } from '@/i18n/sgpiLessonsEs'
 
 export interface LessonTranslation {
   title?: string
@@ -16,6 +17,7 @@ export interface LessonTranslation {
 }
 
 export const lessonsEs: Record<string, LessonTranslation> = {
+  ...sgpiLessonsEs,
   'payment-fundamentals': {
     title: 'Fundamentos de Pagos',
     subtitle: 'Qué ocurre realmente cuando se mueve el dinero',

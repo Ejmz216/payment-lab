@@ -70,7 +70,7 @@ export function buildStudyPathState(
       }]
     })
     const moduleItems = (phase.modules ?? []).map((module) => resolveModule(module, phase.id, completedModules))
-    const items = [...lessonItems, ...moduleItems]
+    const items = phase.modulesFirst ? [...moduleItems, ...lessonItems] : [...lessonItems, ...moduleItems]
     const completedCount = items.filter((item) => item.complete).length
     const availableCount = items.length
 
