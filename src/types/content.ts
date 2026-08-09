@@ -40,11 +40,41 @@ export interface Lesson {
   estimatedMinutes: number
 }
 
+export type LearningPhaseTone =
+  | 'study'
+  | 'reference'
+  | 'warning'
+  | 'public-scheme'
+  | 'investigation'
+  | 'simulation'
+
+export interface StudyModule {
+  id: string
+  title: string
+  description: string
+  route: string
+  estimatedMinutes: number
+  truthLabel?: string
+}
+
+export interface LearningPhase {
+  id: string
+  order: number
+  title: string
+  shortTitle: string
+  description: string
+  tone: LearningPhaseTone
+  lessonIds: string[]
+  modules?: StudyModule[]
+  plannedItemCount: number
+}
+
 export interface LearningPath {
   id: string
   title: string
   description: string
   lessonIds: string[]
+  phases: LearningPhase[]
 }
 
 export interface MessageFieldNode {

@@ -5,6 +5,7 @@ import { glossary as glossaryEn } from '@/content/glossary'
 import { confusions as confusionsEn } from '@/content/confusions'
 import { scenarios as scenariosEn, quizQuestions as quizEn } from '@/content/scenarios'
 import { lessonsEs } from '@/i18n/lessonsEs'
+import { fastPaymentsPathEs } from '@/i18n/pathEs'
 import { glossaryEs } from '@/i18n/glossaryEs'
 import { confusionsEs } from '@/i18n/confusionsEs'
 import { scenariosEs, quizEs } from '@/i18n/scenariosEs'
@@ -15,7 +16,36 @@ import { simulatorScenarios as simScenariosEn, simActors as simActorsEn } from '
 import { simulatorEs, simActorsEs } from '@/i18n/simulatorEs'
 import { debugCases as debugCasesEn } from '@/content/debugCases'
 import { debugCasesEs } from '@/i18n/debugCasesEs'
-import type { Lesson, MessageDefinition, GlossaryEntry, Scenario, QuizQuestion } from '@/types/content'
+import type { Lesson, LearningPath, MessageDefinition, GlossaryEntry, Scenario, QuizQuestion } from '@/types/content'
+import { fastPaymentsPath } from '@/content/lessons/fastPaymentsPath'
+
+export function getFastPaymentsPath(lang: Lang): LearningPath {
+  if (lang === 'en') return fastPaymentsPath
+
+  return {
+    ...fastPaymentsPath,
+    title: fastPaymentsPathEs.title,
+    description: fastPaymentsPathEs.description,
+    phases: fastPaymentsPath.phases.map((phase) => {
+      const translated = fastPaymentsPathEs.phases[phase.id as keyof typeof fastPaymentsPathEs.phases]
+      if (!translated) return phase
+
+      return {
+        ...phase,
+        title: translated.title,
+        shortTitle: translated.shortTitle,
+        description: translated.description,
+        modules: phase.modules?.map((module) => {
+          const moduleTranslations = 'modules' in translated
+            ? translated.modules as Record<string, { title: string; description: string }>
+            : undefined
+          const moduleTranslation = moduleTranslations?.[module.id]
+          return moduleTranslation ? { ...module, ...moduleTranslation } : module
+        }),
+      }
+    }),
+  }
+}
 
 export function getLessons(lang: Lang): Lesson[] {
   if (lang === 'en') return fastPaymentsLessons

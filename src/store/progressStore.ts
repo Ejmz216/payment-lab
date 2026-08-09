@@ -19,12 +19,14 @@ export interface ScenarioResult {
 
 interface ProgressState {
   completedLessons: string[]
+  completedModules: string[]
   quizResults: QuizResult[]
   scenarioHistory: ScenarioResult[]
   messageViewed: string[]
   bookmarks: string[]
   privateSession: boolean
   completeLesson: (id: string) => void
+  completeModule: (id: string) => void
   recordQuiz: (result: QuizResult) => void
   recordScenario: (result: ScenarioResult) => void
   viewMessage: (id: string) => void
@@ -35,6 +37,7 @@ interface ProgressState {
 
 const initial = {
   completedLessons: [] as string[],
+  completedModules: [] as string[],
   quizResults: [] as QuizResult[],
   scenarioHistory: [] as ScenarioResult[],
   messageViewed: [] as string[],
@@ -50,6 +53,11 @@ export const useProgressStore = create<ProgressState>()(
         if (get().privateSession) return
         if (get().completedLessons.includes(id)) return
         set({ completedLessons: [...get().completedLessons, id] })
+      },
+      completeModule: (id) => {
+        if (get().privateSession) return
+        if (get().completedModules.includes(id)) return
+        set({ completedModules: [...get().completedModules, id] })
       },
       recordQuiz: (result) => {
         if (get().privateSession) return

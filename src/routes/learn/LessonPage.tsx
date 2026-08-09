@@ -1,34 +1,27 @@
-import { useEffect } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
-import { getLessons, getScenarios } from '@/lib/i18nContent'
+import { getFastPaymentsPath, getLessons, getScenarios } from '@/lib/i18nContent'
 import { useProgressStore } from '@/store/progressStore'
 import { Card, CardTitle } from '@/components/ui/Card'
 import { BookmarkButton } from '@/components/ui/BookmarkButton'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { LessonBlockRenderer } from '@/components/learning/LessonBlockRenderer'
-import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react'
+import { LessonContextHeader } from '@/components/learning/LessonContextHeader'
+import { StudyRail } from '@/components/learning/StudyRail'
+import { CheckCircle2, Map } from 'lucide-react'
 
 export function LessonPage() {
   const { lessonId } = useParams()
   const lang = useUIStore((s) => s.lang)
   const t = useT()
   const lessons = getLessons(lang)
+  const path = getFastPaymentsPath(lang)
   const lesson = lessons.find((l) => l.id === lessonId)
   const completed = useProgressStore((s) => s.completedLessons)
   const completeLesson = useProgressStore((s) => s.completeLesson)
   const isDone = lesson ? completed.includes(lesson.id) : false
-
-  const orderedLessons = lessons.slice().sort((a, b) => a.order - b.order)
-  const idx = lesson ? orderedLessons.findIndex((l) => l.id === lesson.id) : -1
-  const prev = idx > 0 ? orderedLessons[idx - 1] : undefined
-  const next = idx >= 0 && idx < orderedLessons.length - 1 ? orderedLessons[idx + 1] : undefined
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [lessonId])
 
   if (!lesson) return <Navigate to="/learn/fast-payments" replace />
 
@@ -38,20 +31,32 @@ export function LessonPage() {
     <div className="flex flex-col gap-6">
       <Breadcrumbs items={[{ label: t('nav.dashboard'), to: '/' }, { label: t('fp.title'), to: '/learn/fast-payments' }, { label: lesson.title }]} />
 
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">{lesson.title}</h1>
-          {lesson.subtitle && <p className="mt-1 text-sm text-muted">{lesson.subtitle}</p>}
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]">
+        <Link to="/learn/fast-payments" className="flex min-h-11 items-center justify-between gap-3 rounded-md border border-border bg-surface px-3 py-2 text-sm lg:hidden">
+          <span className="flex min-w-0 items-center gap-2"><Map size={15} className="shrink-0 text-primary" /><span className="truncate">{t('study.learningMap')}</span></span>
+          <span className="shrink-0 text-xs text-muted">{t('study.lesson')} {lesson.order}</span>
+        </Link>
+        <div className="hidden lg:sticky lg:top-6 lg:block">
+          <StudyRail path={path} lessons={lessons} activeItemId={lesson.id} />
         </div>
-        <BookmarkButton id={`lesson:${lesson.id}`} />
-      </div>
 
-      <Card className="border-primary/30 bg-primary/5">
+        <article className="flex min-w-0 flex-col gap-6">
+          <LessonContextHeader path={path} lessons={lessons} lesson={lesson} />
+
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-semibold">{lesson.title}</h1>
+              {lesson.subtitle && <p className="mt-1 text-sm text-muted">{lesson.subtitle}</p>}
+            </div>
+            <BookmarkButton id={`lesson:${lesson.id}`} />
+          </div>
+
+          <Card className="border-primary/30 bg-primary/5">
         <CardTitle>{t('lesson.whyMatters')}</CardTitle>
         <p className="text-sm text-text/90">{lesson.whyItMatters}</p>
-      </Card>
+          </Card>
 
-      <Card>
+          <Card>
         <CardTitle>{t('lesson.objectives')}</CardTitle>
         <ul className="mt-2 flex flex-col gap-1.5 text-sm">
           {lesson.objectives.map((o) => (
@@ -61,22 +66,22 @@ export function LessonPage() {
             </li>
           ))}
         </ul>
-      </Card>
+          </Card>
 
-      {lesson.mentalModel && (
+          {lesson.mentalModel && (
         <Card>
           <CardTitle>{t('lesson.mentalModel')}</CardTitle>
           <p className="text-sm italic text-text/90">{lesson.mentalModel}</p>
         </Card>
-      )}
+          )}
 
-      {lesson.blocks && lesson.blocks.length > 0 ? (
+          {lesson.blocks && lesson.blocks.length > 0 ? (
         <div className="flex flex-col gap-4">
           {lesson.blocks.map((block, i) => (
             <LessonBlockRenderer key={i} block={block} />
           ))}
         </div>
-      ) : (
+          ) : (
         <div className="flex flex-col gap-4">
           {lesson.sections.map((section) => (
             <Card key={section.heading}>
@@ -85,9 +90,9 @@ export function LessonPage() {
             </Card>
           ))}
         </div>
-      )}
+          )}
 
-      {lesson.keyTerms.length > 0 && (
+          {lesson.keyTerms.length > 0 && (
         <Card>
           <CardTitle>{t('lesson.keyTerms')}</CardTitle>
           <div className="mt-2 flex flex-wrap gap-1.5">
@@ -96,9 +101,9 @@ export function LessonPage() {
             ))}
           </div>
         </Card>
-      )}
+          )}
 
-      {lesson.commonConfusion && lesson.commonConfusion.length > 0 && (
+          {lesson.commonConfusion && lesson.commonConfusion.length > 0 && (
         <Card className="border-warning/30">
           <CardTitle>{t('lesson.commonMistake')}</CardTitle>
           {lesson.commonConfusion.map((c) => (
@@ -108,16 +113,16 @@ export function LessonPage() {
             </div>
           ))}
         </Card>
-      )}
+          )}
 
-      {scenario && (
+          {scenario && (
         <div>
           <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted">{t('lesson.checkYourself')}</h2>
           <ScenarioCard scenario={scenario} />
         </div>
-      )}
+          )}
 
-      <Card>
+          <Card>
         <CardTitle>{t('lesson.sources')}</CardTitle>
         <ul className="mt-1 flex flex-col gap-1 text-xs text-muted">
           {lesson.sources.map((s) => (
@@ -127,28 +132,17 @@ export function LessonPage() {
             </li>
           ))}
         </ul>
-      </Card>
+          </Card>
 
-      {!isDone && (
+          {!isDone && (
         <button
           onClick={() => completeLesson(lesson.id)}
           className="self-start rounded-md bg-success px-4 py-2 text-sm font-medium text-white hover:opacity-90"
         >
           {t('lesson.markComplete')}
         </button>
-      )}
-
-      <div className="flex items-center justify-between border-t border-border pt-4">
-        {prev ? (
-          <Link to={`/learn/fast-payments/${prev.id}`} className="flex items-center gap-1.5 text-sm text-muted hover:text-text">
-            <ArrowLeft size={15} /> {prev.title}
-          </Link>
-        ) : <span />}
-        {next ? (
-          <Link to={`/learn/fast-payments/${next.id}`} className="flex items-center gap-1.5 text-sm text-primary hover:underline">
-            {next.title} <ArrowRight size={15} />
-          </Link>
-        ) : <span />}
+          )}
+        </article>
       </div>
     </div>
   )

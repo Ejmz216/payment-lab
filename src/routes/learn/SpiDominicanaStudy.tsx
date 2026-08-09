@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, BadgeCheck, CircleHelp, Landmark, Layers3, Route, SearchCheck } from 'lucide-react'
+import { ArrowRight, BadgeCheck, CheckCircle2, CircleHelp, Landmark, Layers3, Route, SearchCheck } from 'lucide-react'
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs'
 import { Card, CardTitle, type CardVariant } from '@/components/ui/Card'
 import { ScenarioCard } from '@/components/practice/ScenarioCard'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 import { getScenarios } from '@/lib/i18nContent'
+import { useProgressStore } from '@/store/progressStore'
 
 const messageCards: {
   id: string
@@ -80,6 +81,9 @@ export function SpiDominicanaStudy() {
   const t = useT()
   const isEs = lang === 'es'
   const triageScenario = getScenarios(lang).find((scenario) => scenario.id === 'spi-rd-message-triage')
+  const completedModules = useProgressStore((state) => state.completedModules ?? [])
+  const completeModule = useProgressStore((state) => state.completeModule)
+  const moduleComplete = completedModules.includes('spi-dominicana-overview')
 
   return (
     <div className="flex flex-col gap-6">
@@ -215,6 +219,16 @@ export function SpiDominicanaStudy() {
           <ScenarioCard scenario={triageScenario} />
         </section>
       )}
+
+      <div className="flex justify-end border-t border-border pt-4">
+        {moduleComplete ? (
+          <div className="flex items-center gap-2 text-sm font-medium text-success"><CheckCircle2 size={17} /> {isEs ? 'Módulo completado' : 'Module complete'}</div>
+        ) : (
+          <button onClick={() => completeModule('spi-dominicana-overview')} className="rounded-md bg-success px-4 py-2 text-sm font-medium text-white hover:opacity-90">
+            {isEs ? 'Marcar módulo como completado' : 'Mark module complete'}
+          </button>
+        )}
+      </div>
     </div>
   )
 }

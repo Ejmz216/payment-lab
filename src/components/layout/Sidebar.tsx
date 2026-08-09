@@ -10,17 +10,22 @@ import {
   Map,
   Route,
   Search,
-  Zap,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { useT, type StringKey } from '@/i18n/strings'
+import { useUIStore } from '@/store/uiStore'
+import { useProgressStore } from '@/store/progressStore'
+import { getFastPaymentsPath, getLessons } from '@/lib/i18nContent'
+import { buildStudyPathState } from '@/lib/studyPath'
 
-const navGroups: { groupKey: StringKey; items: { to: string; labelKey: StringKey; icon: typeof Route; accent: string }[] }[] = [
+type NavItem = { to: string; labelKey: StringKey; icon: typeof Route; accent: string; dynamic?: 'continue'; exact?: boolean }
+
+const navGroups: { groupKey: StringKey; items: NavItem[] }[] = [
   {
     groupKey: 'nav.study',
     items: [
-      { to: '/learn/fast-payments', labelKey: 'nav.fastPayments', icon: Route, accent: 'text-primary' },
-      { to: '/learn/spi-dominicana', labelKey: 'nav.spiDominicana', icon: Zap, accent: 'text-scheme' },
+      { to: '/learn/fast-payments', labelKey: 'nav.continueLearning', icon: Route, accent: 'text-primary', dynamic: 'continue' },
+      { to: '/learn/fast-payments', labelKey: 'nav.learningMap', icon: Map, accent: 'text-primary', exact: true },
     ],
   },
   {
@@ -54,6 +59,12 @@ const navGroups: { groupKey: StringKey; items: { to: string; labelKey: StringKey
 
 export function Sidebar() {
   const t = useT()
+  const lang = useUIStore((state) => state.lang)
+  const completedLessons = useProgressStore((state) => state.completedLessons)
+  const completedModules = useProgressStore((state) => state.completedModules ?? [])
+  const lessons = getLessons(lang)
+  const path = getFastPaymentsPath(lang)
+  const nextStudyRoute = buildStudyPathState(path, lessons, completedLessons, completedModules).nextItem?.route ?? '/learn/fast-payments'
   return (
     <aside className="hidden w-64 shrink-0 border-r border-border bg-surface/95 md:flex md:flex-col">
       <div className="flex items-center gap-2 border-b border-border px-5 py-4">
@@ -70,9 +81,9 @@ export function Sidebar() {
             <div className="flex flex-col gap-0.5">
               {group.items.map((item) => (
                 <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.to === '/'}
+                  key={`${group.groupKey}:${item.labelKey}`}
+                  to={item.dynamic === 'continue' ? nextStudyRoute : item.to}
+                  end={item.exact ?? item.to === '/'}
                   className={({ isActive }) =>
                     clsx(
                       'flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors',
