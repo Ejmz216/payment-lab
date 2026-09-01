@@ -156,3 +156,19 @@ Request to Pay:
 Settlement / Liquidity / Reconciliation / Reporting:
 “Barbados tiene un modelo bastante detallado de prefunding, ajustes de liquidez, conciliación y reporting. ¿Bahamas reutilizará ese modelo como base o estos procesos se están definiendo específicamente para Bahamas?”
 
+De hecho, reduciría incluso los temas a **5 bloques**, porque settlement, liquidez, conciliación y reporting están muy relacionados:
+
+1. **BULK:**\
+   &#x20;“En Barbados tenemos definidos INST, BULK y BULK Legacy. En Bahamas sabemos que BULK no era obligatorio para la implementación inicial. ¿Ya se definió si Bahamas reutilizará el modelo BULK de Barbados, ya sea para go-live o para una fase posterior?”&#x20;
+2. **Digital Wallet:**\
+   &#x20;“Barbados tiene BiMPay e-Wallet, mientras que Bahamas ya tiene el ecosistema SandDollar. ¿Bahamas reutilizará el modelo de Digital Wallet de Barbados o la experiencia seguirá principalmente en las apps de los participantes y las wallets SandDollar?”&#x20;
+3. **Dispute Management:**\
+   &#x20;“Barbados tiene un ciclo de Dispute Management bastante completo. ¿Bahamas reutilizará ese mismo modelo o se está definiendo un workflow específico?”&#x20;
+4. **Request to Pay:**\
+   &#x20;“Barbados diferencia Normal, Fast y Mandate-based Request to Pay. ¿Bahamas utilizará esas mismas variantes o el alcance inicial será diferente?”&#x20;
+5. **Settlement / Liquidity / Reconciliation / Reporting:**\
+   &#x20;“Barbados tiene un modelo bastante detallado de prefunding, ajustes de liquidez, conciliación y reporting. ¿Bahamas reutilizará ese modelo como base o estos procesos se están definiendo específicamente para Bahamas?”&#x20;
+
+Y cerraría con algo muy sencillo:
+
+> “Tengo algunas preguntas más detalladas sobre cada punto, pero para no extender el daily puedo consolidarlas y enviarlas después.”

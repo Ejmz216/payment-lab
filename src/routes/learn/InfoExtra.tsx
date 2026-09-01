@@ -39,7 +39,14 @@ export function InfoExtra() {
               </h3>
             ),
             p: ({ children }) => <p className="mt-4 text-[15px] leading-7 text-text/90">{children}</p>,
+            ol: ({ children }) => <ol className="mt-5 list-decimal space-y-4 pl-6 text-[15px] leading-7 text-text/90">{children}</ol>,
+            li: ({ children }) => <li className="pl-1 marker:font-semibold marker:text-warning">{children}</li>,
             strong: ({ children }) => <strong className="font-semibold text-warning">{children}</strong>,
+            blockquote: ({ children }) => (
+              <blockquote className="mt-5 border-l-4 border-primary bg-primary/5 px-4 py-1 text-text">
+                {children}
+              </blockquote>
+            ),
             hr: () => <hr className="my-8 border-border" />,
           }}
         >
