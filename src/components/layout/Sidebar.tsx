@@ -6,6 +6,7 @@ import {
   Code2,
   Dumbbell,
   Fingerprint,
+  FileQuestion,
   LayoutDashboard,
   LineChart,
   ListTree,
@@ -28,6 +29,7 @@ const navGroups: { groupKey: StringKey; items: NavItem[] }[] = [
     items: [
       { to: '/learn/fast-payments', labelKey: 'nav.continueLearning', icon: Route, accent: 'text-primary', dynamic: 'continue' },
       { to: '/learn/fast-payments', labelKey: 'nav.learningMap', icon: Map, accent: 'text-primary', exact: true },
+      { to: '/learn/info-extra', labelKey: 'nav.infoExtra', icon: FileQuestion, accent: 'text-warning' },
     ],
   },
   {

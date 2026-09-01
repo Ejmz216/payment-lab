@@ -63,7 +63,16 @@ export function CommandPalette() {
       { id: 'lab-xml', label: t('lab.xmlTitle'), sub: t('lab.xmlDesc'), to: '/lab/xml', group: t('palette.groupLab') },
       { id: 'lab-break', label: t('lab.breakTitle'), sub: t('lab.breakDesc'), to: '/lab/break-message', group: t('palette.groupLab') },
     ]
-    return [...lessonItems, ...messageItems, ...glossaryItems, ...confusionItems, ...scenarioItems, ...labItems]
+    const studyItems: Item[] = [
+      {
+        id: 'study-info-extra',
+        label: t('nav.infoExtra'),
+        sub: lang === 'es' ? 'Comparativa Barbados vs. Bahamas' : 'Barbados vs. Bahamas comparison',
+        to: '/learn/info-extra',
+        group: t('palette.groupLessons'),
+      },
+    ]
+    return [...studyItems, ...lessonItems, ...messageItems, ...glossaryItems, ...confusionItems, ...scenarioItems, ...labItems]
   }, [lang, t])
 
   const miniSearch = useMemo(() => {

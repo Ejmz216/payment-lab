@@ -13,6 +13,7 @@ export const strings = {
   'nav.continueLearning': { en: 'Continue Learning', es: 'Continuar Estudiando' },
   'nav.learningMap': { en: 'Learning Map', es: 'Mapa de Aprendizaje' },
   'nav.spiDominicana': { en: 'Dominican SPI', es: 'SPI Dominicana' },
+  'nav.infoExtra': { en: 'Extra Info', es: 'Info extra' },
   'nav.atlas': { en: 'ISO 20022 Atlas', es: 'Atlas ISO 20022' },
   'nav.messageCatalog': { en: 'Message Catalog', es: 'Catálogo de Mensajes' },
   'nav.lab': { en: 'Lab', es: 'Laboratorio' },

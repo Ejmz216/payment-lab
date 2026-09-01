@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { BookOpen, Dumbbell, FlaskConical, Languages, LayoutDashboard, LineChart, Menu, Moon, Route, Search, ShieldCheck, Sun, X } from 'lucide-react'
+import { BookOpen, Dumbbell, FileQuestion, FlaskConical, Languages, LayoutDashboard, LineChart, Menu, Moon, Route, Search, ShieldCheck, Sun, X } from 'lucide-react'
 import { useUIStore } from '@/store/uiStore'
 import { useProgressStore } from '@/store/progressStore'
 import { useT } from '@/i18n/strings'
@@ -32,6 +32,7 @@ export function Header() {
   const mobileNav = [
     { to: '/', label: t('nav.dashboard'), icon: LayoutDashboard, color: 'text-primary' },
     { to: continueRoute, label: t('nav.continueLearning'), icon: Route, color: 'text-primary' },
+    { to: '/learn/info-extra', label: t('nav.infoExtra'), icon: FileQuestion, color: 'text-warning' },
     { to: '/lab/simulator', label: t('lab.simulatorTitle'), icon: FlaskConical, color: 'text-camt' },
     { to: '/practice/session', label: t('practice.session'), icon: Dumbbell, color: 'text-success' },
     { to: '/progress', label: t('nav.progress'), icon: LineChart, color: 'text-warning' },

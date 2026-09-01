@@ -37,6 +37,10 @@ export function RouteBreadcrumbs() {
     return <Breadcrumbs items={[panel, { label: t('nav.study'), to: '/learn/fast-payments' }, { label: 'SGPI' }, { label: lang === 'es' ? 'Actores y rol' : 'Actors and role' }]} />
   }
 
+  if (pathname === '/learn/info-extra') {
+    return <Breadcrumbs items={[panel, { label: t('nav.study'), to: '/learn/fast-payments' }, { label: t('nav.infoExtra') }]} />
+  }
+
   const domainMatch = matchPath('/atlas/domains/:domainId', pathname)
   if (domainMatch) {
     const domain = getDomain(domainMatch.params.domainId ?? '', lang)
