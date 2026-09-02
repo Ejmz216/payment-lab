@@ -49,10 +49,11 @@ changes.
 
 ## Privacy
 
-No backend, no accounts, no analytics, no tracking, no external runtime
-network calls. Learning progress is stored only in `localStorage` in your
-browser. A "Private Session" toggle disables all progress writes for the
-current session.
+No application database, no accounts, no analytics, and no in-app tracking.
+Learning progress is stored only in `localStorage` in your browser. A "Private
+Session" toggle disables all progress writes for the current session. The
+anonymous canvas on Info extra uses encrypted peer-to-peer WebRTC coordination;
+its text exists only in active browser memory and is not persisted by the app.
 
 Never paste confidential, proprietary or production data into any lab
 (XML Lab, Simulator, Debugger, etc.) — use only synthetic, public or

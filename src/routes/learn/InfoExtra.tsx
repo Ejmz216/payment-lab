@@ -1,6 +1,7 @@
 import { FileQuestion, ShieldQuestion } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import infoExtra from '@/content/infoExtra.md?raw'
+import { SharedStudyCanvas } from '@/components/learning/SharedStudyCanvas'
 
 export function InfoExtra() {
   return (
@@ -21,6 +22,8 @@ export function InfoExtra() {
           <ShieldQuestion className="text-warning" size={32} aria-hidden="true" />
         </div>
       </section>
+
+      <SharedStudyCanvas />
 
       <article className="mx-auto w-full max-w-4xl pb-10">
         <ReactMarkdown
