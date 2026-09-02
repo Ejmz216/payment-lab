@@ -1,16 +1,43 @@
 import { useEffect, useRef, useState } from 'react'
 import { Eraser, Radio, WifiOff } from 'lucide-react'
+import mqtt, { type MqttClient } from 'mqtt'
 import * as Y from 'yjs'
-import { WebrtcProvider } from 'y-webrtc'
 import { useUIStore } from '@/store/uiStore'
 
-const ROOM_NAME = 'payment-lab-info-extra-study-canvas-v1'
-const ROOM_PASSWORD = 'payment-lab-info-extra-session-v1'
-const SIGNALING_URL = 'wss://y-webrtc-signaling.fly.dev'
+const BROKER_URL = 'wss://broker.hivemq.com:8884/mqtt'
+const CHANNEL = 'payment-lab/info-extra/anonymous-canvas/v2-7f4c61d3'
 const MAX_LENGTH = 12_000
+const MAX_WIRE_BYTES = 256_000
 const LOCAL_ORIGIN = Symbol('shared-study-canvas')
+const REMOTE_ORIGIN = Symbol('shared-study-canvas-remote')
 
 type ConnectionState = 'connecting' | 'active' | 'offline'
+
+type WireMessage =
+  | { type: 'sync-request'; sender: string }
+  | { type: 'sync-response'; sender: string; target: string; update: string }
+  | { type: 'update'; sender: string; update: string }
+
+function createEphemeralId() {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  const bytes = crypto.getRandomValues(new Uint8Array(16))
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+function encodeUpdate(update: Uint8Array) {
+  let binary = ''
+  for (const byte of update) binary += String.fromCharCode(byte)
+  return btoa(binary)
+}
+
+function decodeUpdate(encoded: string) {
+  const binary = atob(encoded)
+  const update = new Uint8Array(binary.length)
+  for (let index = 0; index < binary.length; index += 1) {
+    update[index] = binary.charCodeAt(index)
+  }
+  return update
+}
 
 function replaceSharedText(sharedText: Y.Text, nextValue: string) {
   const currentValue = sharedText.toString()
@@ -40,6 +67,11 @@ function replaceSharedText(sharedText: Y.Text, nextValue: string) {
     if (currentEnd > start) sharedText.delete(start, currentEnd - start)
     if (nextEnd > start) sharedText.insert(start, nextValue.slice(start, nextEnd))
   }, LOCAL_ORIGIN)
+}
+
+function publish(client: MqttClient, message: WireMessage) {
+  if (!client.connected) return
+  client.publish(CHANNEL, JSON.stringify(message), { qos: 0, retain: false })
 }
 
 export function SharedStudyCanvas() {
@@ -74,9 +106,15 @@ export function SharedStudyCanvas() {
   useEffect(() => {
     const document = new Y.Doc()
     const sharedText = document.getText('notes')
+    const sender = createEphemeralId()
     sharedTextRef.current = sharedText
 
     const syncFromDocument = () => {
+      if (sharedText.length > MAX_LENGTH) {
+        document.transact(() => sharedText.delete(MAX_LENGTH, sharedText.length - MAX_LENGTH), LOCAL_ORIGIN)
+        return
+      }
+
       const nextValue = sharedText.toString()
       setValue(nextValue)
 
@@ -89,35 +127,101 @@ export function SharedStudyCanvas() {
 
     sharedText.observe(syncFromDocument)
 
-    let provider: WebrtcProvider | null = null
-    let signalingConnection: {
-      connected: boolean
-      on: (event: string, handler: () => void) => void
-      off: (event: string, handler: () => void) => void
-    } | null = null
-    const handleSignalConnect = () => setConnectionState('active')
-    const handleSignalDisconnect = () => setConnectionState('offline')
+    const client = mqtt.connect(BROKER_URL, {
+      clientId: `payment-lab-${sender}`,
+      clean: true,
+      connectTimeout: 10_000,
+      keepalive: 30,
+      queueQoSZero: false,
+      reconnectPeriod: 2_000,
+      resubscribe: true,
+    })
 
-    try {
-      provider = new WebrtcProvider(ROOM_NAME, document, {
-        password: ROOM_PASSWORD,
-        signaling: [SIGNALING_URL],
-        maxConns: 40,
-      })
-      // Presence metadata is unnecessary: only document updates are shared.
-      provider.awareness.setLocalState(null)
-      signalingConnection = provider.signalingConns[0] ?? null
-      signalingConnection?.on('connect', handleSignalConnect)
-      signalingConnection?.on('disconnect', handleSignalDisconnect)
-      setConnectionState(signalingConnection?.connected ? 'active' : 'connecting')
-    } catch {
-      setConnectionState('offline')
+    const handleDocumentUpdate = (update: Uint8Array, origin: unknown) => {
+      if (origin === REMOTE_ORIGIN) return
+      publish(client, { type: 'update', sender, update: encodeUpdate(update) })
     }
 
+    const applyRemoteUpdate = (encoded: string) => {
+      if (encoded.length > MAX_WIRE_BYTES) return
+      try {
+        Y.applyUpdate(document, decodeUpdate(encoded), REMOTE_ORIGIN)
+      } catch {
+        // Ignore malformed messages on the public relay channel.
+      }
+    }
+
+    const handleMessage = (topic: string, payload: Uint8Array) => {
+      if (topic !== CHANNEL || payload.byteLength > MAX_WIRE_BYTES) return
+
+      try {
+        const message = JSON.parse(new TextDecoder().decode(payload)) as Partial<WireMessage>
+        if (typeof message.sender !== 'string' || message.sender === sender) return
+
+        if (message.type === 'sync-request') {
+          publish(client, {
+            type: 'sync-response',
+            sender,
+            target: message.sender,
+            update: encodeUpdate(Y.encodeStateAsUpdate(document)),
+          })
+          return
+        }
+
+        if (message.type === 'sync-response') {
+          if (message.target === sender && typeof message.update === 'string') {
+            applyRemoteUpdate(message.update)
+          }
+          return
+        }
+
+        if (message.type === 'update' && typeof message.update === 'string') {
+          applyRemoteUpdate(message.update)
+        }
+      } catch {
+        // Ignore traffic that does not belong to this canvas protocol.
+      }
+    }
+
+    const handleConnect = () => {
+      client.subscribe(CHANNEL, { qos: 0 }, (error) => {
+        if (error) {
+          setConnectionState('offline')
+          return
+        }
+
+        setConnectionState('active')
+        if (sharedText.length > 0) {
+          publish(client, {
+            type: 'update',
+            sender,
+            update: encodeUpdate(Y.encodeStateAsUpdate(document)),
+          })
+        }
+        publish(client, { type: 'sync-request', sender })
+      })
+    }
+
+    const handleReconnect = () => setConnectionState('connecting')
+    const handleOffline = () => setConnectionState('offline')
+
+    document.on('update', handleDocumentUpdate)
+    client.on('connect', handleConnect)
+    client.on('reconnect', handleReconnect)
+    client.on('offline', handleOffline)
+    client.on('close', handleOffline)
+    client.on('error', handleOffline)
+    client.on('message', handleMessage)
+
     return () => {
-      signalingConnection?.off('connect', handleSignalConnect)
-      signalingConnection?.off('disconnect', handleSignalDisconnect)
-      provider?.destroy()
+      client.off('connect', handleConnect)
+      client.off('reconnect', handleReconnect)
+      client.off('offline', handleOffline)
+      client.off('close', handleOffline)
+      client.off('error', handleOffline)
+      client.off('message', handleMessage)
+      client.end(true)
+      document.off('update', handleDocumentUpdate)
       sharedText.unobserve(syncFromDocument)
       sharedTextRef.current = null
       document.destroy()
