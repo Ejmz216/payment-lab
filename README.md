@@ -52,10 +52,10 @@ changes.
 No application database, no accounts, no analytics, and no in-app tracking.
 Learning progress is stored only in `localStorage` in your browser. A "Private
 Session" toggle disables all progress writes for the current session. The
-anonymous canvas on Info extra synchronizes through non-retained WebSocket
-messages; its text is held by active browsers and the app requests no broker
-retention. The relay is public, so the canvas must only contain public or
-synthetic study notes.
+anonymous canvas on Info extra synchronizes text and compressed images through
+non-retained WebSocket messages; its content is held by active browsers and the
+app requests no broker retention. The relay is public, so the canvas must only
+contain public or synthetic study notes.
 
 Never paste confidential, proprietary or production data into any lab
 (XML Lab, Simulator, Debugger, etc.) — use only synthetic, public or
