@@ -27,7 +27,7 @@ export const useUIStore = create<UIState>()(
       setExpertDetail: (v) => set({ expertDetail: v }),
       perspective: 'business',
       setPerspective: (p) => set({ perspective: p }),
-      lang: 'en',
+      lang: 'es',
       setLang: (l) => set({ lang: l }),
     }),
     { name: 'payment-lab-ui' },

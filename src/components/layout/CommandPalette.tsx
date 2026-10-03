@@ -1,126 +1,54 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import MiniSearch from 'minisearch'
+import { Search, X } from 'lucide-react'
 import { useUIStore } from '@/store/uiStore'
-import { useT } from '@/i18n/strings'
-import { getLessons, getMessages, getGlossary, getConfusions, getScenarios } from '@/lib/i18nContent'
-
-interface Item {
-  id: string
-  label: string
-  sub: string
-  to: string
-  group: string
-}
+import { searchReference } from '@/lib/referenceSearch'
+import { categoryLabels, type EntryCategory } from '@/content/reference/entries'
 
 export function CommandPalette() {
   const setOpen = useUIStore((s) => s.setCommandPaletteOpen)
-  const lang = useUIStore((s) => s.lang)
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
-  const t = useT()
+  const [selected, setSelected] = useState(0)
+  const dialog = useRef<HTMLDivElement>(null)
+  const filtered = useMemo(() => {
+    const spaces = [
+      { id: 'classic', title: 'Estudio clásico', description: 'Lecciones, simuladores y práctica', category: 'espacio', to: '/classic' },
+      { id: 'info-extra', title: 'Info extra', description: 'Comparativa Barbados vs. Bahamas', category: 'espacio', to: '/learn/info-extra' },
+      { id: 'xml', title: 'Explorador XML', description: 'pacs.008.001.10', category: 'xml', to: '/xml' },
+    ].filter((item) => !query || `${item.title} ${item.description}`.toLowerCase().includes(query.toLowerCase()))
+    return [...spaces, ...searchReference(query)].slice(0, 30)
+  }, [query])
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null
+    dialog.current?.querySelector('input')?.focus()
+    return () => previous?.focus()
+  }, [])
+  useEffect(() => { dialog.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' }) }, [selected])
+  function go(to: string) { navigate(to); setOpen(false) }
 
-  const items: Item[] = useMemo(() => {
-    const lessonItems: Item[] = getLessons(lang).map((l) => ({
-      id: `lesson-${l.id}`,
-      label: l.title,
-      sub: l.subtitle ?? t('palette.groupLessons'),
-      to: `/learn/fast-payments/${l.id}`,
-      group: t('palette.groupLessons'),
-    }))
-    const messageItems: Item[] = getMessages(lang).map((m) => ({
-      id: `msg-${m.id}`,
-      label: m.id,
-      sub: m.name,
-      to: `/atlas/messages/${m.id}`,
-      group: t('palette.groupMessages'),
-    }))
-    const glossaryItems: Item[] = getGlossary(lang).map((g) => ({
-      id: `gloss-${g.id}`,
-      label: g.term,
-      sub: g.oneLine,
-      to: `/glossary#${g.id}`,
-      group: t('palette.groupGlossary'),
-    }))
-    const confusionItems: Item[] = getConfusions(lang).map((c) => ({
-      id: `confusion-${c.id}`,
-      label: c.title,
-      sub: t('palette.groupConfusions'),
-      to: '/confusions',
-      group: t('palette.groupConfusions'),
-    }))
-    const scenarioItems: Item[] = getScenarios(lang).map((s) => ({
-      id: `scenario-${s.id}`,
-      label: s.title,
-      sub: t('palette.groupScenarios'),
-      to: '/practice/scenarios',
-      group: t('palette.groupScenarios'),
-    }))
-    const labItems: Item[] = [
-      { id: 'lab-sim', label: t('lab.simulatorTitle'), sub: t('lab.simulatorDesc'), to: '/lab/simulator', group: t('palette.groupLab') },
-      { id: 'lab-debug', label: t('lab.debuggerTitle'), sub: t('lab.debuggerDesc'), to: '/lab/debugger', group: t('palette.groupLab') },
-      { id: 'lab-id', label: t('lab.identifierTitle'), sub: 'MsgId, InstrId, EndToEndId, TxId', to: '/lab/identifiers', group: t('palette.groupLab') },
-      { id: 'lab-xml', label: t('lab.xmlTitle'), sub: t('lab.xmlDesc'), to: '/lab/xml', group: t('palette.groupLab') },
-      { id: 'lab-break', label: t('lab.breakTitle'), sub: t('lab.breakDesc'), to: '/lab/break-message', group: t('palette.groupLab') },
-    ]
-    const studyItems: Item[] = [
-      {
-        id: 'study-info-extra',
-        label: t('nav.infoExtra'),
-        sub: lang === 'es' ? 'Comparativa Barbados vs. Bahamas' : 'Barbados vs. Bahamas comparison',
-        to: '/learn/info-extra',
-        group: t('palette.groupLessons'),
-      },
-    ]
-    return [...studyItems, ...lessonItems, ...messageItems, ...glossaryItems, ...confusionItems, ...scenarioItems, ...labItems]
-  }, [lang, t])
-
-  const miniSearch = useMemo(() => {
-    const ms = new MiniSearch<Item>({
-      idField: 'id',
-      fields: ['label', 'sub', 'group'],
-      storeFields: ['label', 'sub', 'to', 'group'],
-      searchOptions: { prefix: true, fuzzy: 0.2, boost: { label: 3, group: 1 } },
-    })
-    ms.addAll(items)
-    return ms
-  }, [items])
-
-  const filtered: Item[] = useMemo(() => {
-    if (!query.trim()) return items.slice(0, 20)
-    return miniSearch.search(query).slice(0, 20).map((r) => ({ id: r.id as string, label: r.label, sub: r.sub, to: r.to, group: r.group }))
-  }, [query, miniSearch, items])
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-24" onClick={() => setOpen(false)}>
-      <div
-        className="w-full max-w-lg overflow-hidden rounded-lg border border-border bg-surface shadow-xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <input
-          autoFocus
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t('palette.placeholder')}
-          className="w-full border-b border-border bg-transparent px-4 py-3 text-sm outline-none"
-        />
-        <div className="max-h-96 overflow-y-auto py-1">
-          {filtered.length === 0 && <div className="px-4 py-6 text-center text-sm text-muted">{t('palette.noResults')}</div>}
-          {filtered.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                navigate(item.to)
-                setOpen(false)
-              }}
-              className="flex w-full flex-col items-start gap-0.5 px-4 py-2 text-left hover:bg-surface2"
-            >
-              <span className="text-sm font-medium">{item.label}</span>
-              <span className="text-xs text-muted">{item.sub} · {item.group}</span>
-            </button>
-          ))}
-        </div>
+  return <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/65 px-3 pt-[10vh]" onClick={() => setOpen(false)}>
+    <div ref={dialog} role="dialog" aria-modal="true" aria-label="Buscar en Payment Lab" className="reference-nav w-full max-w-2xl overflow-hidden rounded-lg border border-border bg-surface shadow-xl" onClick={(event) => event.stopPropagation()} onKeyDown={(event) => {
+      if (event.key === 'Escape') setOpen(false)
+      if (event.key === 'ArrowDown') { event.preventDefault(); setSelected((old) => Math.min(old + 1, filtered.length - 1)) }
+      if (event.key === 'ArrowUp') { event.preventDefault(); setSelected((old) => Math.max(0, old - 1)) }
+      if (event.key === 'Enter' && event.target instanceof HTMLInputElement && filtered[selected]) { event.preventDefault(); go(filtered[selected].to) }
+      if (event.key === 'Tab') {
+        const elements = Array.from(dialog.current?.querySelectorAll<HTMLElement>('input, button') ?? [])
+        const first = elements[0], last = elements[elements.length - 1]
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() }
+        if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
+      }
+    }}>
+      <div className="flex items-center gap-3 border-b border-border px-4"><Search size={17} className="shrink-0 text-muted" /><input aria-label="Buscar concepto, mensaje o campo" role="combobox" aria-controls="reference-results" aria-expanded="true" aria-autocomplete="list" aria-activedescendant={filtered[selected] ? `result-${selected}` : undefined} value={query} onChange={(event) => { setQuery(event.target.value); setSelected(0) }} placeholder="Concepto, mensaje o campo XML…" className="min-w-0 flex-1 bg-transparent py-4 text-sm outline-none" /><button aria-label="Cerrar búsqueda" title="Cerrar búsqueda" className="ref-icon border-0" onClick={() => setOpen(false)}><X size={16} /></button></div>
+      <div id="reference-results" role="listbox" aria-label="Resultados" className="max-h-[60vh] overflow-auto py-1">
+        {!filtered.length && <p className="px-4 py-6 text-sm text-muted">Sin resultados.</p>}
+        {filtered.map((item, index) => <button id={`result-${index}`} role="option" aria-selected={selected === index} key={item.id} onClick={() => go(item.to)} className={`flex w-full flex-col gap-1 px-4 py-3 text-left ${selected === index ? 'bg-primary/10' : 'hover:bg-surface2'}`}>
+          <span className="text-sm font-medium break-all">{item.title}<span className="ml-3 text-[10px] font-normal text-muted">{categoryLabels[item.category as EntryCategory] ?? item.category.toUpperCase()}</span></span>
+          <span className="line-clamp-2 text-xs text-muted">{item.description}</span>
+          {item.id.startsWith('xml:') && <span className="w-full truncate font-mono text-[10px] text-camt">{item.id.slice(4)}</span>}
+        </button>)}
       </div>
     </div>
-  )
+  </div>
 }

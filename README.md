@@ -3,22 +3,28 @@
 Payment Lab is an interactive learning environment for ISO 20022, payment
 systems and fast payments.
 
-Instead of teaching financial messaging as a collection of XML schemas,
-Payment Lab teaches the business process behind each message through flows,
-simulations, scenarios and debugging exercises.
+The main experience is a Spanish-language quick-reference encyclopedia:
+payment systems, integration architectures, ISO messages and annotated XML.
+Existing guided study, simulators and practice remain available in Classic Study.
 
 ## Modes
 
-- **Fast Payments** — the recommended guided learning path.
-- **ISO 20022 Atlas** — explore the message catalog like a map.
-- **Lab** — Payment Simulator, Payment Debugger, Identifier Lab, Reject vs. Return Trainer.
+- **Enciclopedia** (`#/`): searchable concepts, messages, architectures and public systems.
+- **Explorador XML** (`#/xml`): table, tree and XML views of one synthetic pacs.008.001.10 instance, with field notes and shareable field URLs.
+- **Estudio clásico** (`#/classic`): original curriculum, Atlas, laboratories and practice. Existing routes and progress are preserved.
+- **Info extra** (`#/learn/info-extra`): unchanged questions and anonymous shared canvas.
 
 Also available: Practice Center (scenarios & quiz), Glossary, Common
 Confusions, and local-only Progress tracking.
 
 ## Status
 
-This is the MVP build. Tier 1 of the Fast Payments curriculum is complete
+The encyclopedia includes compact original explanations and reference material
+adapted from the existing catalog. The XML explorer covers the supplied study
+instance, not every optional ISO field; it makes no claim of XSD validation.
+It distinguishes the illustrative transport envelope, BAH and payment document.
+
+In Classic Study, Tier 1 of the Fast Payments curriculum is complete
 (Payment Fundamentals through Reject vs. Return), along with deep dives for
 pain.001, pacs.008, pacs.002 and pacs.004. Broader ISO 20022 Atlas coverage
 and later curriculum tiers are planned — see `CONTENT_GUIDE.md`.
@@ -39,6 +45,17 @@ npm run dev
 npm run build
 npm run preview
 ```
+
+Browser regression tests (with the dev server automatically started or reused):
+
+```bash
+npx playwright install chromium
+npm run test:reference
+```
+
+On Windows, an installed Edge can be used instead: set `PLAYWRIGHT_CHANNEL=msedge`.
+Tests cover search, XML paths/annotations, diagrams, saved references, classic
+navigation and desktop/mobile layouts. Screenshots are written to `test-results/`.
 
 ## Deployment
 

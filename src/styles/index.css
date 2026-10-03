@@ -73,3 +73,24 @@ body {
     linear-gradient(180deg, rgb(var(--color-border) / 0.16) 1px, transparent 1px);
   background-size: 32px 32px;
 }
+
+@layer components {
+  .ref-page { @apply min-w-0; letter-spacing: 0; }
+  .ref-section { @apply border-t border-border py-5; }
+  .ref-eyebrow { @apply text-[11px] font-semibold; letter-spacing: 0; }
+  .ref-input { @apply h-10 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-sm text-text outline-none focus:border-primary focus:ring-1 focus:ring-primary; }
+  .ref-icon { @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted hover:bg-surface2 hover:text-text disabled:cursor-not-allowed disabled:opacity-40; }
+}
+
+:where(button, a, select, summary):focus-visible {
+  outline: 2px solid rgb(var(--color-primary));
+  outline-offset: 3px;
+}
+
+/* Reference accents need darker foregrounds on light surfaces. */
+:root.light :is(.ref-page, .reference-nav) .text-camt,
+:root.light .ref-page .group:hover .group-hover\:text-camt,
+:root.light .ref-page .hover\:text-camt:hover { color: #08786f; }
+:root.light :is(.ref-page, .reference-nav) .text-pacs { color: #315eb8; }
+:root.light :is(.ref-page, .reference-nav) .text-pain { color: #7540b8; }
+:root.light .ref-page .border-camt { border-color: #08786f; }

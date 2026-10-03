@@ -8,3 +8,5 @@ dist-ssr
 !.vscode/extensions.json
 .claude/
 *.tsbuildinfo
+test-results/
+playwright-report/

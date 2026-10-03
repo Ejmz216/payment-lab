@@ -3,15 +3,22 @@ import { Breadcrumbs, type Crumb } from '@/components/ui/Breadcrumbs'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 import { getDomain, getFastPaymentsPath, getLesson, getMessage } from '@/lib/i18nContent'
+import { getReferenceEntry } from '@/content/reference/entries'
 
 export function RouteBreadcrumbs() {
   const { pathname } = useLocation()
   const lang = useUIStore((state) => state.lang)
   const t = useT()
-  const panel: Crumb = { label: t('nav.dashboard'), to: '/' }
+  const panel: Crumb = { label: 'Estudio clásico', to: '/classic' }
+  const library: Crumb = { label: 'Enciclopedia', to: '/' }
   const path = getFastPaymentsPath(lang)
 
-  if (pathname === '/') return <Breadcrumbs items={[{ label: t('nav.dashboard') }]} />
+  if (pathname === '/') return <Breadcrumbs items={[{ label: 'Enciclopedia' }]} />
+  if (pathname === '/classic') return <Breadcrumbs items={[library, { label: 'Estudio clásico' }]} />
+  if (pathname === '/classic/dashboard') return <Breadcrumbs items={[panel, { label: t('nav.dashboard') }]} />
+  if (pathname === '/xml') return <Breadcrumbs items={[library, { label: 'pacs.008', to: '/reference/pacs.008' }, { label: 'Explorador XML' }]} />
+  const entryMatch = matchPath('/reference/:entryId', pathname)
+  if (entryMatch) return <Breadcrumbs items={[library, { label: getReferenceEntry(entryMatch.params.entryId ?? '')?.title ?? 'Referencia' }]} />
 
   const lessonMatch = matchPath('/learn/fast-payments/:lessonId', pathname)
   if (lessonMatch) {
@@ -38,7 +45,7 @@ export function RouteBreadcrumbs() {
   }
 
   if (pathname === '/learn/info-extra') {
-    return <Breadcrumbs items={[panel, { label: t('nav.study'), to: '/learn/fast-payments' }, { label: t('nav.infoExtra') }]} />
+    return <Breadcrumbs items={[library, { label: t('nav.infoExtra') }]} />
   }
 
   const domainMatch = matchPath('/atlas/domains/:domainId', pathname)

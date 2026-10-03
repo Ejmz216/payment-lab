@@ -23,12 +23,16 @@ import { Confusions } from '@/routes/Confusions'
 import { Progress } from '@/routes/Progress'
 import { Saved } from '@/routes/Saved'
 import { NotFound } from '@/routes/NotFound'
+import { Library } from '@/routes/reference/Library'
+import { EntryPage } from '@/routes/reference/EntryPage'
+import { LegacyHub } from '@/routes/reference/LegacyHub'
 
 // Monaco-backed labs are code-split and only fetched when visited, so the
 // heavy editor bundle never loads on the main path.
 const XmlLab = lazy(() => import('@/routes/lab/XmlLab').then((m) => ({ default: m.XmlLab })))
 const BreakMessage = lazy(() => import('@/routes/lab/BreakMessage').then((m) => ({ default: m.BreakMessage })))
 const InfoExtra = lazy(() => import('@/routes/learn/InfoExtra').then((m) => ({ default: m.InfoExtra })))
+const XmlWorkspace = lazy(() => import('@/routes/reference/XmlWorkspace').then((m) => ({ default: m.XmlWorkspace })))
 
 function LazyFallback() {
   return <div className="py-24 text-center text-sm text-muted">Loading…</div>
@@ -38,7 +42,11 @@ export default function App() {
   return (
     <Routes>
       <Route element={<AppShell />}>
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/" element={<Library />} />
+        <Route path="/reference/:entryId" element={<EntryPage />} />
+        <Route path="/xml" element={<Suspense fallback={<LazyFallback />}><XmlWorkspace /></Suspense>} />
+        <Route path="/classic" element={<LegacyHub />} />
+        <Route path="/classic/dashboard" element={<Dashboard />} />
 
         <Route path="/learn/fast-payments" element={<FastPaymentsHome />} />
         <Route path="/learn/fast-payments/:lessonId" element={<LessonPage />} />

@@ -4,6 +4,26 @@ All content lives in `src/content/`, separated from UI components in
 `src/components/` and `src/routes/`. Types are defined in
 `src/types/content.ts`.
 
+## Encyclopedia and XML Study
+
+- Curated entries and reusable diagram data: `src/content/reference/entries.ts`.
+- Field explanations: `src/content/reference/xmlGuide.ts`. Repeated tags must be
+  interpreted by their full path, not only their local name.
+- Synthetic study instance: `src/content/reference/pacs008-v10.xml`, adapted from
+  the user-provided `Guia_estudio_ISO20022_pacs008_001_10.md`. Names, identifiers,
+  accounts and currency are synthetic. The source document is not published.
+- `src/lib/xmlStudy.ts` derives paths, hierarchy, layers and XML lines using
+  DOMParser. Do not replace XML parsing with regular-expression parsing.
+- `src/lib/referenceSearch.ts` indexes entries and XML fields for both search UIs.
+- Reference notes describe this instance only. Do not add universal mandatory
+  labels or cardinalities without checking the versioned official schema.
+- The transport envelope is illustrative; AppHdr and Document have distinct
+  namespaces. Proprietary values must never be presented as universal ISO codes.
+- Keep analogies short and include their limits. Cite public scheme claims and
+  distinguish them from generic architecture diagrams.
+- Preserve Classic Study URLs and Info extra. Add message examples as data, not
+  branches in the view components.
+
 ## Adding a lesson
 
 1. Add a `Lesson` object to `src/content/lessons/fastPaymentsPath.ts` (or a
