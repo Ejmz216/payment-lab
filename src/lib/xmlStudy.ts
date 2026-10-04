@@ -32,7 +32,7 @@ export function parseStudyXml(source: string = xml) {
     const field: StudyField = { id: path, path, tag: element.localName, value, namespace, layer, depth, parentId, attribute: false, container, note: getFieldNote(element.localName, path) }
     fields.push(field)
     const attributes = Array.from(element.attributes)
-    attributes.forEach((attr) => fields.push({ ...field, id: `${path}/@${attr.name}`, path: `${path}/@${attr.name}`, tag: `@${attr.name}`, value: attr.value, namespace: attr.namespaceURI ?? '', parentId: path, depth: depth + 1, attribute: true, container: false, note: getFieldNote(`@${attr.name}`, path) }))
+    attributes.forEach((attr) => fields.push({ ...field, id: `${path}/@${attr.name}`, path: `${path}/@${attr.name}`, tag: `@${attr.name}`, value: attr.value, namespace: attr.namespaceURI ?? '', parentId: path, depth: depth + 1, attribute: true, container: false, note: getFieldNote(`@${attr.name}`, path, attr.value) }))
     const opening = `<${element.tagName}${attributes.map((a) => ` ${a.name}="${escape(a.value)}"`).join('')}>`
     lines.push({ fieldId: path, depth, text: container ? opening : `${opening}${escape(value)}</${element.tagName}>` })
     const children = Array.from(element.children)

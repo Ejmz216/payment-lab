@@ -249,3 +249,21 @@
 @media (prefers-reduced-motion: reduce) {
   .sequence-arrow[data-active="true"]::after { animation: none; left: 50%; }
 }
+
+/* Annotated XML explorer */
+.xml-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 8px; font-size: 11px; font-weight: 600; }
+.xml-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.xml-legend i { width: 8px; height: 8px; border-radius: 2px; }
+.xml-filter { margin-top: 16px; padding: 12px 14px; border: 1px solid rgb(var(--color-border)); border-radius: 10px; background: rgb(var(--color-surface) / .6); }
+.xml-chip { padding: 5px 11px; border: 1px solid rgb(var(--color-border)); border-radius: 999px; font-size: 12px; color: rgb(var(--color-muted)); }
+.xml-chip:hover { color: rgb(var(--color-text)); border-color: rgb(var(--color-camt) / .5); }
+.xml-chip[aria-pressed="true"] { color: rgb(var(--color-camt)); border-color: rgb(var(--color-camt) / .7); background: rgb(var(--color-camt) / .12); font-weight: 600; }
+.xml-line { display: block; padding: 8px 10px; border-radius: 6px; font-size: 11px; line-height: 1.6; overflow-wrap: anywhere; color: rgb(var(--color-text)); background: rgb(var(--color-surface2)); border: 1px solid rgb(var(--color-border)); }
+.xml-parts { display: grid; gap: 6px; }
+.xml-parts > div { display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.xml-parts dt { font: 600 11px/1.5 ui-monospace, monospace; color: rgb(var(--color-pacs)); padding: 1px 6px; border-radius: 4px; background: rgb(var(--color-pacs) / .1); overflow-wrap: anywhere; max-width: 11rem; }
+.xml-parts dd { font-size: 12px; line-height: 1.55; }
+.xml-equivalent { padding: 8px 12px; border-left: 3px solid rgb(var(--color-pain)); border-radius: 0 6px 6px 0; font-size: 13px; line-height: 1.6; background: rgb(var(--color-pain) / .07); }
+.xml-attribute { display: block; width: 100%; margin-top: 8px; padding: 9px 10px; text-align: left; border: 1px solid rgb(var(--color-border)); border-radius: 8px; }
+.xml-attribute:hover { border-color: rgb(var(--color-pain) / .5); background: rgb(var(--color-pain) / .05); }
+.xml-attribute code { font-size: 11px; overflow-wrap: anywhere; }
