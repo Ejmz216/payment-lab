@@ -8,6 +8,7 @@ import { getReferenceEntry } from '@/content/reference/entries'
 import { ColorIcon, Icon3D, familyTones, type ReferenceTone } from '@/components/reference/ReferenceIdentity'
 import { portrait } from '@/components/reference/SequenceDiagram'
 import { XxxNote } from '@/components/reference/XxxNote'
+import { hasSample } from '@/content/reference/samples/ids'
 
 type Focus = { kind: 'step' } | { kind: 'actor'; actor: number }
 const AUTOPLAY_MS = 2600
@@ -125,7 +126,7 @@ export function Journeys() {
             <XmlSnippet xml={step.xml} />
             <p className="mt-1.5 text-[10px] leading-4 text-muted">{L('Fragmento simplificado y sintético: solo los campos clave. Las versiones y códigos son ilustrativos; cada esquema define los suyos.', 'Simplified, synthetic fragment: key fields only. Versions and codes are illustrative; each scheme defines its own.')}</p>
           </details>}
-          {step.message === 'pacs.008' && <Link to="/reference/pacs.008?tab=xml" className="mt-3 inline-flex items-center gap-1 text-[11px] text-primary">{L('Ver el pacs.008 completo anotado', 'See the full annotated pacs.008')} <ArrowRight size={11} /></Link>}
+          {step.message && hasSample(step.message) && <Link to={`/reference/${step.message}?tab=xml`} className="mt-3 inline-flex items-center gap-1 text-[11px] text-primary">{L(`Ver el ${step.message} completo anotado`, `See the full annotated ${step.message}`)} <ArrowRight size={11} /></Link>}
           <div className="mt-5 flex gap-2"><button className="ref-icon" aria-label={L('Paso anterior', 'Previous step')} title={L('Paso anterior', 'Previous step')} disabled={!index} onClick={() => go(index - 1)}><ChevronLeft size={16} /></button><button className="ref-icon" aria-label={L('Paso siguiente', 'Next step')} title={L('Paso siguiente', 'Next step')} disabled={index === steps.length - 1} onClick={() => go(index + 1)}><ChevronRight size={16} /></button></div>
         </>}
       </aside>

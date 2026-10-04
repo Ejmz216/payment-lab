@@ -1,6 +1,7 @@
 import { getMessages } from '@/lib/i18nContent'
 import { conceptEntries, p2p, seq } from './concepts'
 import { messageTeaching } from './messageReference'
+import { hasSample } from './samples/ids'
 import { entriesEn, type EntryEn } from '@/i18n/reference/entriesEn'
 import { conceptsEn } from '@/i18n/reference/conceptsEn'
 import { messagesEn } from '@/i18n/reference/messagesEn'
@@ -197,7 +198,7 @@ const messageEntries: ReferenceEntry[] = getMessages('es').map((message) => {
     analogy: teaching?.analogy, example: teaching?.example, diagram: teaching?.diagram,
     caution: teaching?.caution ?? 'El uso, la versión y las restricciones dependen del esquema. Las estructuras educativas no sustituyen al XSD oficial.',
     related: message.relatedMessages.map((item) => item.messageId), sources: [isoSource, archiveSource],
-    xml: message.id === 'pacs.008',
+    xml: hasSample(message.id),
   }
 })
 messageEntries.find((entry) => entry.id === 'pacs.008')!.related.push('actors', 'identifiers', 'iban', 'bah', 'settlement')

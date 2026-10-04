@@ -96,3 +96,20 @@ keyed by id (entries, concepts, messages), by tag (XML notes) and by phrase
 (Recorridos). Missing pieces fall back to Spanish, and `tests/english.spec.ts`
 fails if any entry, diagram step, XML tag or journey phrase lacks English.
 Interface text uses `useL()` pairs: `L('Hola', 'Hello')`.
+
+## Annotated XML samples
+
+Every ISO message entry has an annotated synthetic sample
+(`src/content/reference/samples/`, registry in `index.ts`, versions in `ids.ts`).
+The pacs.008.001.10 sample and its notes (`xmlGuide.ts`) come from the user's
+study guide and are kept as they are. The other twelve were built for this
+classroom: element names, order and mandatory elements were checked against
+Go types generated from the official XSDs (github.com/moov-io/iso20022 and
+moov-io/fednow20022 for pacs.028.001.03), and every code against the ISO
+20022 external code sets. Interbank samples answer the annotated pacs.008
+(MSG-001 / TX-001 / same UETR) and carry the fictitious envelope plus AppHdr;
+customer-facing ones (pain.001/002, camt.053/054) carry only Document.
+Notes live in `samples/notes.ts` (bilingual, `{value}` placeholders, path
+suffix keys for context-dependent tags); `tests/samples.spec.ts` fails if any
+tag lacks a note. The samples load only with the XML tab (lazy chunk).
+

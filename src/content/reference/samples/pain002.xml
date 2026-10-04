@@ -1,0 +1,35 @@
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.002.001.11">
+  <CstmrPmtStsRpt>
+    <GrpHdr>
+      <MsgId>PSR-001</MsgId>
+      <CreDtTm>2026-10-02T15:58:30Z</CreDtTm>
+      <DbtrAgt>
+        <FinInstnId>
+          <BICFI>AAAADODX</BICFI>
+        </FinInstnId>
+      </DbtrAgt>
+    </GrpHdr>
+    <OrgnlGrpInfAndSts>
+      <OrgnlMsgId>FILE-001</OrgnlMsgId>
+      <OrgnlMsgNmId>pain.001.001.10</OrgnlMsgNmId>
+      <OrgnlNbOfTxs>2</OrgnlNbOfTxs>
+      <OrgnlCtrlSum>400.00</OrgnlCtrlSum>
+      <GrpSts>PART</GrpSts>
+    </OrgnlGrpInfAndSts>
+    <OrgnlPmtInfAndSts>
+      <OrgnlPmtInfId>BATCH-001</OrgnlPmtInfId>
+      <TxInfAndSts>
+        <StsId>STS-002</StsId>
+        <OrgnlInstrId>INSTR-002</OrgnlInstrId>
+        <OrgnlEndToEndId>E2E-002</OrgnlEndToEndId>
+        <TxSts>RJCT</TxSts>
+        <StsRsnInf>
+          <Rsn>
+            <Cd>AC01</Cd>
+          </Rsn>
+          <AddtlInf>IBAN DEL ACREEDOR CON DIGITOS DE CONTROL INVALIDOS</AddtlInf>
+        </StsRsnInf>
+      </TxInfAndSts>
+    </OrgnlPmtInfAndSts>
+  </CstmrPmtStsRpt>
+</Document>

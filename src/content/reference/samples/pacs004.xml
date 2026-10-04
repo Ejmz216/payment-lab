@@ -1,0 +1,66 @@
+<DataPDU xmlns="urn:example:stp:xsd:stp.1.0">
+  <Body>
+    <AppHdr xmlns="urn:iso:std:iso:20022:tech:xsd:head.001.001.02">
+      <Fr>
+        <FIId>
+          <FinInstnId>
+            <BICFI>BBBBDODX</BICFI>
+          </FinInstnId>
+        </FIId>
+      </Fr>
+      <To>
+        <FIId>
+          <FinInstnId>
+            <BICFI>CCCCDODX</BICFI>
+          </FinInstnId>
+        </FIId>
+      </To>
+      <BizMsgIdr>RTR-001</BizMsgIdr>
+      <MsgDefIdr>pacs.004.001.10</MsgDefIdr>
+      <BizSvc>example.ips.01</BizSvc>
+      <CreDt>2026-10-03T09:15:00Z</CreDt>
+    </AppHdr>
+    <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.004.001.10">
+      <PmtRtr>
+        <GrpHdr>
+          <MsgId>RTR-001</MsgId>
+          <CreDtTm>2026-10-03T09:15:00Z</CreDtTm>
+          <NbOfTxs>1</NbOfTxs>
+          <SttlmInf>
+            <SttlmMtd>CLRG</SttlmMtd>
+          </SttlmInf>
+        </GrpHdr>
+        <TxInf>
+          <RtrId>RTR-TX-001</RtrId>
+          <OrgnlGrpInf>
+            <OrgnlMsgId>MSG-001</OrgnlMsgId>
+            <OrgnlMsgNmId>pacs.008.001.10</OrgnlMsgNmId>
+          </OrgnlGrpInf>
+          <OrgnlEndToEndId>NOTPROVIDED</OrgnlEndToEndId>
+          <OrgnlTxId>TX-001</OrgnlTxId>
+          <OrgnlUETR>4f5a3ec0-7a52-4c1e-b321-71e887fa1904</OrgnlUETR>
+          <OrgnlIntrBkSttlmAmt Ccy="XXX">250.00</OrgnlIntrBkSttlmAmt>
+          <OrgnlIntrBkSttlmDt>2026-10-02</OrgnlIntrBkSttlmDt>
+          <RtrdIntrBkSttlmAmt Ccy="XXX">250.00</RtrdIntrBkSttlmAmt>
+          <IntrBkSttlmDt>2026-10-03</IntrBkSttlmDt>
+          <ChrgBr>SLEV</ChrgBr>
+          <InstgAgt>
+            <FinInstnId>
+              <BICFI>BBBBDODX</BICFI>
+            </FinInstnId>
+          </InstgAgt>
+          <InstdAgt>
+            <FinInstnId>
+              <BICFI>AAAADODX</BICFI>
+            </FinInstnId>
+          </InstdAgt>
+          <RtrRsnInf>
+            <Rsn>
+              <Cd>AC04</Cd>
+            </Rsn>
+          </RtrRsnInf>
+        </TxInf>
+      </PmtRtr>
+    </Document>
+  </Body>
+</DataPDU>

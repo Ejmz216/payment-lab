@@ -2,56 +2,47 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, Check, ChevronDown, ChevronRight, Code2, Copy, Download, ExternalLink, ListTree, Search, Table2 } from 'lucide-react'
 import { archiveSource } from '@/content/reference/entries'
-import { normalizeQuery, parseStudyXml, studyXml, type StudyField } from '@/lib/xmlStudy'
+import { normalizeQuery, parseStudyXml, type StudyField } from '@/lib/xmlStudy'
+import { getXmlSample, type XmlGroup } from '@/content/reference/samples'
 import { useL, useRefLang } from '@/i18n/reference/useLang'
 
-const layerLabels = { transport: ['Transporte', 'Transport'], header: ['Cabecera BAH', 'BAH header'], payment: ['Mensaje pacs.008', 'pacs.008 message'] } as const
 const layerColors = { transport: 'text-party', header: 'text-pain', payment: 'text-camt' }
-// The sample has three layers (transport, header, payment) and, inside the
-// payment, several business blocks. Each filter shows only one of them.
-export const xmlGroups = [
-  { id: 'all', label: 'Todo', en: 'All', help: 'El ejemplo completo, de la envoltura de transporte al último campo del pago.', helpEn: 'The whole sample, from the transport envelope to the last payment field.' },
-  { id: 'transport', label: 'Transporte', en: 'Transport', help: 'DataPDU y Body: el sobre técnico de este ejemplo. No pertenece a ISO 20022.', helpEn: 'DataPDU and Body: this example’s technical envelope. Not part of ISO 20022.' },
-  { id: 'header', label: 'Cabecera AppHdr', en: 'AppHdr header', help: 'head.001: quién envía, a quién, qué mensaje es y su referencia.', helpEn: 'head.001: who sends, to whom, which message it is and its reference.' },
-  { id: 'group', label: 'GrpHdr', en: 'GrpHdr', help: 'La portada del pacs.008: identificador del mensaje, fecha, número de transacciones y método de liquidación.', helpEn: 'The pacs.008 cover page: message identifier, date, number of transactions and settlement method.' },
-  { id: 'ids', label: 'Identificadores', en: 'Identifiers', help: 'PmtId: EndToEndId, TxId y UETR, las referencias para seguir el pago.', helpEn: 'PmtId: EndToEndId, TxId and UETR, the references used to track the payment.' },
-  { id: 'actors', label: 'Partes y cuentas', en: 'Parties and accounts', help: 'Quién paga y quién cobra (Dbtr, Cdtr), sus bancos (agentes) y sus cuentas.', helpEn: 'Who pays and who gets paid (Dbtr, Cdtr), their banks (agents) and their accounts.' },
-  { id: 'amount', label: 'Importe y liquidación', en: 'Amount and settlement', help: 'Cuánto se liquida entre bancos, en qué moneda, en qué fecha y quién asume las comisiones.', helpEn: 'How much is settled between banks, in which currency, on which date and who bears the charges.' },
-  { id: 'purpose', label: 'Tipo y propósito', en: 'Type and purpose', help: 'Qué tipo de pago es, para qué es y el concepto para el beneficiario.', helpEn: 'What kind of payment it is, what it is for and the remittance for the payee.' },
-]
-const layerLegend = [
-  { layer: 'transport', label: 'Transporte · ejemplo', en: 'Transport · example', color: 'text-party', dot: 'bg-party' },
-  { layer: 'header', label: 'Cabecera · head.001', en: 'Header · head.001', color: 'text-pain', dot: 'bg-pain' },
-  { layer: 'payment', label: 'Pago · pacs.008', en: 'Payment · pacs.008', color: 'text-camt', dot: 'bg-camt' },
-]
 
-function inGroup(field: StudyField, group: string) {
-  if (group === 'all') return true
-  if (group === 'transport' || group === 'header') return field.layer === group
-  const expressions: Record<string, RegExp> = { group: /\/GrpHdr(?:\/|$)/, ids: /\/PmtId(?:\/|$)/, actors: /\/(?:Dbtr|Cdtr|InstgAgt|InstdAgt)/, amount: /\/(?:IntrBkSttlmAmt|IntrBkSttlmDt|SttlmInf|ChrgBr)(?:\/|$)/, purpose: /\/(?:PmtTpInf|Purp|RmtInf)(?:\/|$)/ }
-  return expressions[group]?.test(field.path) ?? true
+function inGroup(field: StudyField, group: XmlGroup) {
+  if (group.layer) return field.layer === group.layer
+  return group.match ? group.match.test(field.path) : true
 }
 
-// Annotated pacs.008.001.10 study sample. Rendered as a tab of a reference
-// entry; `initialGroup` lets a concept open the sample on its relevant block.
-export function XmlExplorer({ initialGroup = 'all' }: { initialGroup?: string }) {
+// Annotated synthetic sample of an ISO 20022 message, rendered as a tab of its
+// reference entry; `initialGroup` lets a concept open it on a relevant block.
+export function XmlExplorer({ sampleId = 'pacs.008', initialGroup = 'all' }: { sampleId?: string; initialGroup?: string }) {
   const L = useL()
   const lang = useRefLang()
   const en = lang === 'en'
-  const { fields, lines } = useMemo(() => parseStudyXml(undefined, lang), [lang])
+  const t = (pair: readonly [string, string]) => pair[en ? 1 : 0]
+  const sample = getXmlSample(sampleId)
+  const groups = sample.groups
+  const { fields, lines } = useMemo(() => parseStudyXml(sample.xml, lang, sample.resolve), [sample, lang])
+  const layers = new Set(fields.map((field) => field.layer))
+  const layerLabels = { transport: L('Transporte', 'Transport'), header: L('Cabecera BAH', 'BAH header'), payment: `${L('Mensaje', 'Message')} ${sample.id}` }
+  const layerLegend = [
+    { layer: 'transport', label: L('Transporte · ejemplo', 'Transport · example'), color: 'text-party', dot: 'bg-party' },
+    { layer: 'header', label: L('Cabecera · head.001', 'Header · head.001'), color: 'text-pain', dot: 'bg-pain' },
+    { layer: 'payment', label: `${L('Mensaje', 'Message')} · ${sample.id}`, color: 'text-camt', dot: 'bg-camt' },
+  ].filter((item) => layers.has(item.layer as StudyField['layer']))
   const [params, setParams] = useSearchParams()
   const [mode, setMode] = useState<'table' | 'xml' | 'tree'>('xml')
   const [query, setQuery] = useState('')
-  const [group, setGroup] = useState(xmlGroups.some((item) => item.id === initialGroup) ? initialGroup : 'all')
-  const activeGroup = xmlGroups.find((item) => item.id === group) ?? xmlGroups[0]
+  const [group, setGroup] = useState(groups.some((item) => item.id === initialGroup) ? initialGroup : 'all')
+  const activeGroup = groups.find((item) => item.id === group) ?? groups[0]
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
   const [copyState, setCopyState] = useState('')
   const surface = useRef<HTMLDivElement>(null)
   const inspector = useRef<HTMLElement>(null)
-  const defaultField = fields.find((field) => field.tag === 'IntrBkSttlmAmt')!
+  const defaultField = fields.find((field) => field.tag === sample.defaultTag) ?? fields[0]
   const selected = fields.find((field) => field.id === params.get('field')) ?? defaultField
   const selectedElement = selected.attribute ? selected.parentId : selected.id
-  const filtered = fields.filter((field) => inGroup(field, group) && (!query || normalizeQuery(`${field.path} ${field.value} ${field.note.name} ${field.note.meaning} ${field.note.note}`).includes(normalizeQuery(query))))
+  const filtered = fields.filter((field) => inGroup(field, activeGroup) && (!query || normalizeQuery(`${field.path} ${field.value} ${field.note.name} ${field.note.meaning} ${field.note.note}`).includes(normalizeQuery(query))))
   const matchingIds = new Set(filtered.map((field) => field.attribute ? field.parentId : field.id))
   const selectedLine = lines.find((line) => line.fieldId === selectedElement && !line.closing)?.text ?? ''
   const attributes = fields.filter((field) => field.attribute && field.parentId === selectedElement)
@@ -78,26 +69,27 @@ export function XmlExplorer({ initialGroup = 'all' }: { initialGroup?: string })
     try { await navigator.clipboard.writeText(text); setCopyState(success) } catch { setCopyState(L('No se pudo copiar. Selecciona el texto manualmente.', 'Could not copy. Select the text manually.')) }
   }
   function download() {
-    const url = URL.createObjectURL(new Blob([studyXml], { type: 'application/xml' }))
-    const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'pacs.008.001.10-ejemplo-sintetico.xml'; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
+    const url = URL.createObjectURL(new Blob([sample.xml], { type: 'application/xml' }))
+    const anchor = document.createElement('a'); anchor.href = url; anchor.download = `${sample.version}-${L('ejemplo-sintetico', 'synthetic-sample')}.xml`; anchor.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
   function toggle(id: string) { setCollapsed((old) => { const next = new Set(old); if (next.has(id)) next.delete(id); else next.add(id); return next }) }
 
-  return <section className="xml-explorer" aria-label={L('XML anotado pacs.008.001.10', 'Annotated XML pacs.008.001.10')}>
+  return <section className="xml-explorer" aria-label={`${L('XML anotado', 'Annotated XML')} ${sample.version}`}>
     <div className="xml-explorer-head">
       <div className="min-w-0">
         <div className="ref-eyebrow text-pain">{L('XML anotado · instancia sintética', 'Annotated XML · synthetic instance')}</div>
-        <h2 className="mt-1 break-words font-mono text-lg font-semibold">pacs.008.001.10</h2>
-        <div className="xml-legend" aria-label={L('Capas del ejemplo', 'Sample layers')}>{layerLegend.map((item) => <span key={item.layer} className={item.color}><i className={item.dot} aria-hidden="true" />{en ? item.en : item.label}</span>)}</div>
+        <h2 className="mt-1 break-words font-mono text-lg font-semibold">{sample.version}</h2>
+        <p className="mt-1 max-w-2xl text-xs leading-5 text-muted">{t(sample.story)}</p>
+        <div className="xml-legend" aria-label={L('Capas del ejemplo', 'Sample layers')}>{layerLegend.map((item) => <span key={item.layer} className={item.color}><i className={item.dot} aria-hidden="true" />{item.label}</span>)}</div>
       </div>
-      <div className="flex items-center gap-2"><button className="ref-icon" onClick={() => void copy(studyXml, L('XML copiado', 'XML copied'))} aria-label={L('Copiar XML', 'Copy XML')} title={L('Copiar XML', 'Copy XML')}><Copy size={16} /></button><button className="ref-icon" onClick={download} aria-label={L('Descargar XML sintético', 'Download synthetic XML')} title={L('Descargar XML sintético', 'Download synthetic XML')}><Download size={16} /></button></div>
+      <div className="flex items-center gap-2"><button className="ref-icon" onClick={() => void copy(sample.xml, L('XML copiado', 'XML copied'))} aria-label={L('Copiar XML', 'Copy XML')} title={L('Copiar XML', 'Copy XML')}><Copy size={16} /></button><button className="ref-icon" onClick={download} aria-label={L('Descargar XML sintético', 'Download synthetic XML')} title={L('Descargar XML sintético', 'Download synthetic XML')}><Download size={16} /></button></div>
     </div>
     <div className="xml-filter" role="group" aria-labelledby="xml-filter-title">
       <div className="flex flex-wrap items-baseline justify-between gap-2"><span id="xml-filter-title" className="ref-eyebrow text-muted">{L('Ver solo una parte del mensaje', 'Show only one part of the message')}</span><span className="text-[11px] text-muted">{L('Útil para estudiar un bloque a la vez', 'Handy to study one block at a time')}</span></div>
       <div className="mt-2 flex flex-wrap gap-1.5">
-        {xmlGroups.map((item) => <button key={item.id} aria-pressed={group === item.id} onClick={() => setGroup(item.id)} className="xml-chip">{en ? item.en : item.label}</button>)}
+        {groups.map((item) => <button key={item.id} aria-pressed={group === item.id} onClick={() => setGroup(item.id)} className="xml-chip">{t(item.label)}</button>)}
       </div>
-      <p className="mt-2 text-xs leading-5 text-muted" aria-live="polite"><strong className="text-text">{en ? activeGroup.en : activeGroup.label}: </strong>{en ? activeGroup.helpEn : activeGroup.help}</p>
+      <p className="mt-2 text-xs leading-5 text-muted" aria-live="polite"><strong className="text-text">{t(activeGroup.label)}: </strong>{t(activeGroup.help)}</p>
     </div>
     <div className="mt-3 flex flex-wrap items-center gap-3">
       <div className="relative min-w-0 flex-1 basis-56"><Search size={15} className="absolute left-3 top-3 text-muted" /><input aria-label={L('Buscar campo XML', 'Search XML field')} placeholder={L('Etiqueta, significado, ruta o valor…', 'Tag, meaning, path or value…')} value={query} onChange={(event) => setQuery(event.target.value)} className="ref-input pl-9" /></div>
@@ -127,7 +119,7 @@ export function XmlExplorer({ initialGroup = 'all' }: { initialGroup?: string })
       </div>
       <aside ref={inspector} className="min-w-0 rounded-md border border-border bg-surface px-4 py-5 xl:sticky xl:top-4" aria-label={L('Detalle del campo', 'Field detail')}>
         <button onClick={() => surface.current?.scrollIntoView({ block: 'start' })} className="mb-4 flex items-center gap-2 text-xs text-primary xl:hidden"><ArrowLeft size={13} />{L('Volver al XML', 'Back to the XML')}</button>
-        <div className={`ref-eyebrow ${layerColors[selected.layer]}`}>{layerLabels[selected.layer][en ? 1 : 0]} · {selected.attribute ? L('ATRIBUTO', 'ATTRIBUTE') : selected.container ? L('BLOQUE', 'BLOCK') : L('ELEMENTO', 'ELEMENT')}</div>
+        <div className={`ref-eyebrow ${layerColors[selected.layer]}`}>{layerLabels[selected.layer]} · {selected.attribute ? L('ATRIBUTO', 'ATTRIBUTE') : selected.container ? L('BLOQUE', 'BLOCK') : L('ELEMENTO', 'ELEMENT')}</div>
         <h2 className="mt-2 break-all font-mono text-lg font-semibold">{selected.tag}</h2><p className="mt-1 text-xs text-muted">{selected.note.name}</p>
         {selectedLine && <div className="mt-4"><div className="ref-eyebrow text-muted">{L('En el XML', 'In the XML')}</div><code className="xml-line mt-2">{selectedLine}</code></div>}
         <div className="mt-4"><div className="ref-eyebrow text-camt">{L('Qué es', 'What it is')}</div><p className="mt-1.5 text-sm leading-6">{selected.note.explain ?? selected.note.meaning}</p>{selected.note.explain && <p className="mt-2 text-xs leading-5 text-muted">{selected.note.meaning}</p>}</div>
@@ -142,6 +134,6 @@ export function XmlExplorer({ initialGroup = 'all' }: { initialGroup?: string })
       </aside>
     </div>
     <div className="min-h-7 pt-2 text-xs text-camt" role="status">{copyState && <span className="inline-flex items-center gap-1"><Check size={12} />{copyState}</span>}</div>
-    <details className="ref-section text-xs"><summary className="cursor-pointer font-semibold text-muted">{L('Alcance y procedencia de la guía', 'Scope and origin of the guide')}</summary><p className="mt-3 max-w-3xl leading-6 text-muted">{L('Adaptación de la guía de estudio pacs.008.001.10 proporcionada por el usuario. Se conserva su estructura y se sustituyen nombres, referencias, cuentas y moneda por datos sintéticos. Las notas explican esta instancia; no afirman cardinalidades completas ni validación contra el XSD. La guía no determina qué mensajes ni códigos utiliza una institución real.', 'Adapted from a pacs.008.001.10 study guide provided by the user. Its structure is kept, while names, references, accounts and currency are replaced with synthetic data. The notes explain this instance; they do not claim full cardinalities or validation against the XSD. The guide does not determine which messages or codes a real institution uses.')}</p><a className="mt-3 inline-flex items-center gap-1 text-primary" href={archiveSource.url} target="_blank" rel="noreferrer">{L(archiveSource.title, 'ISO 20022 · version archive')}<ExternalLink size={12} /></a></details>
+    <details className="ref-section text-xs"><summary className="cursor-pointer font-semibold text-muted">{L('Alcance y procedencia de la guía', 'Scope and origin of the guide')}</summary>{sample.id === 'pacs.008' ? <p className="mt-3 max-w-3xl leading-6 text-muted">{L('Adaptación de la guía de estudio pacs.008.001.10 proporcionada por el usuario. Se conserva su estructura y se sustituyen nombres, referencias, cuentas y moneda por datos sintéticos. Las notas explican esta instancia; no afirman cardinalidades completas ni validación contra el XSD. La guía no determina qué mensajes ni códigos utiliza una institución real.', 'Adapted from a pacs.008.001.10 study guide provided by the user. Its structure is kept, while names, references, accounts and currency are replaced with synthetic data. The notes explain this instance; they do not claim full cardinalities or validation against the XSD. The guide does not determine which messages or codes a real institution uses.')}</p> : <p className="mt-3 max-w-3xl leading-6 text-muted">{L(`Instancia sintética construida para esta aula con la estructura de ${sample.version}. Los nombres, el orden y los elementos obligatorios se comprobaron contra definiciones generadas del XSD oficial, y los códigos contra las listas externas de ISO 20022. Usa datos ficticios (BANK_A, BANK_B, XXX) y no refleja las reglas de ningún esquema concreto: cada esquema elige la versión, los campos y los códigos que usa.`, `Synthetic instance built for this classroom with the ${sample.version} structure. Names, order and mandatory elements were checked against definitions generated from the official XSD, and codes against the ISO 20022 external code lists. It uses fictitious data (BANK_A, BANK_B, XXX) and reflects no specific scheme’s rules: each scheme chooses the version, fields and codes it uses.`)}</p>}<a className="mt-3 inline-flex items-center gap-1 text-primary" href={archiveSource.url} target="_blank" rel="noreferrer">{L(archiveSource.title, 'ISO 20022 · version archive')}<ExternalLink size={12} /></a></details>
   </section>
 }
