@@ -63,17 +63,25 @@ export function Header() {
             ES
           </button>
         </div>}
-        <button
-          onClick={() => setPrivateSession(!privateSession)}
-          title={t('header.privateSessionTitle')}
-          className={clsx(
-            'flex h-9 w-9 items-center justify-center rounded-md border text-xs font-medium sm:w-auto sm:gap-1.5 sm:px-2.5',
-            privateSession ? 'border-warning text-warning bg-warning/10' : 'border-border text-muted hover:text-text',
-          )}
+        <span className="tip-anchor">
+          <button
+            onClick={() => setPrivateSession(!privateSession)}
+            aria-pressed={privateSession}
+            aria-describedby="private-session-tip"
+            className={clsx(
+              'flex h-9 w-9 items-center justify-center rounded-md border text-xs font-medium sm:w-auto sm:gap-1.5 sm:px-2.5',
+              privateSession ? 'border-warning text-warning bg-warning/10' : 'border-border text-muted hover:text-text',
+            )}
           >
-          <ShieldCheck size={14} />
-          <span className="hidden sm:inline">{privateSession ? t('header.privateSession') : t('header.private')}</span>
-        </button>
+            <ShieldCheck size={14} />
+            <span className="hidden sm:inline">{privateSession ? t('header.privateSession') : t('header.private')}</span>
+            <span className="sr-only sm:hidden">{t('header.privateSession')}</span>
+          </button>
+          <span role="tooltip" id="private-session-tip" className="tip">
+            <strong className="tip-title">{t('header.privateSession')} · {privateSession ? t('header.privateOn') : t('header.privateOff')}</strong>
+            {t('header.privateSessionTip')}
+          </span>
+        </span>
         <button
           onClick={toggleTheme}
           className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:text-text"
@@ -85,7 +93,7 @@ export function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <nav className="reference-nav absolute inset-x-0 top-full max-h-[75vh] overflow-y-auto border-b border-border bg-surface p-3 shadow-lg shadow-bg/40 md:hidden" aria-label="Navegación móvil">
+        <nav className="reference-nav nav-ink absolute inset-x-0 top-full max-h-[75vh] overflow-y-auto border-b border-border bg-surface p-3 shadow-lg shadow-bg/40 md:hidden" aria-label="Navegación móvil">
           <div className="grid grid-cols-2 gap-2">
             {mobileNav.map((item) => (
               <Link key={`${item.to}:${item.label}`} to={item.to} className="flex min-h-11 items-center gap-2 rounded-md border border-border bg-bg/50 px-3 py-2 text-sm hover:bg-surface2">

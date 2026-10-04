@@ -18,6 +18,13 @@ study routes and Info extra keep their own content and surface tokens.
   (`src/content/reference/scales.ts`): architectures → fast payments and
   settlement → operation concepts → ISO 20022 messages (emphasized, grouped by
   pain/pacs/camt) → XML fields. Entries are assigned to scales in data.
+- Canvas: neutral ink in dark (#0D1017), white in light. The menu (`.nav-ink`)
+  stays deep navy in both themes as the brand frame; its items hover and
+  highlight in their own section color.
+- Type: Public Sans (self-hosted via `@fontsource-variable/public-sans`, OFL)
+  for interface text; monospace for code/XML and Georgia for the guide titles.
+- Scales on the home can be folded; the folded set is a per-browser
+  convenience stored in localStorage (`payment-lab:collapsed-scales`).
 - The annotated pacs.008 XML is a tab of the reference entry
   (`/reference/pacs.008?tab=xml`); `/xml` redirects there.
 - Reusable diagram data includes explicit actor roles; icons never infer an

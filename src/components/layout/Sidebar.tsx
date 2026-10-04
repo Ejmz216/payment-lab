@@ -31,7 +31,7 @@ export function Sidebar() {
     if (to.startsWith('/?')) return pathname === '/' && to.endsWith(`=${category}`)
     return pathname === to || (to === '/classic' && !['/', '/visual', '/xml', '/saved', '/learn/info-extra'].includes(pathname) && !pathname.startsWith('/reference/'))
   }
-  return <aside className="reference-nav hidden w-60 shrink-0 flex-col border-r border-border bg-surface md:flex">
+  return <aside className="reference-nav nav-ink hidden w-60 shrink-0 flex-col border-r border-border bg-surface md:flex">
     <Link to="/" className="flex items-center gap-3 border-b border-border px-5 py-4">
       <span className="payment-mark" aria-hidden="true"><Icon3D name="money-with-wings" /></span>
       <span><span className="block text-sm font-semibold">Payment Lab</span><span className="block text-xs text-muted">Pagos · ISO 20022</span></span>
@@ -39,7 +39,7 @@ export function Sidebar() {
     <nav aria-label="Navegación principal" className="flex-1 overflow-y-auto px-3 py-5">
       {groups.map((group, index) => <div key={group.title} className={index ? 'mt-5 border-t border-border pt-4' : ''}>
         <p className="mb-2 px-3 text-[11px] font-semibold text-muted">{group.title}</p>
-        {group.items.map((item) => <Link key={item.to} to={item.to} aria-current={active(item.to) ? 'page' : undefined} className={`sidebar-item ${active(item.to) ? 'sidebar-item-active' : ''}`}><ColorIcon icon={item.icon} tone={item.tone} small /><span>{item.label}</span></Link>)}
+        {group.items.map((item) => <Link key={item.to} to={item.to} aria-current={active(item.to) ? 'page' : undefined} className={`sidebar-item tone-${item.tone} ${active(item.to) ? 'sidebar-item-active' : ''}`}><ColorIcon icon={item.icon} tone={item.tone} small /><span>{item.label}</span></Link>)}
       </div>)}
     </nav>
     <p className="border-t border-border px-5 py-4 text-[11px] leading-5 text-muted">Material educativo<br />Ejemplos sintéticos y fuentes públicas</p>

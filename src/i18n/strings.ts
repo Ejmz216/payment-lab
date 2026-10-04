@@ -30,6 +30,9 @@ export const strings = {
   'header.search': { en: 'Search concepts, messages, lessons…', es: 'Buscar conceptos, mensajes, lecciones…' },
   'header.private': { en: 'Private', es: 'Privado' },
   'header.privateSession': { en: 'Private Session', es: 'Sesión Privada' },
+  'header.privateOn': { en: 'on', es: 'activada' },
+  'header.privateOff': { en: 'off', es: 'desactivada' },
+  'header.privateSessionTip': { en: 'While it is on, Payment Lab stops recording your progress in this browser: completed lessons, practice answers and messages viewed are not saved. Bookmarks still work. It stays on until you turn it off. Payment Lab has no accounts or server: everything is stored only in this browser.', es: 'Mientras está activada, Payment Lab deja de registrar tu progreso en este navegador: no se guardan lecciones completadas, respuestas de práctica ni mensajes vistos. Los guardados sí funcionan. Sigue activa hasta que la desactives. Payment Lab no tiene cuentas ni servidor: todo se guarda solo en este navegador.' },
   'header.privateSessionTitle': { en: 'Private Session: nothing from this session is added to your learning history', es: 'Sesión Privada: nada de esta sesión se agrega a tu historial de aprendizaje' },
   'header.language': { en: 'Language', es: 'Idioma' },
 

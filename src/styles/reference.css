@@ -1,22 +1,47 @@
 /* Reference-only surfaces leave the original study pages and canvas untouched. */
+/* Dark: a neutral ink canvas so the vivid accents and the navy menu stand out
+   instead of competing with a tinted gray. Light: a white canvas. */
 .reference-experience {
-  --color-bg: 20 24 29;
-  --color-surface: 27 33 39;
-  --color-surface2: 35 42 49;
-  --color-border: 57 65 73;
-  --color-text: 237 241 240;
-  --color-muted: 166 180 185;
+  --color-bg: 13 16 23;
+  --color-surface: 20 24 33;
+  --color-surface2: 28 33 45;
+  --color-border: 44 51 66;
+  --color-text: 236 239 245;
+  --color-muted: 152 161 180;
   --color-primary: 77 163 255;
 }
 :root.light .reference-experience {
-  --color-bg: 248 250 250;
+  --color-bg: 255 255 255;
   --color-surface: 255 255 255;
-  --color-surface2: 235 241 240;
-  --color-border: 210 223 222;
-  --color-text: 32 47 49;
-  --color-muted: 88 109 113;
+  --color-surface2: 243 246 250;
+  --color-border: 226 231 239;
+  --color-text: 22 31 48;
+  --color-muted: 88 99 119;
   --color-primary: 22 98 222;
 }
+/* The menu keeps the same deep navy in both themes: it is the brand frame
+   around the content, and its tones always use the bright (dark-theme) values. */
+.nav-ink, :root.light .nav-ink {
+  --color-surface: 15 28 54;
+  --color-surface2: 27 43 76;
+  --color-border: 38 56 92;
+  --color-text: 236 242 252;
+  --color-muted: 156 175 208;
+  --color-primary: 110 180 255;
+  color: rgb(var(--color-text));
+  background-color: rgb(var(--color-surface));
+}
+:root.light .nav-ink .tone-mint { --tone: 26 224 170; }
+:root.light .nav-ink .tone-coral { --tone: 255 112 92; }
+:root.light .nav-ink .tone-blue { --tone: 77 163 255; }
+:root.light .nav-ink .tone-violet { --tone: 160 110 255; }
+:root.light .nav-ink .tone-gold { --tone: 255 194 41; }
+:root.light .nav-ink .tone-cyan { --tone: 34 190 255; }
+:root.light .nav-ink .tone-teal { --tone: 26 224 186; }
+:root.light .nav-ink .tone-purple { --tone: 210 115 255; }
+:root.light .nav-ink .tone-orange { --tone: 255 140 56; }
+:root.light .nav-ink .tone-red { --tone: 255 92 102; }
+:root.light .nav-ink .color-icon { background: radial-gradient(120% 120% at 25% 15%, rgb(var(--tone) / .38), rgb(var(--tone) / .12) 60%, rgb(var(--tone) / .06)); box-shadow: inset 0 1px 0 rgb(255 255 255 / .12); }
 .tone-mint { --tone: 26 224 170; }
 .tone-coral { --tone: 255 112 92; }
 .tone-blue { --tone: 77 163 255; }
@@ -57,9 +82,12 @@
 .color-icon-small .icon-3d { width: 70%; height: 70%; }
 .payment-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: linear-gradient(140deg, rgb(26 224 186), rgb(34 150 255)); box-shadow: 0 6px 14px -6px rgb(34 150 255 / .7); }
 .payment-mark .icon-3d { width: 26px; height: 26px; filter: drop-shadow(0 2px 2px rgb(0 0 0 / .3)); }
-.sidebar-item { display: flex; align-items: center; gap: 10px; min-height: 47px; padding: 6px 9px; margin: 3px 0; border-radius: 6px; font-size: 13px; border-left: 2px solid transparent; }
-.sidebar-item:hover { background: rgb(var(--color-surface2)); }
-.sidebar-item-active { background: rgb(var(--color-camt) / .1); border-left-color: rgb(var(--color-camt)); font-weight: 600; }
+.sidebar-item { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 6px 9px; margin: 3px 0; border-radius: 8px; font-size: 13px; color: rgb(var(--color-text) / .86); border-left: 3px solid transparent; transition: background .15s, color .15s, border-color .15s; }
+.sidebar-item .color-icon { transition: transform .15s; }
+.sidebar-item:hover { color: rgb(var(--color-text)); background: rgb(var(--tone) / .16); border-left-color: rgb(var(--tone) / .55); }
+.sidebar-item:hover .color-icon { transform: scale(1.07); }
+.sidebar-item-active { color: rgb(var(--color-text)); font-weight: 600; border-left-color: rgb(var(--tone)); background: linear-gradient(90deg, rgb(var(--tone) / .3), rgb(var(--tone) / .08)); }
+.sidebar-item-active:hover { background: linear-gradient(90deg, rgb(var(--tone) / .36), rgb(var(--tone) / .12)); }
 .reference-heading { padding-bottom: 24px; border-bottom: 1px solid rgb(var(--color-border)); }
 .reference-heading h1 { line-height: 1.2; }
 .reference-search { width: 100%; height: 56px; border: 1px solid rgb(var(--color-border)); border-radius: 8px; background: rgb(var(--color-surface)); padding: 0 50px; font-size: 16px; outline: none; box-shadow: 0 3px 0 rgb(var(--color-border) / .3); }
@@ -95,7 +123,24 @@
 .scale-section::before { content: ''; position: absolute; left: -30px; top: -23px; width: 26px; height: 46px; border-left: 2px dashed rgb(var(--tone) / .5); border-bottom: 2px dashed rgb(var(--tone) / .5); border-bottom-left-radius: 10px; }
 .scale-section:first-child::before { display: none; }
 .scale-focus { border-width: 1px 1px 1px 6px; border-color: rgb(var(--tone) / .55); background: linear-gradient(135deg, rgb(var(--tone) / .17), rgb(var(--tone) / .04) 50%, transparent); box-shadow: 0 18px 40px -28px rgb(var(--tone) / .8); }
-.scale-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.scale-head { position: relative; display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.scale-toggle { font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.scale-toggle::after { content: ''; position: absolute; inset: -8px 0; border-radius: 12px; transition: background .15s; }
+.scale-toggle:hover::after { background: rgb(var(--tone) / .07); }
+.scale-toggle:focus-visible { outline: none; }
+.scale-toggle:focus-visible::after { outline: 2px solid rgb(var(--tone)); outline-offset: 2px; }
+.scale-chevron { flex-shrink: 0; color: rgb(var(--tone)); transition: transform .2s; }
+.scale-section[data-open="false"] .scale-chevron { transform: rotate(-90deg); }
+.scale-section[data-open="false"] .scale-head { margin-bottom: 0; }
+.fold-all { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 10px; border: 1px solid rgb(var(--color-border)); border-radius: 6px; font-size: 12px; color: rgb(var(--color-muted)); }
+.fold-all:hover { color: rgb(var(--color-text)); background: rgb(var(--color-surface2)); }
+
+/* Explanatory tooltip: shown on hover and keyboard focus. */
+.tip-anchor { position: relative; display: inline-flex; }
+.tip { position: absolute; top: calc(100% + 10px); right: 0; z-index: 60; width: min(300px, 80vw); padding: 12px 14px; border-radius: 10px; border: 1px solid rgb(38 56 92); background: rgb(15 28 54); color: rgb(222 231 246); font-size: 12px; line-height: 1.55; text-align: left; font-weight: 400; box-shadow: 0 16px 32px -12px rgb(0 0 0 / .55); opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s, transform .15s, visibility .15s; pointer-events: none; }
+.tip::before { content: ''; position: absolute; top: -6px; right: 16px; width: 10px; height: 10px; transform: rotate(45deg); background: inherit; border-left: 1px solid rgb(38 56 92); border-top: 1px solid rgb(38 56 92); }
+.tip-anchor:hover .tip, .tip-anchor:focus-within .tip { opacity: 1; visibility: visible; transform: none; }
+.tip-title { display: block; margin-bottom: 4px; font-weight: 700; color: rgb(251 191 36); }
 .scale-head h2 { overflow-wrap: anywhere; }
 .scale-head .color-icon { width: 56px; height: 56px; border-radius: 16px; }
 .scale-level { display: grid; place-items: center; width: 28px; height: 28px; flex-shrink: 0; border-radius: 999px; font: 700 13px/1 ui-monospace, monospace; color: rgb(var(--color-bg)); background: rgb(var(--tone)); }
@@ -124,6 +169,7 @@
 .reference-collection .reference-result-tile:hover { background: rgb(var(--tone) / .085); border-color: rgb(var(--tone) / .5); }
 .reference-result-tile .color-icon { width: 50px; height: 50px; background: rgb(var(--tone) / .17); }
 .reference-result-tile .result-category { margin-top: auto; }
+.reference-collection .reference-result-tile > .min-w-0 { align-self: stretch; }
 .reference-result-tile > svg:last-child { display: block; position: absolute; right: 20px; top: 37px; color: rgb(var(--tone)); }
 .reference-result-tile p { font-size: 12px; line-height: 1.8; }
 :root.light .reference-result-tile .color-icon { background: rgb(var(--tone) / .11); }
