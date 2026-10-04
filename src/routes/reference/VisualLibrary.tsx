@@ -43,7 +43,7 @@ export function VisualLibrary() {
     <section className="visual-next">
       <ReferenceIcon category="xml" />
       <div className="min-w-0 flex-1"><h2 className="text-sm font-semibold">Del diagrama al dato</h2><p className="mt-1 text-xs text-muted">pacs.008.001.10 · partes, agentes, identificadores e importe</p></div>
-      <Link to="/xml" className="visual-link">Abrir XML <ArrowRight size={14} /></Link>
+      <Link to="/reference/pacs.008?tab=xml" className="visual-link">Abrir XML <ArrowRight size={14} /></Link>
     </section>
   </div>
 }

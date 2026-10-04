@@ -2,21 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Semantic palette. Vivid accents on a dark navy/charcoal foundation; every
+   color is paired with a label or icon in the UI (see AGENTS.md). */
 :root {
   --color-bg: 10 14 23;
   --color-surface: 16 22 34;
   --color-surface2: 22 29 44;
   --color-border: 39 48 68;
-  --color-primary: 91 141 239;
-  --color-iso: 139 92 246;
-  --color-scheme: 202 138 4;
-  --color-party: 249 115 22;
-  --color-agent: 59 130 246;
-  --color-infra: 124 58 237;
-  --color-return: 234 88 12;
-  --color-success: 74 168 122;
-  --color-warning: 217 164 65;
-  --color-danger: 214 95 95;
+  --color-primary: 77 163 255;
+  --color-iso: 157 107 255;
+  --color-scheme: 251 191 36;
+  --color-party: 255 140 56;
+  --color-agent: 79 156 255;
+  --color-infra: 168 113 255;
+  --color-return: 255 106 61;
+  --color-success: 46 213 140;
+  --color-warning: 251 191 36;
+  --color-danger: 255 92 102;
+  --color-pacs: 34 190 255;
+  --color-pain: 200 120 255;
+  --color-camt: 26 224 186;
   --color-text: 232 236 244;
   --color-muted: 148 161 184;
 }
@@ -26,16 +31,19 @@
   --color-surface: 255 255 255;
   --color-surface2: 241 243 247;
   --color-border: 223 227 234;
-  --color-primary: 47 91 191;
-  --color-iso: 124 58 237;
-  --color-scheme: 161 98 7;
-  --color-party: 194 65 12;
-  --color-agent: 37 99 235;
-  --color-infra: 109 40 217;
-  --color-return: 194 65 12;
-  --color-success: 39 128 90;
-  --color-warning: 156 108 8;
-  --color-danger: 179 56 56;
+  --color-primary: 22 98 222;
+  --color-iso: 118 52 230;
+  --color-scheme: 176 106 0;
+  --color-party: 217 82 0;
+  --color-agent: 22 98 222;
+  --color-infra: 112 44 222;
+  --color-return: 214 56 20;
+  --color-success: 4 140 88;
+  --color-warning: 168 108 0;
+  --color-danger: 210 30 52;
+  --color-pacs: 0 118 190;
+  --color-pain: 146 40 214;
+  --color-camt: 0 133 112;
   --color-text: 22 27 38;
   --color-muted: 96 106 124;
 }
@@ -86,11 +94,3 @@ body {
   outline: 2px solid rgb(var(--color-primary));
   outline-offset: 3px;
 }
-
-/* Reference accents need darker foregrounds on light surfaces. */
-:root.light :is(.ref-page, .reference-nav) .text-camt,
-:root.light .ref-page .group:hover .group-hover\:text-camt,
-:root.light .ref-page .hover\:text-camt:hover { color: #08786f; }
-:root.light :is(.ref-page, .reference-nav) .text-pacs { color: #315eb8; }
-:root.light :is(.ref-page, .reference-nav) .text-pain { color: #7540b8; }
-:root.light .ref-page .border-camt { border-color: #08786f; }

@@ -40,7 +40,8 @@ test('illustrated reference renders in both themes at desktop and mobile widths'
       await expect(picture).toBeVisible()
       await expect.poll(() => picture.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(1000)
       expect(await picture.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThan(180)
-      await expect(page.getByRole('link', { name: /Entender el sistema/ })).toHaveAttribute('href', '#/reference/fast-payments')
+      await expect(page.getByRole('button', { name: /Empieza aquí/ })).toBeVisible()
+      await expect(page.locator('.scale-section')).toHaveCount(5)
       if (width !== 768 && width !== 320) await page.screenshot({ path: `test-results/design-home-${theme}-${width}.png` })
       for (const route of ['/', '/visual', '/visual?topic=payment-web-app&view=architecture', '/reference/pacs.008', '/xml']) {
         await page.goto(`#${route}`)

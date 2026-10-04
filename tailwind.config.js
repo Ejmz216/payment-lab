@@ -21,9 +21,9 @@ export default {
         danger: 'rgb(var(--color-danger) / <alpha-value>)',
         text: 'rgb(var(--color-text) / <alpha-value>)',
         muted: 'rgb(var(--color-muted) / <alpha-value>)',
-        pacs: '#5b8def',
-        pain: '#a78bfa',
-        camt: '#2dd4bf',
+        pacs: 'rgb(var(--color-pacs) / <alpha-value>)',
+        pain: 'rgb(var(--color-pain) / <alpha-value>)',
+        camt: 'rgb(var(--color-camt) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],

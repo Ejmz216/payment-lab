@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import { ArrowDown, ArrowLeft, ArrowRight, Blocks, ChevronLeft, ChevronRight, FileCheck2, Landmark, LaptopMinimal, RotateCcw, ServerCog, UserRound } from 'lucide-react'
+import { ArrowDown, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { ReferenceEntry, VisualRole } from '@/content/reference/entries'
 import { ColorIcon, type ReferenceTone } from './ReferenceIdentity'
 
+// Role colors follow AGENTS.md: party orange, institution blue, infrastructure violet.
 const portraits = {
-  party: { icon: UserRound, tone: 'coral' }, agent: { icon: Landmark, tone: 'blue' },
-  infrastructure: { icon: Blocks, tone: 'violet' }, channel: { icon: LaptopMinimal, tone: 'coral' },
-  service: { icon: ServerCog, tone: 'violet' }, report: { icon: FileCheck2, tone: 'mint' },
+  party: { icon: 'bust-in-silhouette', tone: 'orange' }, agent: { icon: 'bank', tone: 'blue' },
+  infrastructure: { icon: 'satellite-antenna', tone: 'violet' }, channel: { icon: 'mobile-phone', tone: 'orange' },
+  service: { icon: 'gear', tone: 'violet' }, report: { icon: 'clipboard', tone: 'mint' },
 } as const
 function portrait(role?: VisualRole) { return portraits[role ?? 'infrastructure'] }
 

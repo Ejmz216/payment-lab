@@ -3,10 +3,10 @@ import { Breadcrumbs, type Crumb } from '@/components/ui/Breadcrumbs'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 import { getDomain, getFastPaymentsPath, getLesson, getMessage } from '@/lib/i18nContent'
-import { getReferenceEntry } from '@/content/reference/entries'
+import { categoryLabels, getReferenceEntry } from '@/content/reference/entries'
 
 export function RouteBreadcrumbs() {
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
   const lang = useUIStore((state) => state.lang)
   const t = useT()
   const panel: Crumb = { label: 'Estudio clásico', to: '/classic' }
@@ -19,7 +19,12 @@ export function RouteBreadcrumbs() {
   if (pathname === '/classic/dashboard') return <Breadcrumbs items={[panel, { label: t('nav.dashboard') }]} />
   if (pathname === '/xml') return <Breadcrumbs items={[library, { label: 'pacs.008', to: '/reference/pacs.008' }, { label: 'Explorador XML' }]} />
   const entryMatch = matchPath('/reference/:entryId', pathname)
-  if (entryMatch) return <Breadcrumbs items={[library, { label: getReferenceEntry(entryMatch.params.entryId ?? '')?.title ?? 'Referencia' }]} />
+  if (entryMatch) {
+    const entry = getReferenceEntry(entryMatch.params.entryId ?? '')
+    if (!entry) return <Breadcrumbs items={[library, { label: 'Referencia' }]} />
+    const xmlTab = new URLSearchParams(search).get('tab') === 'xml'
+    return <Breadcrumbs items={[library, { label: categoryLabels[entry.category], to: `/?category=${entry.category}` }, xmlTab ? { label: entry.title, to: `/reference/${entry.id}` } : { label: entry.title }, ...(xmlTab ? [{ label: 'XML anotado' }] : [])]} />
+  }
 
   const lessonMatch = matchPath('/learn/fast-payments/:lessonId', pathname)
   if (lessonMatch) {

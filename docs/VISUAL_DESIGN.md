@@ -3,10 +3,23 @@
 Scope: encyclopedia, reference entries, XML explorer and Visual Guide. Original
 study routes and Info extra keep their own content and surface tokens.
 
-- Charcoal foundation; mint, coral, azure, violet and gold accents paired with
-  role labels and icons. Light-theme foregrounds use darker equivalents.
-- Existing Lucide library, new role-specific symbols and softly filled color
-  treatments. No additional runtime icon service or font request.
+- Charcoal foundation with vivid semantic accents: pacs cyan, pain purple, camt
+  teal, party orange, institution blue, infrastructure violet, schemes gold.
+  Defined once as CSS variables (`src/styles/index.css`, `.tone-*` in
+  `reference.css`); light theme uses darker equivalents of the same hues.
+- Content icons are Microsoft Fluent Emoji (MIT), dimensional "3D-style" SVGs.
+  `npm run icons` (`scripts/fluent-icons.mjs`) copies only the listed icons
+  from the `@iconify-json/fluent-emoji` dev dependency into
+  `public/icons/fluent/` and regenerates `iconNames.ts`. They render as `<img>`
+  (no gradient-id clashes, nothing added to the JS bundle, no runtime icon
+  service) and are decorative: always paired with visible text. Lucide stays
+  for small UI controls (arrows, copy, search).
+- The encyclopedia home is a staircase of five scales, largest to smallest
+  (`src/content/reference/scales.ts`): architectures → fast payments and
+  settlement → operation concepts → ISO 20022 messages (emphasized, grouped by
+  pain/pacs/camt) → XML fields. Entries are assigned to scales in data.
+- The annotated pacs.008 XML is a tab of the reference entry
+  (`/reference/pacs.008?tab=xml`); `/xml` redirects there.
 - Reusable diagram data includes explicit actor roles; icons never infer an
   institution's technical implementation from its name.
 - `/visual` gathers the existing curated sequence/architecture models. Topic

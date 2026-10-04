@@ -4,8 +4,8 @@ import { Languages, Menu, Moon, Search, ShieldCheck, Sun, X } from 'lucide-react
 import { useUIStore } from '@/store/uiStore'
 import { useProgressStore } from '@/store/progressStore'
 import { useT } from '@/i18n/strings'
-import { referenceNav, secondaryNav } from './Sidebar'
-import { ColorIcon, type ReferenceTone } from '@/components/reference/ReferenceIdentity'
+import { referenceNav, scaleNav, secondaryNav } from './Sidebar'
+import { ColorIcon } from '@/components/reference/ReferenceIdentity'
 import clsx from 'clsx'
 
 export function Header() {
@@ -25,7 +25,7 @@ export function Header() {
     setMobileMenuOpen(false)
   }, [location.pathname, location.search])
 
-  const mobileNav = [...referenceNav, ...secondaryNav]
+  const mobileNav = [...referenceNav, ...scaleNav, ...secondaryNav]
 
   return (
     <header className="relative z-40 flex min-w-0 items-center justify-between gap-2 border-b border-border bg-surface px-3 py-3 sm:px-6">
@@ -89,7 +89,7 @@ export function Header() {
           <div className="grid grid-cols-2 gap-2">
             {mobileNav.map((item) => (
               <Link key={`${item.to}:${item.label}`} to={item.to} className="flex min-h-11 items-center gap-2 rounded-md border border-border bg-bg/50 px-3 py-2 text-sm hover:bg-surface2">
-                <ColorIcon icon={item.icon} tone={item.tone as ReferenceTone} small />
+                <ColorIcon icon={item.icon} tone={item.tone} small />
                 <span className="min-w-0">{item.label}</span>
               </Link>
             ))}

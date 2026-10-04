@@ -22,6 +22,8 @@ export interface ReferenceEntry {
   architecture?: { title: string; nodes: { label: string; role: string; kind?: VisualRole }[] }
   messageId?: string
   xml?: boolean
+  /** Block of the annotated XML sample to open first in the entry's XML tab. */
+  xmlFocus?: string
   publicScheme?: boolean
 }
 
@@ -88,7 +90,7 @@ const curated: ReferenceEntry[] = [
     facts: [{ label: 'Partes', value: 'Dbtr: quien debe pagar. Cdtr: a quien se debe pagar.' }, { label: 'Servicio de cuenta', value: 'DbtrAgt y CdtrAgt: instituciones de las cuentas de esas partes.' }, { label: 'Tramo', value: 'InstgAgt e InstdAgt: quién instruye y quién recibe la instrucción en ese tramo.' }],
     example: { title: 'Roles que pueden coincidir', text: 'BANK_A puede ser a la vez DbtrAgt e InstgAgt. CUSTOMER_A sigue siendo el Dbtr.', outcome: 'Una misma institución puede ocupar varios roles; los campos mantienen significados distintos.' },
     caution: 'AppHdr/Fr y AppHdr/To pertenecen a la cabecera del mensaje. No deben confundirse con las partes de la transferencia.',
-    related: ['pacs.008', 'bah', 'identifiers'], sources: [isoSource], xml: true,
+    related: ['pacs.008', 'bah', 'identifiers'], sources: [isoSource], xml: true, xmlFocus: 'actors',
   },
   {
     id: 'identifiers', title: 'Identificadores de pago', subtitle: 'Mensaje, instrucción y transacción', category: 'concepts',
@@ -96,14 +98,14 @@ const curated: ReferenceEntry[] = [
     facts: [{ label: 'Cabecera', value: 'BizMsgIdr identifica el mensaje de negocio en AppHdr.' }, { label: 'Mensaje de pago', value: 'GrpHdr/MsgId identifica el mensaje pacs.008.' }, { label: 'Transacción', value: 'PmtId reúne referencias como EndToEndId, TxId y UETR, con semánticas distintas.' }],
     analogy: { text: 'Un envío puede contener varios paquetes: la referencia del envío y la de cada paquete identifican objetos distintos.', limit: 'No explica quién asigna cada identificador ni sus reglas de conservación; eso requiere la definición y la guía de uso.' },
     example: { title: 'Mismo valor, distinto campo', text: 'BizMsgIdr y MsgId valen MSG-001 en la muestra. TxId vale TX-001.', outcome: 'La coincidencia de valores no convierte dos campos en el mismo concepto.' },
-    related: ['pacs.008', 'reconciliation', 'bah'], sources: [isoSource], xml: true,
+    related: ['pacs.008', 'reconciliation', 'bah'], sources: [isoSource], xml: true, xmlFocus: 'ids',
   },
   {
     id: 'bah', title: 'Business Application Header', subtitle: 'AppHdr · cabecera de negocio', category: 'concepts',
     summary: 'Cabecera ISO independiente del mensaje de pago que aporta identificación, emisor, destinatario y contexto del mensaje de negocio.', aliases: ['BAH', 'head.001', 'AppHdr', 'cabecera'],
     facts: [{ label: 'Sobre el mensaje', value: 'Fr, To, BizMsgIdr, MsgDefIdr, BizSvc y CreDt aparecen en la muestra.' }, { label: 'Separación XML', value: 'AppHdr usa head.001.001.02; Document usa pacs.008.001.10.' }],
     analogy: { text: 'La cabecera se parece a la etiqueta de un envío: identifica el envío y a quién va dirigido; el documento contiene la instrucción.', limit: 'El envelope técnico, el BAH y el documento siguen siendo tres capas diferentes.' },
-    related: ['xml-basics', 'identifiers', 'pacs.008'], sources: [isoSource, archiveSource], xml: true,
+    related: ['xml-basics', 'identifiers', 'pacs.008'], sources: [isoSource, archiveSource], xml: true, xmlFocus: 'header',
   },
   {
     id: 'xml-basics', title: 'Leer un XML de pagos', subtitle: 'Elementos, atributos y namespaces', category: 'concepts',

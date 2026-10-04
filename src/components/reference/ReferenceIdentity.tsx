@@ -1,32 +1,58 @@
-import { Blocks, Clock3, Compass, FileCode2, Fingerprint, Globe2, Landmark, Lightbulb, ListChecks, MailOpen, Mails, Scale, Shapes, UsersRound, WalletCards, Zap, type LucideIcon } from 'lucide-react'
+import type { IconName } from './iconNames'
 
-export type ReferenceTone = 'mint' | 'coral' | 'blue' | 'violet' | 'gold'
-const identities: Record<string, { icon: LucideIcon; tone: ReferenceTone }> = {
-  concepts: { icon: Lightbulb, tone: 'coral' },
-  messages: { icon: Mails, tone: 'blue' },
-  architecture: { icon: Blocks, tone: 'violet' },
-  schemes: { icon: Globe2, tone: 'gold' },
-  xml: { icon: FileCode2, tone: 'mint' },
+export type { IconName }
+export type ReferenceTone = 'mint' | 'coral' | 'blue' | 'violet' | 'gold' | 'cyan' | 'teal' | 'purple' | 'orange' | 'red'
+
+const identities: Record<string, { icon: IconName; tone: ReferenceTone }> = {
+  concepts: { icon: 'light-bulb', tone: 'coral' },
+  messages: { icon: 'incoming-envelope', tone: 'cyan' },
+  architecture: { icon: 'building-construction', tone: 'violet' },
+  schemes: { icon: 'globe-showing-americas', tone: 'gold' },
+  xml: { icon: 'label', tone: 'mint' },
 }
-const conceptSymbols: Record<string, LucideIcon> = {
-  'fast-payments': Zap, settlement: Scale, clearing: ListChecks, iso20022: Shapes,
-  actors: UsersRound, identifiers: Fingerprint, bah: MailOpen, 'xml-basics': FileCode2,
-  timeouts: Clock3, 'settlement-system': Landmark, 'payment-system': Blocks,
-  'settlement-account': WalletCards, reconciliation: ListChecks, participant: Landmark,
-  msgid: Mails, endtoendid: Fingerprint, txid: Fingerprint, uetr: Fingerprint,
+// ISO 20022 family colors (AGENTS.md): pacs cyan/blue, pain purple, camt teal.
+export const familyTones: Record<string, ReferenceTone> = { pacs: 'cyan', pain: 'purple', camt: 'teal', head: 'violet' }
+
+const entrySymbols: Record<string, IconName> = {
+  // systems
+  'fast-payments': 'high-voltage', 'payment-system': 'satellite-antenna', 'settlement-system': 'classical-building', 'clearing-system': 'gear',
+  'payment-network': 'link', 'payment-rail': 'world-map', 'payment-scheme': 'scroll', ach: 'card-file-box', rtgs: 'stopwatch', participant: 'bank',
+  'host-to-host': 'electric-plug', 'payment-web-app': 'mobile-phone',
+  // settlement
+  settlement: 'balance-scale', clearing: 'abacus', 'gross-settlement': 'coin', 'net-settlement': 'balance-scale', finality: 'locked', 'settlement-account': 'coin',
+  // operation
+  actors: 'busts-in-silhouette', agent: 'bank', 'debtor-agent': 'bank', 'creditor-agent': 'bank', debtor: 'bust-in-silhouette', creditor: 'bust-in-silhouette', beneficiary: 'bust-in-silhouette',
+  identifiers: 'id-button', msgid: 'id-button', endtoendid: 'id-button', txid: 'id-button', uetr: 'key',
+  timeouts: 'hourglass-not-done', reconciliation: 'bar-chart', investigation: 'magnifying-glass-tilted-left', validation: 'check-mark-button',
+  instruction: 'memo', reject: 'no-entry', return: 'right-arrow-curving-left', recall: 'counterclockwise-arrows-button', reversal: 'repeat-button',
+  'cash-management': 'ledger',
+  // language of messages
+  iso20022: 'triangular-ruler', bah: 'label', message: 'e-mail', 'xml-basics': 'page-facing-up',
+  // messages
+  'pain.001': 'memo', 'pain.002': 'clipboard', 'pacs.008': 'money-with-wings', 'pacs.002': 'check-mark-button', 'pacs.004': 'right-arrow-curving-left',
+  'pacs.003': 'inbox-tray', 'pacs.028': 'magnifying-glass-tilted-left', 'camt.053': 'ledger', 'camt.054': 'bell', 'camt.056': 'stop-sign',
+  'camt.029': 'scroll', 'camt.003': 'card-index-dividers', 'camt.004': 'card-file-box',
 }
 
-export function referenceIdentity(category: string, id = '') {
-  const identity = identities[category] ?? { icon: Compass, tone: 'mint' as const }
-  if (category === 'concepts' && conceptSymbols[id]) return { ...identity, icon: conceptSymbols[id] }
-  if (category === 'messages' && id.startsWith('pain.')) return { ...identity, tone: 'violet' as const }
-  if (category === 'messages' && id.startsWith('camt.')) return { ...identity, tone: 'mint' as const }
-  return identity
+export function referenceIdentity(category: string, id = ''): { icon: IconName; tone: ReferenceTone } {
+  const identity = identities[category] ?? { icon: 'compass' as const, tone: 'mint' as const }
+  const icon = entrySymbols[id] ?? identity.icon
+  if (category === 'messages') return { icon, tone: familyTones[id.split('.')[0]] ?? identity.tone }
+  return { ...identity, icon }
 }
 
-export function ColorIcon({ icon: Icon, tone = 'mint', small = false }: { icon: LucideIcon; tone?: ReferenceTone; small?: boolean }) {
+export function iconUrl(name: IconName) {
+  return `${import.meta.env.BASE_URL}icons/fluent/${name}.svg`
+}
+
+/** A Fluent Emoji (3D-style) icon. Decorative: always pair it with visible text. */
+export function Icon3D({ name, size = 24, className = '' }: { name: IconName; size?: number; className?: string }) {
+  return <img src={iconUrl(name)} width={size} height={size} alt="" aria-hidden="true" loading="lazy" decoding="async" draggable={false} className={`icon-3d ${className}`} />
+}
+
+export function ColorIcon({ icon, tone = 'mint', small = false }: { icon: IconName; tone?: ReferenceTone; small?: boolean }) {
   return <span className={`color-icon tone-${tone} ${small ? 'color-icon-small' : ''}`} aria-hidden="true">
-    <Icon size={small ? 18 : 23} strokeWidth={1.65} fill="currentColor" fillOpacity={0.12} />
+    <Icon3D name={icon} size={small ? 20 : 28} />
   </span>
 }
 
