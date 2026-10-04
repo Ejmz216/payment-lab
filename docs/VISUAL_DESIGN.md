@@ -25,6 +25,15 @@ study routes and Info extra keep their own content and surface tokens.
   for interface text; monospace for code/XML and Georgia for the guide titles.
 - Scales on the home can be folded; the folded set is a per-browser
   convenience stored in localStorage (`payment-lab:collapsed-scales`).
+- Encyclopedia texts (`concepts.ts`, `messageReference.ts`) are written for
+  the new reference and are separate from the classic glossary/Atlas. Each
+  entry has a plain-language version and a time-ordered diagram shown inside
+  "En pocas palabras". The visual guide always opens on the sequence.
+- `/recorridos` (`journeys.ts`): end-to-end journeys across CUSTOMER_A,
+  BANK_A, PAYMENT_SYSTEM, BANK_B and CUSTOMER_B. Each step carries its phase,
+  money state and payment state, and message steps carry a simplified
+  synthetic XML fragment. SIMPLIFIED MODEL: codes and versions are
+  illustrative common ISO usages; schemes define the real flow.
 - The annotated pacs.008 XML is a tab of the reference entry
   (`/reference/pacs.008?tab=xml`); `/xml` redirects there.
 - Reusable diagram data includes explicit actor roles; icons never infer an

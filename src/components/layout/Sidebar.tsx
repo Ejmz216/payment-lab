@@ -5,6 +5,7 @@ interface NavItem { to: string; label: string; icon: IconName; tone: ReferenceTo
 export const referenceNav: NavItem[] = [
   { to: '/', label: 'Enciclopedia', icon: 'books', tone: 'blue' },
   { to: '/visual', label: 'Guía visual', icon: 'compass', tone: 'mint' },
+  { to: '/recorridos', label: 'Recorridos', icon: 'world-map', tone: 'orange' },
 ]
 // The encyclopedia's scales, from the whole ecosystem down to a single XML field.
 export const scaleNav: NavItem[] = [
@@ -29,7 +30,7 @@ export function Sidebar() {
     if (to === '/') return pathname === '/' && !category
     if (to.includes('?tab=')) return `${pathname}?tab=${tab}` === to
     if (to.startsWith('/?')) return pathname === '/' && to.endsWith(`=${category}`)
-    return pathname === to || (to === '/classic' && !['/', '/visual', '/xml', '/saved', '/learn/info-extra'].includes(pathname) && !pathname.startsWith('/reference/'))
+    return pathname === to || (to === '/classic' && !['/', '/visual', '/recorridos', '/xml', '/saved', '/learn/info-extra'].includes(pathname) && !pathname.startsWith('/reference/'))
   }
   return <aside className="reference-nav nav-ink hidden w-60 shrink-0 flex-col border-r border-border bg-surface md:flex">
     <Link to="/" className="flex items-center gap-3 border-b border-border px-5 py-4">

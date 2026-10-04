@@ -14,6 +14,7 @@ export function CommandPalette() {
   const filtered = useMemo(() => {
     const spaces = [
       { id: 'visual', title: 'Guía visual', description: 'Diagramas, secuencias y arquitecturas de pagos', category: 'espacio', to: '/visual' },
+      { id: 'recorridos', title: 'Recorridos', description: 'Un pago completo en el tiempo: transferencia, rechazo, devolución, timeout, cancelación, débito directo', category: 'espacio', to: '/recorridos' },
       { id: 'classic', title: 'Estudio clásico', description: 'Lecciones, simuladores y práctica', category: 'espacio', to: '/classic' },
       { id: 'info-extra', title: 'Info extra', description: 'Comparativa Barbados vs. Bahamas', category: 'espacio', to: '/learn/info-extra' },
       { id: 'xml', title: 'Explorador XML', description: 'pacs.008.001.10', category: 'xml', to: '/reference/pacs.008?tab=xml' },

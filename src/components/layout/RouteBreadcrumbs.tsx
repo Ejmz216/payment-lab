@@ -15,6 +15,7 @@ export function RouteBreadcrumbs() {
 
   if (pathname === '/') return <Breadcrumbs items={[{ label: 'Enciclopedia' }]} />
   if (pathname === '/visual') return <Breadcrumbs items={[library, { label: 'Guía visual' }]} />
+  if (pathname === '/recorridos') return <Breadcrumbs items={[library, { label: 'Recorridos' }]} />
   if (pathname === '/classic') return <Breadcrumbs items={[library, { label: 'Estudio clásico' }]} />
   if (pathname === '/classic/dashboard') return <Breadcrumbs items={[panel, { label: t('nav.dashboard') }]} />
   if (pathname === '/xml') return <Breadcrumbs items={[library, { label: 'pacs.008', to: '/reference/pacs.008' }, { label: 'Explorador XML' }]} />

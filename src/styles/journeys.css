@@ -1,0 +1,77 @@
+/* Recorridos: end-to-end payment journeys. */
+.journey-picker { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; padding: 22px 0 16px; }
+.journey-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; text-align: left; border: 1px solid rgb(var(--color-border)); border-radius: 12px; background: rgb(var(--color-surface) / .6); transition: background .15s, border-color .15s; }
+.journey-option:hover { border-color: rgb(var(--tone) / .55); background: rgb(var(--tone) / .08); }
+.journey-option[aria-pressed="true"] { border-color: rgb(var(--tone)); background: linear-gradient(135deg, rgb(var(--tone) / .2), rgb(var(--tone) / .05)); box-shadow: inset 0 -3px 0 rgb(var(--tone)); }
+.journey-intro { padding: 14px 16px; border-left: 4px solid rgb(var(--tone)); border-radius: 0 12px 12px 0; background: rgb(var(--tone) / .07); }
+.journey-takeaway { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 12px; font-weight: 600; color: rgb(var(--tone)); }
+
+.journey-layout { display: grid; gap: 20px; align-items: start; margin-top: 20px; }
+.journey-panel { min-width: 0; padding: 18px; border: 1px solid rgb(var(--color-border)); border-radius: 14px; background: rgb(var(--color-surface)); }
+@media (min-width: 1280px) {
+  .journey-layout { grid-template-columns: 20rem minmax(0, 1fr); }
+  .journey-panel { position: sticky; top: 12px; max-height: calc(100vh - 140px); overflow-y: auto; }
+}
+@media (max-width: 1279px) { .journey-panel { order: 2; } }
+.journey-states { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.journey-states > div { padding: 8px 10px; border-radius: 8px; background: rgb(var(--color-surface2)); }
+.journey-states dt { font-size: 10px; font-weight: 700; text-transform: uppercase; color: rgb(var(--color-muted)); }
+.journey-states dd { margin-top: 3px; font-size: 12px; line-height: 1.45; }
+.journey-message { margin-top: 14px; padding: 10px 12px; border: 1px solid rgb(var(--tone) / .4); border-left: 3px solid rgb(var(--tone)); border-radius: 8px; background: rgb(var(--tone) / .06); }
+.journey-xml { margin-top: 8px; max-height: 320px; overflow: auto; padding: 10px 12px; border-radius: 8px; border: 1px solid rgb(var(--color-border)); background: rgb(var(--color-bg)); font-size: 10.5px; line-height: 1.6; white-space: pre; }
+.journey-xml .x-tag { color: rgb(var(--color-pacs)); }
+.journey-xml .x-attr { color: rgb(var(--color-pain)); }
+.journey-xml .x-val { color: rgb(var(--color-warning)); }
+.journey-xml .x-text { color: rgb(var(--color-text)); }
+.journey-mini { display: flex; align-items: center; gap: 8px; padding: 5px 8px; font-size: 12px; text-align: left; border-radius: 6px; }
+.journey-mini:hover { background: rgb(var(--color-surface2)); }
+.journey-mini code { font-size: 10px; }
+
+.journey-stage { min-width: 0; }
+.journey-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.journey-play { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 8px; font-size: 12px; font-weight: 600; color: rgb(var(--color-bg)); background: rgb(var(--color-camt)); }
+.journey-play:hover { filter: brightness(1.08); }
+.journey-progress { flex: 1; min-width: 120px; height: 6px; border-radius: 999px; background: rgb(var(--color-surface2)); overflow: hidden; }
+.journey-progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgb(var(--color-pain)), rgb(var(--color-camt))); transition: width .3s; }
+.journey-track { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.journey-track span { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 999px; font-size: 12px; border: 1px solid rgb(var(--color-border)); background: rgb(var(--color-surface) / .7); }
+.journey-track em { font-style: normal; font-size: 10px; font-weight: 700; text-transform: uppercase; color: rgb(var(--color-muted)); }
+
+.journey-scroll { overflow-x: auto; border: 1px solid rgb(var(--color-border)); border-radius: 14px; background: rgb(var(--color-surface) / .5); }
+.journey-scroll:focus-visible { outline: 2px solid rgb(var(--color-primary)); outline-offset: 2px; }
+.journey-grid { min-width: 720px; padding: 0 14px 14px; }
+.journey-head { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); align-items: end; padding: 14px 0 10px; border-bottom: 1px solid rgb(var(--color-border)); }
+.journey-actors { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); }
+.journey-actor { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 6px 4px; border-radius: 10px; font: 600 11px/1.2 ui-monospace, monospace; color: rgb(var(--color-muted)); transition: color .15s, background .15s; }
+.journey-actor:hover { background: rgb(var(--color-surface2)); color: rgb(var(--color-text)); }
+.journey-actor[data-active="true"], .journey-actor[aria-pressed="true"] { color: rgb(var(--color-text)); }
+.journey-actor[aria-pressed="true"] { background: rgb(var(--color-camt) / .12); }
+.journey-actor[data-active="true"] .color-icon { box-shadow: 0 0 0 2px rgb(var(--tone)); }
+.journey-phase-col { display: flex; align-items: center; min-width: 0; }
+.journey-body { position: relative; }
+.journey-lifelines { position: absolute; top: 0; bottom: 0; left: 5.5rem; right: 0; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); pointer-events: none; }
+.journey-lifelines span { margin: 0 auto; border-left: 2px dashed rgb(var(--color-border)); }
+.journey-row { position: relative; display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); height: 54px; transition: opacity .2s; }
+.journey-row[data-state="next"] { opacity: .5; }
+.journey-row[data-state="next"]:hover { opacity: .8; }
+.journey-phase { padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; color: rgb(var(--tone)); background: rgb(var(--tone) / .14); border: 1px solid rgb(var(--tone) / .35); }
+.journey-lane { position: relative; }
+.journey-step { position: absolute; top: 4px; height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 0 4px; color: rgb(var(--tone)); border-radius: 8px; }
+.journey-step:hover .journey-label { border-color: rgb(var(--tone) / .7); }
+/* Labels float centered over their arrow, so they can be wider than one column. */
+.journey-label { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 1; display: inline-flex; align-items: center; gap: 6px; max-width: 240px; padding: 3px 8px; border-radius: 6px; font-size: 11px; color: rgb(var(--color-text)); background: rgb(var(--color-surface)); border: 1px solid rgb(var(--tone) / .3); white-space: nowrap; }
+.journey-label code { font-size: 10px; font-weight: 700; color: rgb(var(--tone)); }
+.journey-num { display: grid; place-items: center; min-width: 16px; height: 16px; border-radius: 999px; font: 700 9px/1 ui-monospace, monospace; color: rgb(var(--color-bg)); background: rgb(var(--tone)); }
+.journey-arrow { position: relative; display: block; width: 100%; height: 2px; margin-bottom: 4px; background: rgb(var(--tone)); }
+.journey-arrow::after { content: ""; position: absolute; top: -4px; width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+.is-right .journey-arrow::after { right: -1px; border-left: 8px solid rgb(var(--tone)); }
+.is-left .journey-arrow::after { left: -1px; border-right: 8px solid rgb(var(--tone)); }
+.journey-step.is-action { justify-content: center; }
+.journey-step.is-action .journey-label { bottom: auto; top: 50%; transform: translate(-50%, -50%); }
+.journey-step.is-action .journey-label { border-style: dashed; background: rgb(var(--tone) / .08); }
+.journey-step[aria-pressed="true"] .journey-label { border-color: rgb(var(--tone)); background: rgb(var(--tone) / .18); font-weight: 600; box-shadow: 0 6px 16px -10px rgb(var(--tone)); }
+.journey-step[aria-pressed="true"] .journey-arrow { height: 3px; }
+.journey-row[data-state="current"] .journey-arrow { animation: journey-draw 1s ease-out 1; transform-origin: left; }
+.journey-row[data-state="current"] .is-left .journey-arrow { transform-origin: right; }
+@keyframes journey-draw { from { transform: scaleX(.15); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .journey-row[data-state="current"] .journey-arrow { animation: none; } }

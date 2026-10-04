@@ -19,7 +19,7 @@ export function Header() {
   const t = useT()
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const legacy = !['/', '/visual', '/xml', '/classic'].includes(location.pathname) && !location.pathname.startsWith('/reference/')
+  const legacy = !['/', '/visual', '/recorridos', '/xml', '/classic'].includes(location.pathname) && !location.pathname.startsWith('/reference/')
 
   useEffect(() => {
     setMobileMenuOpen(false)

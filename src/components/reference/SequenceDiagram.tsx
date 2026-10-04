@@ -10,7 +10,7 @@ const portraits = {
   infrastructure: { icon: 'satellite-antenna', tone: 'violet' }, channel: { icon: 'mobile-phone', tone: 'orange' },
   service: { icon: 'gear', tone: 'violet' }, report: { icon: 'clipboard', tone: 'mint' },
 } as const
-function portrait(role?: VisualRole) { return portraits[role ?? 'infrastructure'] }
+export function portrait(role?: VisualRole) { return portraits[role ?? 'infrastructure'] }
 
 export function SequenceDiagram({ diagram }: { diagram: NonNullable<ReferenceEntry['diagram']> }) {
   const [selected, setSelected] = useState(0)

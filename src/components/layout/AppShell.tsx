@@ -13,7 +13,7 @@ export function AppShell() {
   const setCommandPaletteOpen = useUIStore((s) => s.setCommandPaletteOpen)
   const location = useLocation()
   const mainRef = useRef<HTMLElement>(null)
-  const referenceExperience = ['/', '/visual', '/xml'].includes(location.pathname) || location.pathname.startsWith('/reference/')
+  const referenceExperience = ['/', '/visual', '/recorridos', '/xml'].includes(location.pathname) || location.pathname.startsWith('/reference/')
   useEffect(() => { document.documentElement.lang = referenceExperience ? 'es' : lang }, [referenceExperience, lang])
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export function AppShell() {
           </div>
         </div>
         <main ref={mainRef} className="flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className={`mx-auto w-full ${location.pathname === '/recorridos' ? 'max-w-[90rem]' : 'max-w-6xl'} px-4 py-6 sm:px-6 lg:px-8`}>
             <Outlet />
           </div>
         </main>

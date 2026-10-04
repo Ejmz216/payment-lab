@@ -43,6 +43,11 @@ export function VisualLibrary() {
       <p className="visual-scope">{topic.publicScheme ? 'Relaciones públicas entre roles; no representa conexiones técnicas internas ni asigna mensajes ISO a las flechas.' : 'Modelo didáctico. El orden operativo, los mensajes y los tiempos de un sistema real dependen de su esquema.'}</p>
     </section>
     <section className="visual-next">
+      <ReferenceIcon category="concepts" id="fast-payments" />
+      <div className="min-w-0 flex-1"><h2 className="text-sm font-semibold">Un pago completo, de punta a punta</h2><p className="mt-1 text-xs text-muted">Recorridos: el cliente, los dos bancos y el sistema, con todos los mensajes y qué pasa si algo falla</p></div>
+      <Link to="/recorridos" className="visual-link">Abrir recorridos <ArrowRight size={14} /></Link>
+    </section>
+    <section className="visual-next">
       <ReferenceIcon category="xml" />
       <div className="min-w-0 flex-1"><h2 className="text-sm font-semibold">Del diagrama al dato</h2><p className="mt-1 text-xs text-muted">pacs.008.001.10 · partes, agentes, identificadores e importe</p></div>
       <Link to="/reference/pacs.008?tab=xml" className="visual-link">Abrir XML <ArrowRight size={14} /></Link>

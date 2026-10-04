@@ -28,6 +28,7 @@ import { EntryPage } from '@/routes/reference/EntryPage'
 import { LegacyHub } from '@/routes/reference/LegacyHub'
 import { VisualLibrary } from '@/routes/reference/VisualLibrary'
 import { XmlWorkspace } from '@/routes/reference/XmlWorkspace'
+import { Journeys } from '@/routes/reference/Journeys'
 
 // Monaco-backed labs are code-split and only fetched when visited, so the
 // heavy editor bundle never loads on the main path.
@@ -45,6 +46,7 @@ export default function App() {
       <Route element={<AppShell />}>
         <Route path="/" element={<Library />} />
         <Route path="/visual" element={<VisualLibrary />} />
+        <Route path="/recorridos" element={<Journeys />} />
         <Route path="/reference/:entryId" element={<EntryPage />} />
         <Route path="/xml" element={<XmlWorkspace />} />
         <Route path="/classic" element={<LegacyHub />} />

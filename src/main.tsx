@@ -5,6 +5,7 @@ import App from './App'
 import '@fontsource-variable/public-sans/wght.css'
 import './styles/index.css'
 import './styles/reference.css'
+import './styles/journeys.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
