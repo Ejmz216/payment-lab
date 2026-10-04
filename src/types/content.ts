@@ -1,4 +1,4 @@
-// Core content types for Payment Lab. Content is data, kept separate from UI components.
+// Core content types for Aula Libre de Pagos. Content is data, kept separate from UI components.
 
 export type CoverageLevel = 'full-lesson' | 'detailed-reference' | 'basic-reference' | 'catalog-only'
 export type FastPaymentsRelevance = 'critical' | 'high' | 'medium' | 'low' | 'not-covered'

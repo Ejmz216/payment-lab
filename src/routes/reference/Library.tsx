@@ -19,11 +19,15 @@ const filterOrder: { id: string; label: string; icon: IconName }[] = [
 type View = 'grid' | 'list'
 type CardItem = Pick<ReferenceResult, 'id' | 'title' | 'description' | 'category' | 'to'> & { subtitle?: string; badge?: string }
 
-// Which scales the viewer folded. A per-browser convenience only; the page
-// renders fully expanded whenever storage is unavailable.
+// Which scales the viewer folded. Scales start folded (the home reads as a
+// five-step index); the viewer's own choice is remembered per browser.
 const COLLAPSED_KEY = 'payment-lab:collapsed-scales'
+const allScales = () => new Set<ScaleId>(scales.map((scale) => scale.id))
 function readCollapsed(): Set<ScaleId> {
-  try { return new Set(JSON.parse(localStorage.getItem(COLLAPSED_KEY) ?? '[]')) } catch { return new Set() }
+  try {
+    const stored = localStorage.getItem(COLLAPSED_KEY)
+    return stored === null ? allScales() : new Set(JSON.parse(stored))
+  } catch { return allScales() }
 }
 function useCollapsedScales() {
   const [collapsed, setCollapsed] = useState(readCollapsed)
@@ -61,7 +65,7 @@ export function Library() {
   }
   return <div className="ref-page">
     <header className="reference-heading">
-      <div className="ref-eyebrow text-camt">Payment Lab · El mundo de los pagos</div>
+      <div className="ref-eyebrow text-camt">Aula Libre de Pagos · material de estudio libre</div>
       <h1 className="mt-2 text-3xl font-semibold">Enciclopedia de pagos</h1>
       <p className="mt-2 text-sm text-muted">Del ecosistema completo al último campo del XML: cinco escalas para entender un pago.</p>
       <div className="relative mt-6">

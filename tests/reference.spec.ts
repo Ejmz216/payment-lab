@@ -69,7 +69,7 @@ test('sequences, bookmarks and classic routes remain connected', async ({ page }
 
 test('global search supports keyboard and restores focus', async ({ page }) => {
   await page.goto('#/')
-  const search = page.getByRole('button', { name: 'Buscar en Payment Lab', exact: true })
+  const search = page.getByRole('button', { name: 'Buscar en Aula Libre de Pagos', exact: true })
   await search.click()
   await page.getByRole('combobox', { name: 'Buscar concepto, mensaje o campo' }).fill('EndToEndId')
   await page.keyboard.press('Enter')
@@ -138,6 +138,7 @@ test('old XML links redirect into the pacs.008 XML tab and concepts open their b
   await page.goto('#/reference/identifiers?tab=xml')
   await expect(page.getByRole('button', { name: 'Identificadores', exact: true })).toHaveAttribute('aria-pressed', 'true')
   await page.goto('#/')
+  await page.locator('.learning-stop', { hasText: 'Campos XML' }).click()
   await page.getByRole('link', { name: /^AppHdr/ }).click()
   await expect(page.getByRole('button', { name: 'Cabecera AppHdr', exact: true })).toHaveAttribute('aria-pressed', 'true')
 })

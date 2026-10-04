@@ -30,7 +30,7 @@ export function CommandPalette() {
   function go(to: string) { navigate(to); setOpen(false) }
 
   return <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/65 px-3 pt-[10vh]" onClick={() => setOpen(false)}>
-    <div ref={dialog} role="dialog" aria-modal="true" aria-label="Buscar en Payment Lab" className="reference-nav w-full max-w-2xl overflow-hidden rounded-lg border border-border bg-surface shadow-xl" onClick={(event) => event.stopPropagation()} onKeyDown={(event) => {
+    <div ref={dialog} role="dialog" aria-modal="true" aria-label="Buscar en Aula Libre de Pagos" className="reference-nav w-full max-w-2xl overflow-hidden rounded-lg border border-border bg-surface shadow-xl" onClick={(event) => event.stopPropagation()} onKeyDown={(event) => {
       if (event.key === 'Escape') setOpen(false)
       if (event.key === 'ArrowDown') { event.preventDefault(); setSelected((old) => Math.min(old + 1, filtered.length - 1)) }
       if (event.key === 'ArrowUp') { event.preventDefault(); setSelected((old) => Math.max(0, old - 1)) }

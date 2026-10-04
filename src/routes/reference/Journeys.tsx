@@ -5,6 +5,7 @@ import { journeyActors, journeys, phaseTone, type JourneyStep } from '@/content/
 import { getReferenceEntry } from '@/content/reference/entries'
 import { ColorIcon, Icon3D, familyTones, type ReferenceTone } from '@/components/reference/ReferenceIdentity'
 import { portrait } from '@/components/reference/SequenceDiagram'
+import { XxxNote } from '@/components/reference/XxxNote'
 
 type Focus = { kind: 'step' } | { kind: 'actor'; actor: number }
 const AUTOPLAY_MS = 2600
@@ -84,6 +85,7 @@ export function Journeys() {
     <section className={`journey-intro tone-${journey.tone}`}>
       <p className="text-sm leading-6">{journey.summary}</p>
       <p className="journey-takeaway"><Icon3D name="light-bulb" size={16} />{journey.takeaway}</p>
+      <XxxNote />
     </section>
 
     <div className="journey-layout">

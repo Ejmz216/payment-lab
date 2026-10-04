@@ -23,8 +23,15 @@ study routes and Info extra keep their own content and surface tokens.
   highlight in their own section color.
 - Type: Public Sans (self-hosted via `@fontsource-variable/public-sans`, OFL)
   for interface text; monospace for code/XML and Georgia for the guide titles.
-- Scales on the home can be folded; the folded set is a per-browser
-  convenience stored in localStorage (`payment-lab:collapsed-scales`).
+- Scales on the home start folded (a five-step index); the viewer's own
+  choice is a per-browser convenience in localStorage (`payment-lab:collapsed-scales`).
+- Brand: "Aula Libre de Pagos" (study material, free, nothing stored). The
+  mark is the mint-to-blue tile with the 3D "money with wings"; `npm run icons`
+  also writes the matching `public/favicon.svg`. URL and storage keys keep
+  `payment-lab` so links and saved progress survive.
+- Mobile menu: a left drawer with the same navy groups as the desktop sidebar.
+- Example amounts use XXX (ISO 4217 "no currency"), explained in place and in
+  the `currency-code` entry.
 - Encyclopedia texts (`concepts.ts`, `messageReference.ts`) are written for
   the new reference and are separate from the classic glossary/Atlas. Each
   entry has a plain-language version and a time-ordered diagram shown inside

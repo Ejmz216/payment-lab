@@ -331,6 +331,18 @@ export const conceptEntries: Concept[] = [
     related: ['identifiers', 'endtoendid', 'txid'], xml: true, xmlFocus: 'ids',
   },
 
+  {
+    id: 'currency-code', title: 'Código de moneda · XXX', subtitle: 'ISO 4217 · atributo Ccy',
+    summary: 'Los importes en ISO 20022 indican su moneda con un código de tres letras de la norma ISO 4217, en el atributo Ccy. XXX es el código oficial para "sin moneda".',
+    plain: 'Cuando ves "250 XXX" en esta aula, no es una moneda real: XXX significa "sin moneda". Lo usamos a propósito para que ningún ejemplo represente dinero de verdad. En un pago real verías USD, EUR, DOP, BBD, etc.',
+    aliases: ['XXX', 'Ccy', 'ISO 4217', 'moneda', 'divisa', 'currency'],
+    facts: [{ label: 'Formato', value: 'Tres letras: las dos primeras suelen ser el país y la tercera la moneda (DOP = peso dominicano, USD = dólar estadounidense).' }, { label: 'En el XML', value: 'Va como atributo del importe: <IntrBkSttlmAmt Ccy="XXX">250.00</IntrBkSttlmAmt>.' }, { label: 'XXX', value: 'Código ISO 4217 reservado para operaciones "sin moneda". Aquí marca que el ejemplo es sintético.' }],
+    analogy: { text: 'Como usar "Fulano de Tal" en un formulario de ejemplo: el campo está bien escrito, pero no es una persona real.', limit: 'Un sistema de pagos real rechazaría XXX en una transferencia de dinero.' },
+    example: { title: 'Mismo pago, moneda real', text: 'En el aula: 250.00 XXX. En un pago real en República Dominicana se vería, por ejemplo, Ccy="DOP".', outcome: 'La estructura del mensaje es la misma; solo cambia el código.' },
+    diagram: seq('El importe viaja con su moneda', banks, [[0, 1, 'Importe + Ccy', 'El pacs.008 indica 250.00 con Ccy="XXX" en el ejemplo.', 'pacs.008'], [1, 2, 'Mismo importe y moneda', 'Cada banco lee el código para saber de qué moneda se trata.']]),
+    related: ['pacs.008', 'xml-basics', 'settlement'], xml: true, xmlFocus: 'amount',
+  },
+
   // ── Lifecycle ────────────────────────────────────────────────────────────
   {
     id: 'instruction', title: 'Instrucción de pago', subtitle: 'La orden de mover dinero',

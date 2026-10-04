@@ -383,7 +383,7 @@ export const sgpiLessonsEs: Record<string, SgpiLessonTranslation> = {
             title: 'Límite de seguridad',
             items: [
               'Usa únicamente identificadores sintéticos como MSG-001, E2E-001 y TX-001.',
-              'No pegues datos de clientes, producción, propiedad institucional o implementación interna en Payment Lab.',
+              'No pegues datos de clientes, producción, propiedad institucional o implementación interna en Aula Libre de Pagos.',
               'Registra una incógnita como TO VERIFY en vez de adivinar.',
             ],
           },

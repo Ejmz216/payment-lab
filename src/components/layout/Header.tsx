@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Languages, Menu, Moon, Search, ShieldCheck, Sun, X } from 'lucide-react'
 import { useUIStore } from '@/store/uiStore'
 import { useProgressStore } from '@/store/progressStore'
 import { useT } from '@/i18n/strings'
-import { referenceNav, scaleNav, secondaryNav } from './Sidebar'
-import { ColorIcon } from '@/components/reference/ReferenceIdentity'
+import { BRAND, BrandMark, NavGroups, PrivacyNote } from './Sidebar'
 import clsx from 'clsx'
 
 export function Header() {
@@ -21,31 +20,46 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const legacy = !['/', '/visual', '/recorridos', '/xml', '/classic'].includes(location.pathname) && !location.pathname.startsWith('/reference/')
 
+  const closeButton = useRef<HTMLButtonElement>(null)
+  const menuButton = useRef<HTMLButtonElement>(null)
+
   useEffect(() => {
     setMobileMenuOpen(false)
   }, [location.pathname, location.search])
 
-  const mobileNav = [...referenceNav, ...scaleNav, ...secondaryNav]
+  // Drawer: focus its close button on open, close on Escape, restore focus.
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    closeButton.current?.focus()
+    function onKey(event: KeyboardEvent) { if (event.key === 'Escape') { setMobileMenuOpen(false); menuButton.current?.focus() } }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [mobileMenuOpen])
 
   return (
     <header className="relative z-40 flex min-w-0 items-center justify-between gap-2 border-b border-border bg-surface px-3 py-3 sm:px-6">
-      <button
-        type="button"
-        onClick={() => setMobileMenuOpen((open) => !open)}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted hover:text-text md:hidden"
-        aria-label={mobileMenuOpen ? 'Cerrar navegación' : 'Abrir navegación'}
-        aria-expanded={mobileMenuOpen}
-      >
-        {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
-      </button>
+      <div className="flex shrink-0 items-center gap-2 md:hidden">
+        <button
+          ref={menuButton}
+          type="button"
+          onClick={() => setMobileMenuOpen(true)}
+          className="flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted hover:text-text"
+          aria-label="Abrir navegación"
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-drawer"
+        >
+          <Menu size={16} />
+        </button>
+        <span className="mobile-brand"><BrandMark compact /></span>
+      </div>
       <button
         onClick={() => setCommandPaletteOpen(true)}
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface2 text-sm text-muted hover:text-text sm:w-full sm:min-w-0 sm:max-w-sm sm:shrink sm:flex-1 sm:justify-start sm:gap-2 sm:px-3"
-        aria-label="Buscar en Payment Lab"
-        title="Buscar en Payment Lab"
+        aria-label={`Buscar en ${BRAND}`}
+        title={`Buscar en ${BRAND}`}
       >
         <Search size={15} />
-        <span className="hidden truncate sm:block">Buscar en Payment Lab</span>
+        <span className="hidden truncate sm:block">Buscar conceptos, mensajes y campos</span>
       </button>
       <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 sm:pl-3">
         {legacy && <div className="flex items-center gap-1 rounded-md border border-border p-0.5 text-xs" title={t('header.language')}>
@@ -92,18 +106,17 @@ export function Header() {
         </button>
       </div>
 
-      {mobileMenuOpen && (
-        <nav className="reference-nav nav-ink absolute inset-x-0 top-full max-h-[75vh] overflow-y-auto border-b border-border bg-surface p-3 shadow-lg shadow-bg/40 md:hidden" aria-label="Navegación móvil">
-          <div className="grid grid-cols-2 gap-2">
-            {mobileNav.map((item) => (
-              <Link key={`${item.to}:${item.label}`} to={item.to} className="flex min-h-11 items-center gap-2 rounded-md border border-border bg-bg/50 px-3 py-2 text-sm hover:bg-surface2">
-                <ColorIcon icon={item.icon} tone={item.tone} small />
-                <span className="min-w-0">{item.label}</span>
-              </Link>
-            ))}
+      {mobileMenuOpen && <>
+        <div className="mobile-drawer-backdrop md:hidden" onClick={() => setMobileMenuOpen(false)} aria-hidden="true" />
+        <nav id="mobile-drawer" className="reference-nav nav-ink mobile-drawer md:hidden" aria-label="Navegación móvil">
+          <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+            <BrandMark />
+            <button ref={closeButton} type="button" onClick={() => { setMobileMenuOpen(false); menuButton.current?.focus() }} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted hover:text-text" aria-label="Cerrar navegación"><X size={16} /></button>
           </div>
+          <div className="flex-1 overflow-y-auto px-3 py-4"><NavGroups /></div>
+          <PrivacyNote />
         </nav>
-      )}
+      </>}
     </header>
   )
 }

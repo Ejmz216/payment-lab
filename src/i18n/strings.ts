@@ -32,7 +32,7 @@ export const strings = {
   'header.privateSession': { en: 'Private Session', es: 'Sesión Privada' },
   'header.privateOn': { en: 'on', es: 'activada' },
   'header.privateOff': { en: 'off', es: 'desactivada' },
-  'header.privateSessionTip': { en: 'While it is on, Payment Lab stops recording your progress in this browser: completed lessons, practice answers and messages viewed are not saved. Bookmarks still work. It stays on until you turn it off. Payment Lab has no accounts or server: everything is stored only in this browser.', es: 'Mientras está activada, Payment Lab deja de registrar tu progreso en este navegador: no se guardan lecciones completadas, respuestas de práctica ni mensajes vistos. Los guardados sí funcionan. Sigue activa hasta que la desactives. Payment Lab no tiene cuentas ni servidor: todo se guarda solo en este navegador.' },
+  'header.privateSessionTip': { en: 'While it is on, Aula Libre de Pagos stops recording your progress in this browser: completed lessons, practice answers and messages viewed are not saved. Bookmarks still work. It stays on until you turn it off. Aula Libre de Pagos has no accounts or server: everything is stored only in this browser.', es: 'Mientras está activada, Aula Libre de Pagos deja de registrar tu progreso en este navegador: no se guardan lecciones completadas, respuestas de práctica ni mensajes vistos. Los guardados sí funcionan. Sigue activa hasta que la desactives. Aula Libre de Pagos no tiene cuentas ni servidor: todo se guarda solo en este navegador.' },
   'header.privateSessionTitle': { en: 'Private Session: nothing from this session is added to your learning history', es: 'Sesión Privada: nada de esta sesión se agrega a tu historial de aprendizaje' },
   'header.language': { en: 'Language', es: 'Idioma' },
 
@@ -47,7 +47,7 @@ export const strings = {
   'palette.groupScenarios': { en: 'Scenarios', es: 'Escenarios' },
 
   // Dashboard
-  'dashboard.title': { en: 'Payment Lab', es: 'Payment Lab' },
+  'dashboard.title': { en: 'Aula Libre de Pagos', es: 'Aula Libre de Pagos' },
   'dashboard.subtitle': { en: 'ISO 20022 & Payments Learning Environment', es: 'Entorno de aprendizaje de ISO 20022 y Pagos' },
   'dashboard.continueLearning': { en: 'Continue Learning', es: 'Continuar Aprendiendo' },
   'dashboard.continue': { en: 'Continue', es: 'Continuar' },
@@ -77,8 +77,8 @@ export const strings = {
   // Fast payments home
   'fp.title': { en: 'Fast Payments Path', es: 'Ruta de Pagos Instantáneos' },
   'fp.description': {
-    en: 'The recommended route through Payment Lab. Learn how a payment actually works before treating ISO 20022 messages as isolated XML files.',
-    es: 'La ruta recomendada en Payment Lab. Aprende cómo funciona realmente un pago antes de tratar los mensajes ISO 20022 como archivos XML aislados.',
+    en: 'The recommended route through Aula Libre de Pagos. Learn how a payment actually works before treating ISO 20022 messages as isolated XML files.',
+    es: 'La ruta recomendada en Aula Libre de Pagos. Aprende cómo funciona realmente un pago antes de tratar los mensajes ISO 20022 como archivos XML aislados.',
   },
   'study.learningMap': { en: 'Learning map', es: 'Mapa de aprendizaje' },
   'study.currentPhase': { en: 'Current phase', es: 'Fase actual' },
@@ -111,8 +111,8 @@ export const strings = {
   // Atlas
   'atlas.title': { en: 'ISO 20022 Atlas', es: 'Atlas ISO 20022' },
   'atlas.description': {
-    en: 'Explore ISO 20022 like a map, not a spreadsheet. Payment Lab currently offers deep educational coverage for Payments, and catalog-level discovery for other business domains.',
-    es: 'Explora ISO 20022 como un mapa, no como una hoja de cálculo. Payment Lab ofrece actualmente cobertura educativa profunda para Pagos, y descubrimiento a nivel de catálogo para otros dominios de negocio.',
+    en: 'Explore ISO 20022 like a map, not a spreadsheet. Aula Libre de Pagos currently offers deep educational coverage for Payments, and catalog-level discovery for other business domains.',
+    es: 'Explora ISO 20022 como un mapa, no como una hoja de cálculo. Aula Libre de Pagos ofrece actualmente cobertura educativa profunda para Pagos, y descubrimiento a nivel de catálogo para otros dominios de negocio.',
   },
   'atlas.domains': { en: 'Business domains', es: 'Dominios de negocio' },
   'atlas.families': { en: 'Message families', es: 'Familias de mensajes' },
@@ -123,7 +123,7 @@ export const strings = {
   'atlas.message': { en: 'message', es: 'mensaje' },
   'domain.families': { en: 'Business area families', es: 'Familias de área de negocio' },
   'domain.messagesInDomain': { en: 'Messages in this domain', es: 'Mensajes en este dominio' },
-  'domain.comingSoon': { en: 'Coming in a future learning module. Payment Lab currently offers deep coverage for Payments — this domain is discovery-level for now.', es: 'Próximamente en un futuro módulo de aprendizaje. Payment Lab actualmente ofrece cobertura profunda para Pagos — este dominio es de nivel de descubrimiento por ahora.' },
+  'domain.comingSoon': { en: 'Coming in a future learning module. Aula Libre de Pagos currently offers deep coverage for Payments — this domain is discovery-level for now.', es: 'Próximamente en un futuro módulo de aprendizaje. Aula Libre de Pagos actualmente ofrece cobertura profunda para Pagos — este dominio es de nivel de descubrimiento por ahora.' },
   'domain.catalogBadgeTitle': { en: 'Catalog-level discovery only — no full lessons or message deep dives yet for this domain.', es: 'Solo descubrimiento a nivel de catálogo — todavía no hay lecciones completas ni análisis profundos de mensajes para este dominio.' },
 
   // Message catalog
@@ -193,7 +193,7 @@ export const strings = {
   'sim.watchMode': { en: 'Watch', es: 'Observar' },
   'sim.watchModeDesc': { en: 'Guided learning — explanations shown as you go.', es: 'Aprendizaje guiado — explicaciones mostradas en el camino.' },
   'sim.challengeMode': { en: 'Challenge', es: 'Desafío' },
-  'sim.challengeModeDesc': { en: 'Predict what happens next before Payment Lab reveals it.', es: 'Predice qué pasa después antes de que Payment Lab lo revele.' },
+  'sim.challengeModeDesc': { en: 'Predict what happens next before Aula Libre de Pagos reveals it.', es: 'Predice qué pasa después antes de que Aula Libre de Pagos lo revele.' },
   'sim.reset': { en: 'Reset', es: 'Reiniciar' },
   'sim.previous': { en: 'Previous', es: 'Anterior' },
   'sim.next': { en: 'Next', es: 'Siguiente' },
@@ -365,8 +365,8 @@ export const strings = {
   // Break the message
   'breakmsg.title': { en: 'Break the Message', es: 'Encuentra el Error' },
   'breakmsg.description': {
-    en: 'Payment Lab hands you a synthetic message with something wrong in it. Find the problem, then see what kind of error it is — some errors can\'t be determined from ISO 20022 alone.',
-    es: 'Payment Lab te entrega un mensaje sintético con algo mal. Encuentra el problema y luego descubre qué tipo de error es — algunos errores no pueden determinarse solo con ISO 20022.',
+    en: 'Aula Libre de Pagos hands you a synthetic message with something wrong in it. Find the problem, then see what kind of error it is — some errors can\'t be determined from ISO 20022 alone.',
+    es: 'Aula Libre de Pagos te entrega un mensaje sintético con algo mal. Encuentra el problema y luego descubre qué tipo de error es — algunos errores no pueden determinarse solo con ISO 20022.',
   },
 
   // Lesson blocks
@@ -456,7 +456,7 @@ export const strings = {
   'trace.disclaimer': { en: 'Values shown come from this page\'s synthetic example data, not a live lookup.', es: 'Los valores mostrados provienen de los datos de ejemplo sintéticos de esta página, no de una búsqueda en vivo.' },
 
   // Not found
-  'notfound.text': { en: "This page doesn't exist yet in Payment Lab.", es: 'Esta página aún no existe en Payment Lab.' },
+  'notfound.text': { en: "This page doesn't exist yet in Aula Libre de Pagos.", es: 'Esta página aún no existe en Aula Libre de Pagos.' },
   'notfound.back': { en: 'Back to Dashboard', es: 'Volver al Panel' },
 } as const
 

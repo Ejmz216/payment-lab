@@ -270,6 +270,7 @@ export const fieldNotes: Record<string, FieldNote> = {
     explain: 'Un atributo es un dato que va dentro de la etiqueta de apertura. Ccy usa códigos de tres letras de la norma ISO 4217 (por ejemplo USD, EUR, DOP).',
     parts: [{ label: 'XXX', text: 'Código ISO 4217 para "sin moneda". Aquí se usa a propósito para que el ejemplo no represente dinero real.' }],
     note: 'Un atributo no es un elemento hijo: no aparece como etiqueta propia, sino dentro de <IntrBkSttlmAmt ...>.',
+    concept: 'currency-code',
   },
   IntrBkSttlmDt: {
     name: 'Interbank Settlement Date',

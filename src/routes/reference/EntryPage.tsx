@@ -5,6 +5,7 @@ import { getReferenceEntry, categoryLabels } from '@/content/reference/entries'
 import { getMessage } from '@/lib/i18nContent'
 import { SequenceDiagram, ArchitectureMap } from '@/components/reference/SequenceDiagram'
 import { BookmarkButton } from '@/components/ui/BookmarkButton'
+import { XxxNote } from '@/components/reference/XxxNote'
 import { Icon3D, ReferenceIcon, referenceIdentity, type IconName } from '@/components/reference/ReferenceIdentity'
 
 // The annotated XML (sample parser + raw XML) is only fetched when its tab opens.
@@ -48,7 +49,7 @@ export function EntryPage() {
         {(entry.diagram || entry.architecture) && <p className="-mt-2 mb-2 text-[11px] text-muted">{entry.publicScheme ? 'Relaciones públicas entre roles; no asigna mensajes ISO a las flechas ni describe conexiones técnicas internas.' : 'Modelo simplificado. Mensajes, tiempos y responsabilidades reales dependen de cada esquema.'} <Link className="text-primary" to={`/visual?topic=${entry.id}`}>Ver en la guía visual</Link></p>}
         <section className="ref-section"><h2 className="ref-eyebrow text-muted">Lo esencial</h2><dl className="mt-3 grid gap-5 sm:grid-cols-2">{entry.facts.map((fact) => <div key={fact.label}><dt className="text-xs font-semibold text-text">{fact.label}</dt><dd className="mt-1.5 text-sm leading-6 text-muted">{fact.value}</dd></div>)}</dl></section>
         {entry.analogy && <section className="ref-section analogy-section"><div className="ref-eyebrow text-party">Una analogía</div><p className="mt-2 text-sm leading-6">{entry.analogy.text}</p><p className="mt-3 border-l-2 border-party/50 pl-3 text-xs leading-5 text-muted"><strong className="text-party">Hasta dónde sirve: </strong>{entry.analogy.limit}</p></section>}
-        {entry.example && <section className="ref-section"><div className="ref-eyebrow text-pacs">Ejemplo sintético</div><h2 className="mt-2 text-base font-semibold">{entry.example.title}</h2><p className="mt-2 text-sm leading-6">{entry.example.text}</p>{entry.example.outcome && <p className="mt-3 text-sm leading-6 text-muted">{entry.example.outcome}</p>}</section>}
+        {entry.example && <section className="ref-section"><div className="ref-eyebrow text-pacs">Ejemplo sintético</div><h2 className="mt-2 text-base font-semibold">{entry.example.title}</h2><p className="mt-2 text-sm leading-6">{entry.example.text}</p>{entry.example.outcome && <p className="mt-3 text-sm leading-6 text-muted">{entry.example.outcome}</p>}{entry.id !== 'currency-code' && /XXX/.test(`${entry.example.text} ${entry.example.outcome}`) && <XxxNote />}</section>}
         {entry.caution && <p className="my-5 border-l-2 border-warning pl-4 text-sm leading-6 text-muted"><strong className="text-warning">Distinción clave. </strong>{entry.caution}</p>}
         {entry.xml && <button className="my-3 inline-flex items-center gap-2 text-sm text-camt" onClick={() => setView('xml')}>Leer el XML anotado <ArrowRight size={14} /></button>}
       </>}

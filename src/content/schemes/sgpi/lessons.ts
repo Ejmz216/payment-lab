@@ -466,7 +466,7 @@ export const sgpiLessons: Lesson[] = [
             title: 'Safety boundary',
             items: [
               'Use only synthetic identifiers such as MSG-001, E2E-001 and TX-001.',
-              'Do not paste customer, production, proprietary or internal implementation data into Payment Lab.',
+              'Do not paste customer, production, proprietary or internal implementation data into Aula Libre de Pagos.',
               'Record an unknown as TO VERIFY instead of guessing.',
             ],
           },

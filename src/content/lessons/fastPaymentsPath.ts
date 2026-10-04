@@ -5,7 +5,7 @@ export const fastPaymentsPath: LearningPath = {
   id: 'fast-payments',
   title: 'Fast Payments Path',
   description:
-    'The recommended route through Payment Lab. Learn how a payment actually works before treating ISO 20022 messages as isolated XML files.',
+    'The recommended route through Aula Libre de Pagos. Learn how a payment actually works before treating ISO 20022 messages as isolated XML files.',
   lessonIds: [
     'payment-fundamentals',
     'payment-actors',
@@ -222,7 +222,7 @@ export const fastPaymentsLessons: Lesson[] = [
     relatedConcepts: ['clearing', 'settlement', 'payment-scheme'],
     sources: [
       {
-        sourceName: 'Payment Lab educational synthesis',
+        sourceName: 'Aula Libre de Pagos educational synthesis',
         sourceType: 'educational-synthesis',
         lastReviewed: '2026-01-01',
         notes: 'General payments terminology synthesized for teaching purposes; not a normative source.',
@@ -375,7 +375,7 @@ export const fastPaymentsLessons: Lesson[] = [
     relatedLessons: ['payment-fundamentals', 'payment-lifecycle', 'payment-systems'],
     relatedMessages: ['pacs.008'],
     sources: [
-      { sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' },
+      { sourceName: 'Aula Libre de Pagos educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' },
     ],
     estimatedMinutes: 12,
   },
@@ -424,7 +424,7 @@ export const fastPaymentsLessons: Lesson[] = [
       },
     ],
     relatedLessons: ['clearing-vs-settlement', 'reject-vs-return'],
-    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    sources: [{ sourceName: 'Aula Libre de Pagos educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 6,
   },
   {
@@ -503,7 +503,7 @@ export const fastPaymentsLessons: Lesson[] = [
     ],
     relatedLessons: ['payment-lifecycle', 'payment-systems', 'fast-payments'],
     relatedConcepts: ['clearing', 'settlement'],
-    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    sources: [{ sourceName: 'Aula Libre de Pagos educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 11,
   },
   {
@@ -798,7 +798,7 @@ export const fastPaymentsLessons: Lesson[] = [
     ],
     relatedLessons: ['payment-systems', 'payment-lifecycle', 'clearing-vs-settlement', 'iso20022-fundamentals'],
     relatedMessages: ['pacs.008', 'pacs.002'],
-    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    sources: [{ sourceName: 'Aula Libre de Pagos educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 9,
   },
   {
@@ -873,7 +873,7 @@ export const fastPaymentsLessons: Lesson[] = [
       {
         heading: 'Other families',
         body:
-          'admi (administration messages), head (business application header), remt (remittance advice) also exist. Payment Lab will expand coverage of these over time.',
+          'admi (administration messages), head (business application header), remt (remittance advice) also exist. Aula Libre de Pagos will expand coverage of these over time.',
       },
     ],
     keyTerms: ['pain', 'pacs', 'camt', 'admi', 'head', 'remt'],
@@ -1089,7 +1089,7 @@ export const fastPaymentsLessons: Lesson[] = [
     ],
     relatedLessons: ['message-families'],
     relatedMessages: ['pacs.008', 'pacs.002', 'pacs.004'],
-    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    sources: [{ sourceName: 'Aula Libre de Pagos educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 8,
   },
   {
@@ -1243,7 +1243,7 @@ export const fastPaymentsLessons: Lesson[] = [
     relatedMessages: ['pacs.002', 'pacs.008'],
     sources: [
       { sourceName: 'ISO 20022 official catalogue', sourceType: 'ISO', lastReviewed: '2026-08-08' },
-      { sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-08-09', notes: 'Lifecycle distinctions are a generic teaching model, not a universal scheme state machine.' },
+      { sourceName: 'Aula Libre de Pagos educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-08-09', notes: 'Lifecycle distinctions are a generic teaching model, not a universal scheme state machine.' },
     ],
     estimatedMinutes: 10,
   },
@@ -1285,7 +1285,7 @@ export const fastPaymentsLessons: Lesson[] = [
     scenarioId: 'reject-or-return-1',
     relatedLessons: ['payment-lifecycle'],
     relatedMessages: ['pacs.002', 'pacs.004'],
-    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    sources: [{ sourceName: 'Aula Libre de Pagos educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 9,
   },
   {
@@ -1433,7 +1433,7 @@ export const fastPaymentsLessons: Lesson[] = [
     ],
     relatedLessons: ['reject-vs-return', 'fast-payments'],
     relatedMessages: ['pacs.004'],
-    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    sources: [{ sourceName: 'Aula Libre de Pagos educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 8,
   },
   {
@@ -1633,7 +1633,7 @@ export const fastPaymentsLessons: Lesson[] = [
       {
         heading: 'Two representative examples',
         body:
-          'A statement-style message reports the transactions and balances on an account over a period. An investigation-style message is used to request or report on the resolution of a question about a specific payment (for example, "where did this payment go?"). Payment Lab\'s Atlas includes catalog-level entries for both — see the camt family in the Message Catalog.',
+          'A statement-style message reports the transactions and balances on an account over a period. An investigation-style message is used to request or report on the resolution of a question about a specific payment (for example, "where did this payment go?"). Aula Libre de Pagos\'s Atlas includes catalog-level entries for both — see the camt family in the Message Catalog.',
       },
     ],
     keyTerms: ['camt', 'cash management', 'account statement', 'notification'],
@@ -1682,7 +1682,7 @@ export const fastPaymentsLessons: Lesson[] = [
     ],
     relatedLessons: ['identifiers', 'camt-cash-management'],
     relatedMessages: ['pacs.002', 'pacs.004', 'camt.029'],
-    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    sources: [{ sourceName: 'Aula Libre de Pagos educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 7,
   },
   {
@@ -1733,7 +1733,7 @@ export const fastPaymentsLessons: Lesson[] = [
       { title: 'This is a teaching model, not a real architecture', explanation: 'No institution is guaranteed to structure their systems exactly this way. Use it to reason about layers of responsibility, not as a spec.' },
     ],
     relatedLessons: ['payment-lifecycle', 'reconciliation-investigations'],
-    sources: [{ sourceName: 'Payment Lab educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
+    sources: [{ sourceName: 'Aula Libre de Pagos educational synthesis', sourceType: 'educational-synthesis', lastReviewed: '2026-01-01' }],
     estimatedMinutes: 6,
   },
   ...sgpiLessons,
