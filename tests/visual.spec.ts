@@ -6,7 +6,7 @@ test('visual guide topics, diagrams and links work from shared URLs', async ({ p
   await page.goto('#/visual')
   await expect(page.getByRole('heading', { name: 'Guía visual', exact: true })).toBeVisible()
   const topics = page.getByRole('group', { name: 'Temas visuales' })
-  await expect(topics.getByRole('button')).toHaveCount(5)
+  await expect(topics.getByRole('button')).toHaveCount(12)
   for (const title of ['Fast Payments', 'Host-to-host', 'Aplicación web de pagos', 'BiMPay', 'pacs.008']) {
     await topics.getByRole('button', { name: new RegExp(title.replace('.', '\\.')) }).click()
     await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible()

@@ -51,7 +51,6 @@ test('XML groups, repeated names, attributes, modes and downloads', async ({ pag
 
 test('sequences, bookmarks and classic routes remain connected', async ({ page }) => {
   await page.goto('#/reference/fast-payments')
-  await page.getByRole('tab', { name: 'Diagramas', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Paso 1: Orden de pago', exact: true })).toHaveAttribute('aria-pressed', 'true')
   await page.getByRole('button', { name: 'Paso siguiente', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Paso 2: Instrucción', exact: true })).toHaveAttribute('aria-pressed', 'true')
@@ -155,7 +154,6 @@ test('mobile inspection returns to the selected field and light diagrams render'
   await expect(page.getByRole('tabpanel', { name: 'Contenido XML' })).toBeInViewport()
   await page.goto('#/reference/payment-web-app')
   await page.getByRole('button', { name: 'Cambiar tema' }).click()
-  await page.getByRole('tab', { name: 'Diagramas', exact: true }).click()
   await page.getByRole('button', { name: 'Paso siguiente', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Paso 2: Recibido / pendiente', exact: true })).toHaveAttribute('aria-pressed', 'true')
   await page.getByRole('button', { name: 'Paso siguiente', exact: true }).scrollIntoViewIfNeeded()

@@ -19,10 +19,10 @@ export function EntryPage() {
   const tabs: { id: string; label: string; icon: IconName }[] = [
     { id: 'summary', label: 'En pocas palabras', icon: 'light-bulb' },
     ...(entry.xml ? [{ id: 'xml', label: 'XML anotado', icon: 'page-facing-up' as const }] : []),
-    ...(entry.diagram || entry.architecture ? [{ id: 'flow', label: 'Diagramas', icon: 'link' as const }] : []),
     ...(message ? [{ id: 'versions', label: 'Versiones y estructura', icon: 'card-index-dividers' as const }] : []),
     { id: 'sources', label: 'Fuentes', icon: 'books' },
   ]
+  // Old links to the former diagrams tab land on the summary, where diagrams now live.
   const requested = params.get('tab') ?? 'summary'
   const active = tabs.some((tab) => tab.id === requested) ? requested : 'summary'
   function setView(id: string) {
@@ -42,17 +42,17 @@ export function EntryPage() {
     </div>
     <div role="tabpanel" id="entry-panel" aria-labelledby={`entry-tab-${active}`}>
       {active === 'summary' && <>
-        <section className="ref-section"><dl className="grid gap-5 sm:grid-cols-2">{entry.facts.map((fact) => <div key={fact.label}><dt className="ref-eyebrow text-muted">{fact.label}</dt><dd className="mt-2 text-sm leading-6">{fact.value}</dd></div>)}</dl></section>
+        {entry.plain && <section className="plain-box"><div className="ref-eyebrow text-camt">En palabras simples</div><p className="mt-2 text-base leading-7">{entry.plain}</p></section>}
+        {entry.diagram && <SequenceDiagram key={`${entry.id}-sequence`} diagram={entry.diagram} />}
+        {entry.architecture && <ArchitectureMap key={`${entry.id}-architecture`} architecture={entry.architecture} />}
+        {(entry.diagram || entry.architecture) && <p className="-mt-2 mb-2 text-[11px] text-muted">{entry.publicScheme ? 'Relaciones públicas entre roles; no asigna mensajes ISO a las flechas ni describe conexiones técnicas internas.' : 'Modelo simplificado. Mensajes, tiempos y responsabilidades reales dependen de cada esquema.'} <Link className="text-primary" to={`/visual?topic=${entry.id}`}>Ver en la guía visual</Link></p>}
+        <section className="ref-section"><h2 className="ref-eyebrow text-muted">Lo esencial</h2><dl className="mt-3 grid gap-5 sm:grid-cols-2">{entry.facts.map((fact) => <div key={fact.label}><dt className="text-xs font-semibold text-text">{fact.label}</dt><dd className="mt-1.5 text-sm leading-6 text-muted">{fact.value}</dd></div>)}</dl></section>
         {entry.analogy && <section className="ref-section analogy-section"><div className="ref-eyebrow text-party">Una analogía</div><p className="mt-2 text-sm leading-6">{entry.analogy.text}</p><p className="mt-3 border-l-2 border-party/50 pl-3 text-xs leading-5 text-muted"><strong className="text-party">Hasta dónde sirve: </strong>{entry.analogy.limit}</p></section>}
         {entry.example && <section className="ref-section"><div className="ref-eyebrow text-pacs">Ejemplo sintético</div><h2 className="mt-2 text-base font-semibold">{entry.example.title}</h2><p className="mt-2 text-sm leading-6">{entry.example.text}</p>{entry.example.outcome && <p className="mt-3 text-sm leading-6 text-muted">{entry.example.outcome}</p>}</section>}
         {entry.caution && <p className="my-5 border-l-2 border-warning pl-4 text-sm leading-6 text-muted"><strong className="text-warning">Distinción clave. </strong>{entry.caution}</p>}
-        <div className="my-3 flex flex-wrap gap-x-6 gap-y-2">
-          {entry.xml && <button className="inline-flex items-center gap-2 text-sm text-camt" onClick={() => setView('xml')}>Leer el XML anotado <ArrowRight size={14} /></button>}
-          {(entry.diagram || entry.architecture) && <button className="inline-flex items-center gap-2 text-sm text-camt" onClick={() => setView('flow')}>Ver el proceso en un diagrama <ArrowRight size={14} /></button>}
-        </div>
+        {entry.xml && <button className="my-3 inline-flex items-center gap-2 text-sm text-camt" onClick={() => setView('xml')}>Leer el XML anotado <ArrowRight size={14} /></button>}
       </>}
       {active === 'xml' && <div className="pt-5"><Suspense fallback={<p className="py-12 text-center text-sm text-muted">Cargando XML anotado…</p>}><XmlExplorer key={params.get('group') ?? 'focus'} initialGroup={params.get('group') ?? entry.xmlFocus} /></Suspense></div>}
-      {active === 'flow' && <><Link className={`reference-tag tone-${referenceIdentity(entry.category, entry.id).tone} mt-4`} to={`/visual?topic=${entry.id}`}>Ver en la guía visual <ArrowRight size={12} /></Link>{entry.architecture && <ArchitectureMap key={entry.id} architecture={entry.architecture} />}{entry.diagram && <SequenceDiagram key={entry.id} diagram={entry.diagram} />}</>}
       {active === 'versions' && message && <section className="ref-section"><h2 className="text-base font-semibold">Versiones incluidas en la referencia</h2><p className="mt-2 text-sm text-muted">Los árboles heredados son resúmenes educativos. La guía XML corresponde exclusivamente a pacs.008.001.10.</p><div className="mt-4 divide-y divide-border">{message.versions.map((version) => <div key={version.fullIdentifier} className="py-4"><div className="font-mono text-sm text-pacs">{version.fullIdentifier}</div><p className="mt-2 text-xs leading-5 text-muted">{version.cardinalityNotes}</p><p className="mt-1 text-xs text-muted">Revisión registrada: {version.lastReviewed}</p></div>)}</div><Link to={`/atlas/messages/${message.id}`} className="mt-4 inline-flex items-center gap-2 text-sm text-primary"><BookOpen size={16} />Explorador de estructura clásico</Link></section>}
       {active === 'sources' && <section className="ref-section"><h2 className="text-base font-semibold">Fuentes y alcance</h2><p className="mt-2 text-sm leading-6 text-muted">{entry.publicScheme ? 'Síntesis de material público del operador. Los diagramas explican roles, sin atribuir arquitectura interna.' : 'Explicación educativa. Los ejemplos y diagramas son modelos simplificados; los detalles normativos se verifican en la versión y guía de uso aplicables.'}</p>{entry.reviewed && <p className="mt-2 text-xs text-muted">Consultado: {entry.reviewed}</p>}<ul className="mt-4 space-y-3">{entry.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-primary">{source.title}<ExternalLink size={13} /></a></li>)}</ul>{!entry.sources.length && <p className="mt-4 text-xs text-warning">Síntesis didáctica del proyecto; esta ficha no documenta una implementación específica.</p>}</section>}
     </div>
