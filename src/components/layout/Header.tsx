@@ -5,6 +5,7 @@ import { useUIStore } from '@/store/uiStore'
 import { useProgressStore } from '@/store/progressStore'
 import { useT } from '@/i18n/strings'
 import { BRAND, BrandMark, NavGroups, PrivacyNote } from './Sidebar'
+import { useL } from '@/i18n/reference/useLang'
 import clsx from 'clsx'
 
 export function Header() {
@@ -18,7 +19,7 @@ export function Header() {
   const t = useT()
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const legacy = !['/', '/visual', '/recorridos', '/xml', '/classic'].includes(location.pathname) && !location.pathname.startsWith('/reference/')
+  const L = useL()
 
   const closeButton = useRef<HTMLButtonElement>(null)
   const menuButton = useRef<HTMLButtonElement>(null)
@@ -44,7 +45,7 @@ export function Header() {
           type="button"
           onClick={() => setMobileMenuOpen(true)}
           className="flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted hover:text-text"
-          aria-label="Abrir navegación"
+          aria-label={L('Abrir navegación', 'Open navigation')}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-drawer"
         >
@@ -55,28 +56,30 @@ export function Header() {
       <button
         onClick={() => setCommandPaletteOpen(true)}
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface2 text-sm text-muted hover:text-text sm:w-full sm:min-w-0 sm:max-w-sm sm:shrink sm:flex-1 sm:justify-start sm:gap-2 sm:px-3"
-        aria-label={`Buscar en ${BRAND}`}
-        title={`Buscar en ${BRAND}`}
+        aria-label={`${L('Buscar en', 'Search')} ${BRAND}`}
+        title={`${L('Buscar en', 'Search')} ${BRAND}`}
       >
         <Search size={15} />
-        <span className="hidden truncate sm:block">Buscar conceptos, mensajes y campos</span>
+        <span className="hidden truncate sm:block">{L('Buscar conceptos, mensajes y campos', 'Search concepts, messages and fields')}</span>
       </button>
       <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 sm:pl-3">
-        {legacy && <div className="flex items-center gap-1 rounded-md border border-border p-0.5 text-xs" title={t('header.language')}>
+        <div className="flex items-center gap-1 rounded-md border border-border p-0.5 text-xs" role="group" aria-label={t('header.language')} title={t('header.language')}>
           <Languages size={13} className="ml-1 hidden text-muted sm:block" />
           <button
             onClick={() => setLang('en')}
+            aria-pressed={lang === 'en'}
             className={clsx('rounded px-1.5 py-1 font-medium', lang === 'en' ? 'bg-primary text-white' : 'text-muted hover:text-text')}
           >
             EN
           </button>
           <button
             onClick={() => setLang('es')}
+            aria-pressed={lang === 'es'}
             className={clsx('rounded px-1.5 py-1 font-medium', lang === 'es' ? 'bg-primary text-white' : 'text-muted hover:text-text')}
           >
             ES
           </button>
-        </div>}
+        </div>
         <span className="tip-anchor">
           <button
             onClick={() => setPrivateSession(!privateSession)}
@@ -99,8 +102,8 @@ export function Header() {
         <button
           onClick={toggleTheme}
           className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted hover:text-text"
-          aria-label="Cambiar tema"
-          title="Cambiar tema"
+          aria-label={L('Cambiar tema', 'Change theme')}
+          title={L('Cambiar tema', 'Change theme')}
         >
           {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
         </button>
@@ -108,10 +111,10 @@ export function Header() {
 
       {mobileMenuOpen && <>
         <div className="mobile-drawer-backdrop md:hidden" onClick={() => setMobileMenuOpen(false)} aria-hidden="true" />
-        <nav id="mobile-drawer" className="reference-nav nav-ink mobile-drawer md:hidden" aria-label="Navegación móvil">
+        <nav id="mobile-drawer" className="reference-nav nav-ink mobile-drawer md:hidden" aria-label={L('Navegación móvil', 'Mobile navigation')}>
           <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
             <BrandMark />
-            <button ref={closeButton} type="button" onClick={() => { setMobileMenuOpen(false); menuButton.current?.focus() }} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted hover:text-text" aria-label="Cerrar navegación"><X size={16} /></button>
+            <button ref={closeButton} type="button" onClick={() => { setMobileMenuOpen(false); menuButton.current?.focus() }} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-muted hover:text-text" aria-label={L('Cerrar navegación', 'Close navigation')}><X size={16} /></button>
           </div>
           <div className="flex-1 overflow-y-auto px-3 py-4"><NavGroups /></div>
           <PrivacyNote />

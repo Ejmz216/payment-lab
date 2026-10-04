@@ -1,6 +1,9 @@
 import { getMessages } from '@/lib/i18nContent'
 import { conceptEntries, p2p, seq } from './concepts'
 import { messageTeaching } from './messageReference'
+import { entriesEn, type EntryEn } from '@/i18n/reference/entriesEn'
+import { conceptsEn } from '@/i18n/reference/conceptsEn'
+import { messagesEn } from '@/i18n/reference/messagesEn'
 
 export type EntryCategory = 'concepts' | 'messages' | 'architecture' | 'schemes'
 export interface ReferenceSource { title: string; url: string }
@@ -202,4 +205,53 @@ messageEntries.find((entry) => entry.id === 'pain.001')!.related.push('iban')
 
 const encyclopediaConcepts: ReferenceEntry[] = conceptEntries.map((entry) => ({ ...entry, category: 'concepts', sources: entry.sources ?? [] }))
 export const referenceEntries: ReferenceEntry[] = [...curated, ...messageEntries, ...encyclopediaConcepts]
-export const getReferenceEntry = (id: string) => referenceEntries.find((entry) => entry.id === id)
+
+// ── English ────────────────────────────────────────────────────────────────
+export type RefLang = 'es' | 'en'
+const english: Record<string, EntryEn> = { ...entriesEn, ...conceptsEn, ...messagesEn }
+const sourceTitlesEn: Record<string, string> = {
+  'ISO 20022 · catálogo oficial': 'ISO 20022 · official catalogue',
+  'ISO 20022 · archivo de versiones': 'ISO 20022 · version archive',
+  'MDN · Introducción a XML': 'MDN · Introduction to XML',
+  'MDN · Visión general de HTTP': 'MDN · HTTP overview',
+  'Banco Central de Barbados · preguntas sobre BiMPay': 'Central Bank of Barbados · BiMPay FAQs',
+  'Banco Central de Barbados · BiMPay': 'Central Bank of Barbados · BiMPay',
+}
+const defaultMessageCautionEn = 'Usage, version and restrictions depend on the scheme. Educational structures do not replace the official XSD.'
+
+function toEnglish(entry: ReferenceEntry): ReferenceEntry {
+  const en = english[entry.id]
+  if (!en) return entry
+  const diagram = entry.diagram && en.diagram ? {
+    ...entry.diagram,
+    title: en.diagram.title,
+    actors: en.diagram.actors ?? entry.diagram.actors,
+    steps: entry.diagram.steps.map((step, i) => en.diagram!.steps[i] ? { ...step, label: en.diagram!.steps[i][0], detail: en.diagram!.steps[i][1] } : step),
+  } : entry.diagram
+  const architecture = entry.architecture && en.architecture ? {
+    title: en.architecture.title,
+    nodes: entry.architecture.nodes.map((node, i) => en.architecture!.nodes[i] ? { ...node, label: en.architecture!.nodes[i][0], role: en.architecture!.nodes[i][1] } : node),
+  } : entry.architecture
+  return {
+    ...entry,
+    title: en.title ?? entry.title,
+    subtitle: en.subtitle ?? entry.subtitle,
+    summary: en.summary,
+    plain: en.plain ?? entry.plain,
+    // Spanish names stay searchable from the English interface.
+    aliases: [...entry.aliases, entry.title, entry.subtitle],
+    facts: en.facts ? en.facts.map(([label, value]) => ({ label, value })) : entry.facts,
+    analogy: entry.analogy && en.analogy ? { text: en.analogy[0], limit: en.analogy[1] } : entry.analogy,
+    example: entry.example && en.example ? { title: en.example[0], text: en.example[1], outcome: en.example[2] } : entry.example,
+    caution: entry.caution ? en.caution ?? (entry.category === 'messages' ? defaultMessageCautionEn : entry.caution) : undefined,
+    diagram,
+    architecture,
+    sources: entry.sources.map((source) => ({ ...source, title: sourceTitlesEn[source.title] ?? source.title })),
+  }
+}
+const englishEntries = referenceEntries.map(toEnglish)
+
+export const getReferenceEntries = (lang: RefLang = 'es') => lang === 'en' ? englishEntries : referenceEntries
+export const getReferenceEntry = (id: string, lang: RefLang = 'es') => getReferenceEntries(lang).find((entry) => entry.id === id)
+const categoryLabelsEn: Record<EntryCategory, string> = { concepts: 'Concepts', messages: 'ISO messages', architecture: 'Architectures and integration', schemes: 'Public systems' }
+export const getCategoryLabels = (lang: RefLang = 'es') => lang === 'en' ? categoryLabelsEn : categoryLabels

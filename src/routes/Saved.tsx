@@ -20,7 +20,7 @@ export function Saved() {
   const savedMessages = bookmarks.filter((b) => b.startsWith('message:')).map((b) => messages.find((m) => m.id === b.slice(8))).filter(Boolean)
   const savedGlossary = bookmarks.filter((b) => b.startsWith('glossary:')).map((b) => glossary.find((g) => g.id === b.slice(9))).filter(Boolean)
 
-  const savedReferences = bookmarks.filter((b) => b.startsWith('reference:')).map((b) => getReferenceEntry(b.slice(10))).filter(Boolean)
+  const savedReferences = bookmarks.filter((b) => b.startsWith('reference:')).map((b) => getReferenceEntry(b.slice(10), lang === 'en' ? 'en' : 'es')).filter(Boolean)
   const isEmpty = savedLessons.length === 0 && savedMessages.length === 0 && savedGlossary.length === 0 && savedReferences.length === 0
 
   return (
@@ -35,7 +35,7 @@ export function Saved() {
       )}
 
       {savedReferences.length > 0 && <section>
-        <h2 className="mb-2 text-sm font-semibold text-muted">Enciclopedia</h2>
+        <h2 className="mb-2 text-sm font-semibold text-muted">{lang === 'en' ? 'Encyclopedia' : 'Enciclopedia'}</h2>
         {savedReferences.map((entry) => entry && <div key={entry.id} className="flex items-center justify-between gap-3 border-t border-border py-4">
           <Link to={`/reference/${entry.id}`} className="min-w-0 hover:text-primary"><span className="text-sm font-semibold">{entry.title}</span><p className="mt-1 text-xs text-muted">{entry.subtitle}</p></Link>
           <BookmarkButton id={`reference:${entry.id}`} />

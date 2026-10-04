@@ -87,3 +87,12 @@ Final prompt:
 > currency symbols, characters, people, text, typography, neon, glow, purple gradient,
 > or decorative particles. This is a conceptual illustration, not a normative
 > architecture diagram.
+
+## Languages
+
+The reference experience is bilingual (ES/EN) and follows the header switch.
+Spanish is the source; English lives in `src/i18n/reference/` as overlays
+keyed by id (entries, concepts, messages), by tag (XML notes) and by phrase
+(Recorridos). Missing pieces fall back to Spanish, and `tests/english.spec.ts`
+fails if any entry, diagram step, XML tag or journey phrase lacks English.
+Interface text uses `useL()` pairs: `L('Hola', 'Hello')`.

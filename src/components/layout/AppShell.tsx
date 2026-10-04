@@ -14,7 +14,7 @@ export function AppShell() {
   const location = useLocation()
   const mainRef = useRef<HTMLElement>(null)
   const referenceExperience = ['/', '/visual', '/recorridos', '/xml'].includes(location.pathname) || location.pathname.startsWith('/reference/')
-  useEffect(() => { document.documentElement.lang = referenceExperience ? 'es' : lang }, [referenceExperience, lang])
+  useEffect(() => { document.documentElement.lang = lang }, [lang])
 
   useEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light')

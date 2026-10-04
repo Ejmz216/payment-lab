@@ -18,9 +18,9 @@ export interface StudyField {
 }
 export interface XmlLine { fieldId: string; depth: number; text: string; closing?: boolean }
 
-export function parseStudyXml(source: string = xml) {
+export function parseStudyXml(source: string = xml, lang: 'es' | 'en' = 'es') {
   const doc = new DOMParser().parseFromString(source, 'application/xml')
-  if (doc.querySelector('parsererror')) throw new Error('El ejemplo XML no está bien formado.')
+  if (doc.querySelector('parsererror')) throw new Error(lang === 'en' ? 'The XML sample is not well-formed.' : 'El ejemplo XML no está bien formado.')
   const fields: StudyField[] = []
   const lines: XmlLine[] = []
   const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;')
@@ -29,10 +29,10 @@ export function parseStudyXml(source: string = xml) {
     const layer: XmlLayer = namespace.includes('head.001') ? 'header' : namespace.includes('pacs.008') ? 'payment' : 'transport'
     const container = element.children.length > 0
     const value = container ? '' : element.textContent ?? ''
-    const field: StudyField = { id: path, path, tag: element.localName, value, namespace, layer, depth, parentId, attribute: false, container, note: getFieldNote(element.localName, path) }
+    const field: StudyField = { id: path, path, tag: element.localName, value, namespace, layer, depth, parentId, attribute: false, container, note: getFieldNote(element.localName, path, '', lang) }
     fields.push(field)
     const attributes = Array.from(element.attributes)
-    attributes.forEach((attr) => fields.push({ ...field, id: `${path}/@${attr.name}`, path: `${path}/@${attr.name}`, tag: `@${attr.name}`, value: attr.value, namespace: attr.namespaceURI ?? '', parentId: path, depth: depth + 1, attribute: true, container: false, note: getFieldNote(`@${attr.name}`, path, attr.value) }))
+    attributes.forEach((attr) => fields.push({ ...field, id: `${path}/@${attr.name}`, path: `${path}/@${attr.name}`, tag: `@${attr.name}`, value: attr.value, namespace: attr.namespaceURI ?? '', parentId: path, depth: depth + 1, attribute: true, container: false, note: getFieldNote(`@${attr.name}`, path, attr.value, lang) }))
     const opening = `<${element.tagName}${attributes.map((a) => ` ${a.name}="${escape(a.value)}"`).join('')}>`
     lines.push({ fieldId: path, depth, text: container ? opening : `${opening}${escape(value)}</${element.tagName}>` })
     const children = Array.from(element.children)

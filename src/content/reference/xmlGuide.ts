@@ -1,3 +1,5 @@
+import { fieldNotesEn, namespaceNoteEn, prtryNotesEn } from '@/i18n/reference/xmlGuideEn'
+
 export interface FieldNote {
   /** Expanded name of the tag (what the abbreviation stands for). */
   name: string
@@ -434,9 +436,19 @@ function namespaceNote(value: string): FieldNote {
   }
 }
 
-export function getFieldNote(tag: string, path: string, value = ''): FieldNote {
+function getFieldNoteEs(tag: string, path: string, value: string): FieldNote {
   if (tag === '@xmlns') return namespaceNote(value)
   if (tag === 'Prtry' && path.includes('/LclInstrm/')) return { name: 'Instrumento local propietario', meaning: 'TEST es el código ficticio del instrumento local.', explain: 'Cuando un esquema no usa la lista de códigos ISO, pone su propio valor en Prtry.', equivalent: 'Este pago pertenece al instrumento "TEST" del esquema.', note: 'ISO define LclInstrm/Prtry, pero no asigna un significado universal a TEST.' }
   if (tag === 'Prtry' && path.includes('/Purp/')) return { name: 'Propósito propietario', meaning: '999 es la clasificación ficticia del propósito del pago.', equivalent: 'El motivo del pago es "999" según la lista propia del esquema.', note: 'El mismo nombre Prtry aparece en otros bloques con otro significado. La ruta completa es imprescindible.' }
   return fieldNotes[tag] ?? { name: tag, meaning: 'Elemento de esta instancia XML.', note: 'No hay una explicación editorial revisada para este campo.' }
+}
+
+export function getFieldNote(tag: string, path: string, value = '', lang: 'es' | 'en' = 'es'): FieldNote {
+  const es = getFieldNoteEs(tag, path, value)
+  if (lang === 'es') return es
+  if (tag === '@xmlns') return { ...namespaceNoteEn(value), concept: es.concept }
+  if (tag === 'Prtry' && path.includes('/LclInstrm/')) return prtryNotesEn.local
+  if (tag === 'Prtry' && path.includes('/Purp/')) return prtryNotesEn.purpose
+  const en = fieldNotesEn[tag]
+  return en ? { ...en, concept: es.concept } : es
 }

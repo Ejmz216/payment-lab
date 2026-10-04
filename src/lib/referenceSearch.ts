@@ -1,28 +1,29 @@
 import MiniSearch from 'minisearch'
-import { referenceEntries, categoryLabels } from '@/content/reference/entries'
+import { getCategoryLabels, getReferenceEntries, type RefLang } from '@/content/reference/entries'
 import { normalizeQuery, parseStudyXml } from '@/lib/xmlStudy'
 
 export const xmlFieldLink = (fieldId: string) => `/reference/pacs.008?tab=xml&field=${encodeURIComponent(fieldId)}`
 
 export interface ReferenceResult { id: string; title: string; description: string; category: string; to: string; searchable: string }
-let cached: { items: ReferenceResult[]; index: MiniSearch<ReferenceResult> } | undefined
-function getIndex() {
+const cache: Partial<Record<RefLang, { items: ReferenceResult[]; index: MiniSearch<ReferenceResult> }>> = {}
+function getIndex(lang: RefLang) {
+  const cached = cache[lang]
   if (cached) return cached
-  const items: ReferenceResult[] = referenceEntries.map((entry) => ({
+  const labels = getCategoryLabels(lang)
+  const items: ReferenceResult[] = getReferenceEntries(lang).map((entry) => ({
     id: entry.id, title: entry.title, description: entry.summary, category: entry.category,
-    to: `/reference/${entry.id}`, searchable: [entry.subtitle, categoryLabels[entry.category], ...entry.aliases, ...entry.facts.map((fact) => fact.value), entry.example?.text ?? ''].join(' '),
+    to: `/reference/${entry.id}`, searchable: [entry.subtitle, labels[entry.category], ...entry.aliases, ...entry.facts.map((fact) => fact.value), entry.example?.text ?? ''].join(' '),
   }))
-  for (const field of parseStudyXml().fields) {
+  for (const field of parseStudyXml(undefined, lang).fields) {
     items.push({ id: `xml:${field.id}`, title: field.tag, description: field.note.meaning, category: 'xml', to: xmlFieldLink(field.id), searchable: `${field.path} ${field.note.name} ${field.note.note} ${field.value} pacs.008.001.10` })
   }
   const index = new MiniSearch<ReferenceResult>({ fields: ['title', 'description', 'searchable'], storeFields: ['title', 'description', 'category', 'to', 'searchable'], searchOptions: { prefix: true, fuzzy: 0.15, boost: { title: 5 } } })
   index.addAll(items)
-  cached = { items, index }
-  return cached
+  return (cache[lang] = { items, index })
 }
 
-export function searchReference(query: string, category = 'all'): ReferenceResult[] {
-  const { items, index } = getIndex()
+export function searchReference(query: string, category = 'all', lang: RefLang = 'es'): ReferenceResult[] {
+  const { items, index } = getIndex(lang)
   const q = query.trim()
   const normal = normalizeQuery(q)
   let found = items

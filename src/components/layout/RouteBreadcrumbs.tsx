@@ -3,28 +3,30 @@ import { Breadcrumbs, type Crumb } from '@/components/ui/Breadcrumbs'
 import { useUIStore } from '@/store/uiStore'
 import { useT } from '@/i18n/strings'
 import { getDomain, getFastPaymentsPath, getLesson, getMessage } from '@/lib/i18nContent'
-import { categoryLabels, getReferenceEntry } from '@/content/reference/entries'
+import { getCategoryLabels, getReferenceEntry } from '@/content/reference/entries'
 
 export function RouteBreadcrumbs() {
   const { pathname, search } = useLocation()
   const lang = useUIStore((state) => state.lang)
   const t = useT()
-  const panel: Crumb = { label: 'Estudio clásico', to: '/classic' }
-  const library: Crumb = { label: 'Enciclopedia', to: '/' }
+  const en = lang === 'en'
+  const L = (es: string, english: string) => (en ? english : es)
+  const panel: Crumb = { label: L('Estudio clásico', 'Classic study'), to: '/classic' }
+  const library: Crumb = { label: L('Enciclopedia', 'Encyclopedia'), to: '/' }
   const path = getFastPaymentsPath(lang)
 
-  if (pathname === '/') return <Breadcrumbs items={[{ label: 'Enciclopedia' }]} />
-  if (pathname === '/visual') return <Breadcrumbs items={[library, { label: 'Guía visual' }]} />
-  if (pathname === '/recorridos') return <Breadcrumbs items={[library, { label: 'Recorridos' }]} />
-  if (pathname === '/classic') return <Breadcrumbs items={[library, { label: 'Estudio clásico' }]} />
+  if (pathname === '/') return <Breadcrumbs items={[{ label: library.label }]} />
+  if (pathname === '/visual') return <Breadcrumbs items={[library, { label: L('Guía visual', 'Visual guide') }]} />
+  if (pathname === '/recorridos') return <Breadcrumbs items={[library, { label: L('Recorridos', 'Journeys') }]} />
+  if (pathname === '/classic') return <Breadcrumbs items={[library, { label: panel.label }]} />
   if (pathname === '/classic/dashboard') return <Breadcrumbs items={[panel, { label: t('nav.dashboard') }]} />
-  if (pathname === '/xml') return <Breadcrumbs items={[library, { label: 'pacs.008', to: '/reference/pacs.008' }, { label: 'Explorador XML' }]} />
+  if (pathname === '/xml') return <Breadcrumbs items={[library, { label: 'pacs.008', to: '/reference/pacs.008' }, { label: L('Explorador XML', 'XML explorer') }]} />
   const entryMatch = matchPath('/reference/:entryId', pathname)
   if (entryMatch) {
-    const entry = getReferenceEntry(entryMatch.params.entryId ?? '')
-    if (!entry) return <Breadcrumbs items={[library, { label: 'Referencia' }]} />
+    const entry = getReferenceEntry(entryMatch.params.entryId ?? '', en ? 'en' : 'es')
+    if (!entry) return <Breadcrumbs items={[library, { label: L('Referencia', 'Reference') }]} />
     const xmlTab = new URLSearchParams(search).get('tab') === 'xml'
-    return <Breadcrumbs items={[library, { label: categoryLabels[entry.category], to: `/?category=${entry.category}` }, xmlTab ? { label: entry.title, to: `/reference/${entry.id}` } : { label: entry.title }, ...(xmlTab ? [{ label: 'XML anotado' }] : [])]} />
+    return <Breadcrumbs items={[library, { label: getCategoryLabels(en ? 'en' : 'es')[entry.category], to: `/?category=${entry.category}` }, xmlTab ? { label: entry.title, to: `/reference/${entry.id}` } : { label: entry.title }, ...(xmlTab ? [{ label: L('XML anotado', 'Annotated XML') }] : [])]} />
   }
 
   const lessonMatch = matchPath('/learn/fast-payments/:lessonId', pathname)

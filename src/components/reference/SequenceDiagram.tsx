@@ -3,6 +3,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, RotateCcw 
 import { Link } from 'react-router-dom'
 import type { ReferenceEntry, VisualRole } from '@/content/reference/entries'
 import { ColorIcon, type ReferenceTone } from './ReferenceIdentity'
+import { useL } from '@/i18n/reference/useLang'
 
 // Role colors follow AGENTS.md: party orange, institution blue, infrastructure violet.
 const portraits = {
@@ -13,6 +14,7 @@ const portraits = {
 export function portrait(role?: VisualRole) { return portraits[role ?? 'infrastructure'] }
 
 export function SequenceDiagram({ diagram }: { diagram: NonNullable<ReferenceEntry['diagram']> }) {
+  const L = useL()
   const [selected, setSelected] = useState(0)
   const current = diagram.steps[selected]
   const columns = diagram.actors.length
@@ -22,9 +24,9 @@ export function SequenceDiagram({ diagram }: { diagram: NonNullable<ReferenceEnt
         <h2 className="text-base font-semibold">{diagram.title}</h2>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted">{selected + 1} / {diagram.steps.length}</span>
-          <button className="ref-icon" title="Paso anterior" aria-label="Paso anterior" disabled={!selected} onClick={() => setSelected((s) => s - 1)}><ChevronLeft size={16} /></button>
-          <button className="ref-icon" title="Paso siguiente" aria-label="Paso siguiente" disabled={selected === diagram.steps.length - 1} onClick={() => setSelected((s) => s + 1)}><ChevronRight size={16} /></button>
-          <button className="ref-icon" title="Volver al inicio" aria-label="Volver al inicio" onClick={() => setSelected(0)}><RotateCcw size={14} /></button>
+          <button className="ref-icon" title={L('Paso anterior', 'Previous step')} aria-label={L('Paso anterior', 'Previous step')} disabled={!selected} onClick={() => setSelected((s) => s - 1)}><ChevronLeft size={16} /></button>
+          <button className="ref-icon" title={L('Paso siguiente', 'Next step')} aria-label={L('Paso siguiente', 'Next step')} disabled={selected === diagram.steps.length - 1} onClick={() => setSelected((s) => s + 1)}><ChevronRight size={16} /></button>
+          <button className="ref-icon" title={L('Volver al inicio', 'Back to start')} aria-label={L('Volver al inicio', 'Back to start')} onClick={() => setSelected(0)}><RotateCcw size={14} /></button>
         </div>
       </div>
       <div className="sequence-surface overflow-x-auto rounded-md border border-border bg-surface/50">
@@ -39,7 +41,7 @@ export function SequenceDiagram({ diagram }: { diagram: NonNullable<ReferenceEnt
             const left = ((Math.min(step.from, step.to) + 0.5) / columns) * 100
             const width = (Math.abs(step.to - step.from) / columns) * 100
             return <div key={`${step.label}-${i}`} className="relative h-[76px]">
-              <button aria-label={`Paso ${i + 1}: ${step.label}`} aria-pressed={selected === i} onClick={() => setSelected(i)} className={`absolute top-1 flex h-16 flex-col items-center justify-center gap-1 px-1 text-xs transition-colors ${selected === i ? 'text-camt' : 'text-muted hover:text-text'}`} style={{ left: `${left}%`, width: `${width}%` }}>
+              <button aria-label={`${L('Paso', 'Step')} ${i + 1}: ${step.label}`} aria-pressed={selected === i} onClick={() => setSelected(i)} className={`absolute top-1 flex h-16 flex-col items-center justify-center gap-1 px-1 text-xs transition-colors ${selected === i ? 'text-camt' : 'text-muted hover:text-text'}`} style={{ left: `${left}%`, width: `${width}%` }}>
                 <span className={`relative z-10 max-w-full rounded px-2 py-1 text-center ${selected === i ? 'bg-camt/10 font-semibold' : 'bg-surface'}`}>{i + 1}. {step.label}</span>
                 <span className={`sequence-arrow relative block w-full border-t-2 ${selected === i ? 'border-camt' : 'border-muted/60'}`} data-active={selected === i} data-direction={step.to > step.from ? 'right' : 'left'}>
                   {step.to > step.from ? <ArrowRight className="absolute -right-1 -top-[9px]" size={16} /> : <ArrowLeft className="absolute -left-1 -top-[9px]" size={16} />}
@@ -49,11 +51,11 @@ export function SequenceDiagram({ diagram }: { diagram: NonNullable<ReferenceEnt
           })}
         </div>
       </div>
-      <div className="mt-2 flex items-center gap-1 text-[11px] text-muted"><ArrowDown size={12} /> Tiempo relativo · sin escala de duración</div>
+      <div className="mt-2 flex items-center gap-1 text-[11px] text-muted"><ArrowDown size={12} /> {L('Tiempo relativo · sin escala de duración', 'Relative time · not to scale')}</div>
       <div className="mt-4 min-h-24 border-l-2 border-camt pl-4" aria-live="polite">
         <div className="text-sm font-semibold">{current.label}</div>
         <p className="mt-1 text-sm leading-relaxed text-muted">{current.detail}</p>
-        {current.entry && <Link to={`/reference/${current.entry}`} className="mt-2 inline-flex items-center gap-1 text-xs text-primary">Abrir {current.entry}<ArrowRight size={12} /></Link>}
+        {current.entry && <Link to={`/reference/${current.entry}`} className="mt-2 inline-flex items-center gap-1 text-xs text-primary">{L('Abrir', 'Open')} {current.entry}<ArrowRight size={12} /></Link>}
       </div>
     </section>
   )
