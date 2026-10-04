@@ -27,7 +27,7 @@ const entrySymbols: Record<string, IconName> = {
   instruction: 'memo', reject: 'no-entry', return: 'right-arrow-curving-left', recall: 'counterclockwise-arrows-button', reversal: 'repeat-button',
   'cash-management': 'ledger',
   // language of messages
-  iso20022: 'triangular-ruler', 'currency-code': 'coin', bah: 'label', message: 'e-mail', 'xml-basics': 'page-facing-up',
+  iso20022: 'triangular-ruler', 'currency-code': 'coin', iban: 'card-index-dividers', bah: 'label', message: 'e-mail', 'xml-basics': 'page-facing-up',
   // messages
   'pain.001': 'memo', 'pain.002': 'clipboard', 'pacs.008': 'money-with-wings', 'pacs.002': 'check-mark-button', 'pacs.004': 'right-arrow-curving-left',
   'pacs.003': 'inbox-tray', 'pacs.028': 'magnifying-glass-tilted-left', 'camt.053': 'ledger', 'camt.054': 'bell', 'camt.056': 'stop-sign',

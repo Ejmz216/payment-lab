@@ -45,10 +45,10 @@ export type IconName = (typeof iconNames)[number]
 // Browser icon: the same mark as the menu logo (.payment-mark) — a mint-to-blue
 // tile with the 3D "money with wings".
 const mark = set.icons['money-with-wings']
-writeFileSync(new URL('../public/favicon.svg', import.meta.url), `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+writeFileSync(new URL('../public/aula-icon.svg', import.meta.url), `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs><linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1ae0ba"/><stop offset="1" stop-color="#2296ff"/></linearGradient></defs>
   <rect width="64" height="64" rx="15" fill="url(#tile)"/>
   <svg x="9" y="9" width="46" height="46" viewBox="0 0 32 32">${mark.body}</svg>
 </svg>
 `)
-console.log(`Wrote ${names.length} icons to public/icons/fluent/ and public/favicon.svg`)
+console.log(`Wrote ${names.length} icons to public/icons/fluent/ and public/aula-icon.svg`)

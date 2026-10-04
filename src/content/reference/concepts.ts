@@ -343,6 +343,30 @@ export const conceptEntries: Concept[] = [
     related: ['pacs.008', 'xml-basics', 'settlement'], xml: true, xmlFocus: 'amount',
   },
 
+  {
+    id: 'iban', title: 'IBAN', subtitle: 'ISO 13616 · número de cuenta internacional',
+    summary: 'International Bank Account Number: formato estándar (ISO 13616) para identificar una cuenta bancaria de forma única y verificable, con el país, unos dígitos de control y el número de cuenta nacional.',
+    plain: 'Es el "número de cuenta con pasaporte": empieza por el país, lleva dos números que detectan errores de tecleo y luego la cuenta tal como la numera ese país. Identifica la cuenta; el banco lo identifica el BIC.',
+    aliases: ['IBAN', 'ISO 13616', 'número de cuenta', 'cuenta internacional', 'account number', 'CdtrAcct', 'DbtrAcct'],
+    facts: [
+      { label: 'Estructura', value: '2 letras de país (ISO 3166) + 2 dígitos de control + el BBAN, el número de cuenta nacional. Cada país fija la longitud total: en República Dominicana son 28 caracteres.' },
+      { label: 'Dígitos de control', value: 'Se calculan con un algoritmo módulo 97. Si alguien teclea mal un carácter, el IBAN deja de ser válido y el error se detecta antes de enviar el pago.' },
+      { label: 'En el XML', value: 'Dentro de la cuenta (DbtrAcct, CdtrAcct…) hay una elección: <Id><IBAN>…</IBAN></Id> o, si no hay IBAN, <Id><Othr><Id>…</Id></Othr></Id>.' },
+      { label: 'IBAN ≠ BIC', value: 'El IBAN dice qué cuenta; el BIC (BICFI) dice qué banco. Un pago suele llevar los dos.' },
+    ],
+    analogy: { text: 'Como una dirección postal completa con código postal: el país primero, luego un dato de control y después la dirección local. Si falta o sobra una cifra, se nota.', limit: 'Que un IBAN sea válido solo prueba que está bien escrito: no garantiza que la cuenta exista, esté abierta o sea del beneficiario.' },
+    example: { title: 'Dos cuentas sintéticas', text: 'CUSTOMER_A: DO58 AAAA 0000 0000 0000 0000 1001 (en BANK_A). CUSTOMER_B: DO45 BBBB 0000 0000 0000 0000 2001 (en BANK_B).', outcome: 'Ambos pasan la verificación módulo 97. Si cambias una cifra, dejan de pasarla y el banco lo rechaza antes de enviarlo.' },
+    caution: 'No todos los países usan IBAN (por ejemplo, Estados Unidos o Barbados no lo usan para sus cuentas nacionales). Por eso ISO 20022 permite Othr. El XML anotado de esta aula usa Othr; los Recorridos usan IBAN.',
+    diagram: seq('El IBAN en un pago', p2p, [
+      [0, 1, 'Ordena con el IBAN de B', 'CUSTOMER_A indica el IBAN del beneficiario.'],
+      [1, 0, 'Valida el IBAN', 'BANK_A comprueba el formato y los dígitos de control (módulo 97). Si hay un error de tecleo, se lo indica al cliente antes de enviar nada.'],
+      [1, 2, 'pacs.008 con CdtrAcct/IBAN', 'El IBAN viaja en la cuenta del acreedor; el BIC del banco va en CdtrAgt.', 'pacs.008'],
+      [2, 3, 'Entrega', 'BANK_B busca la cuenta por el IBAN. Si no existe, rechaza (por ejemplo AC01).', 'reject'],
+      [3, 4, 'Abono', 'El dinero llega a la cuenta identificada por el IBAN.'],
+    ]),
+    related: ['creditor', 'debtor', 'pacs.008', 'pain.001', 'currency-code'], xml: true, xmlFocus: 'actors',
+  },
+
   // ── Lifecycle ────────────────────────────────────────────────────────────
   {
     id: 'instruction', title: 'Instrucción de pago', subtitle: 'La orden de mover dinero',

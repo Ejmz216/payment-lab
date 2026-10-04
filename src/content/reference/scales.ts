@@ -26,7 +26,7 @@ export const scales: Scale[] = [
 const ecosystemIds = new Set(['payment-system', 'settlement-system', 'clearing-system', 'payment-network', 'payment-rail', 'ach', 'participant'])
 const journeyIds = new Set(['fast-payments', 'payment-scheme', 'rtgs', 'clearing', 'settlement', 'gross-settlement', 'net-settlement', 'finality', 'settlement-account'])
 const messageLanguageIds = new Set(['iso20022', 'bah', 'message'])
-const xmlIds = new Set(['xml-basics', 'currency-code'])
+const xmlIds = new Set(['xml-basics', 'currency-code', 'iban'])
 
 export function scaleOf(entry: ReferenceEntry): ScaleId {
   if (entry.category === 'architecture' || ecosystemIds.has(entry.id)) return 'ecosystem'

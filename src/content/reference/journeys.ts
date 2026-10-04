@@ -56,9 +56,11 @@ const pacs008 = `${hdr('AAAADODX', 'SYSTDODX', 'pacs.008.001.10', 'MSG-001')}
     <PmtId><EndToEndId>E2E-001</EndToEndId><TxId>TX-001</TxId></PmtId>
     <IntrBkSttlmAmt Ccy="XXX">250.00</IntrBkSttlmAmt>
     <Dbtr><Nm>CUSTOMER_A</Nm></Dbtr>
+    <DbtrAcct><Id><IBAN>DO58AAAA00000000000000001001</IBAN></Id></DbtrAcct>
     <DbtrAgt><FinInstnId><BICFI>AAAADODX</BICFI></FinInstnId></DbtrAgt>
     <CdtrAgt><FinInstnId><BICFI>BBBBDODX</BICFI></FinInstnId></CdtrAgt>
     <Cdtr><Nm>CUSTOMER_B</Nm></Cdtr>
+    <CdtrAcct><Id><IBAN>DO45BBBB00000000000000002001</IBAN></Id></CdtrAcct>
   </CdtTrfTxInf>
 </FIToFICstmrCdtTrf>`
 
@@ -78,7 +80,7 @@ const pacs002 = (from: string, to: string, id: string, status: string, reason?: 
 const camt054 = `<BkToCstmrDbtCdtNtfctn>
   <GrpHdr><MsgId>NTF-001</MsgId></GrpHdr>
   <Ntfctn>
-    <Acct><Id><Othr><Id>DEMO-BENEFICIARY-ACCOUNT-2001</Id></Othr></Id></Acct>
+    <Acct><Id><IBAN>DO45BBBB00000000000000002001</IBAN></Id></Acct>
     <Ntry>
       <Amt Ccy="XXX">250.00</Amt>
       <CdtDbtInd>CRDT</CdtDbtInd>
@@ -95,13 +97,13 @@ const fail = 'fail' as const
 const opening: JourneyStep[] = [
   { from: 0, to: 1, label: 'Ordena pagar 250 XXX', phase: 'Iniciación', detail: 'CUSTOMER_A se autentica en la app de BANK_A y ordena pagar 250 XXX a CUSTOMER_B con la referencia E2E-001. Es una intención: todavía no se ha movido dinero.', money: 'En la cuenta de CUSTOMER_A', status: 'Ordenado' },
   { from: 1, to: 1, label: 'Valida y reserva fondos', phase: 'Iniciación', detail: 'BANK_A comprueba identidad, límites y saldo, y reserva (bloquea) 250 XXX. Reservar no es debitar definitivamente: si el pago falla, se libera.', money: 'Reservado en BANK_A', status: 'Aceptado por BANK_A' },
-  { from: 1, to: 2, label: 'Instrucción de pago', message: 'pacs.008', phase: 'Compensación', detail: 'BANK_A envía la transferencia al sistema con MsgId MSG-001, TxId TX-001 y EndToEndId E2E-001. Enviar no es lo mismo que ser aceptado.', money: 'Reservado en BANK_A', status: 'Enviado', xml: pacs008 },
+  { from: 1, to: 2, label: 'Instrucción de pago', message: 'pacs.008', phase: 'Compensación', detail: 'BANK_A envía la transferencia al sistema con MsgId MSG-001, TxId TX-001 y EndToEndId E2E-001. Las cuentas van como IBAN y los bancos como BIC. Enviar no es lo mismo que ser aceptado.', money: 'Reservado en BANK_A', status: 'Enviado', xml: pacs008 },
   { from: 2, to: 2, label: 'Valida la instrucción', phase: 'Compensación', detail: 'El sistema comprueba formato, versión, participantes y reglas del esquema. Si algo no cumple, rechaza aquí mismo.', money: 'Reservado en BANK_A', status: 'Recibido por el sistema' },
   { from: 2, to: 3, label: 'Entrega la instrucción', message: 'pacs.008', phase: 'Compensación', detail: 'El sistema entrega el pacs.008 a BANK_B. Que BANK_B lo reciba no significa que lo acepte.', money: 'Reservado en BANK_A', status: 'Entregado a BANK_B', xml: pacs008.replace('<Fr><FIId><FinInstnId><BICFI>AAAADODX', '<Fr><FIId><FinInstnId><BICFI>SYSTDODX').replace('<To><FIId><FinInstnId><BICFI>SYSTDODX', '<To><FIId><FinInstnId><BICFI>BBBBDODX') },
 ]
 
 const settledCredit: JourneyStep[] = [
-  { from: 3, to: 3, label: 'Comprueba la cuenta', phase: 'Compensación', detail: 'BANK_B verifica que la cuenta de CUSTOMER_B exista, esté activa y pase sus controles.', money: 'Reservado en BANK_A', status: 'En revisión por BANK_B' },
+  { from: 3, to: 3, label: 'Comprueba la cuenta', phase: 'Compensación', detail: 'BANK_B busca la cuenta por el IBAN del acreedor (CdtrAcct) y verifica que exista, esté activa y pase sus controles.', money: 'Reservado en BANK_A', status: 'En revisión por BANK_B' },
   { from: 3, to: 2, label: 'Acepta el pago', message: 'pacs.002', phase: 'Compensación', detail: 'BANK_B responde positivamente (por ejemplo ACSP: aceptado, liquidación en curso). Aceptar no es liquidar: el dinero aún no ha cambiado de banco.', money: 'Reservado en BANK_A', status: 'Aceptado por BANK_B', outcome: ok, xml: pacs002('BBBBDODX', 'SYSTDODX', 'STS-B-001', 'ACSP') },
   { from: 2, to: 2, label: 'Liquida entre bancos', phase: 'Liquidación', detail: 'El sistema mueve 250 XXX de la cuenta de liquidación de BANK_A a la de BANK_B. A partir de aquí la liquidación es firme según las reglas del sistema.', money: 'Liquidado: en la cuenta de liquidación de BANK_B', status: 'Liquidado', outcome: ok },
   { from: 2, to: 1, label: 'Confirma liquidación', message: 'pacs.002', phase: 'Liquidación', detail: 'El sistema informa a BANK_A que el pago se liquidó (por ejemplo ACSC). BANK_A convierte la reserva en un débito definitivo a CUSTOMER_A.', money: 'Debitado a CUSTOMER_A · liquidado', status: 'Liquidado', outcome: ok, xml: pacs002('SYSTDODX', 'AAAADODX', 'STS-S-001', 'ACSC') },
@@ -122,7 +124,7 @@ export const journeys: Journey[] = [
     summary: 'BANK_B no encuentra la cuenta de CUSTOMER_B y rechaza el pago. Como no se liquidó, no hay nada que devolver: solo se libera la reserva.',
     takeaway: 'Un rechazo ocurre antes de liquidar: el dinero nunca cambió de banco.',
     steps: [...opening,
-      { from: 3, to: 3, label: 'Cuenta no encontrada', phase: 'Compensación', detail: 'La cuenta indicada no existe en BANK_B.', money: 'Reservado en BANK_A', status: 'En revisión por BANK_B', outcome: warn },
+      { from: 3, to: 3, label: 'Cuenta no encontrada', phase: 'Compensación', detail: 'El IBAN tiene un formato válido, pero esa cuenta no existe en BANK_B. Un IBAN válido no garantiza que la cuenta exista.', money: 'Reservado en BANK_A', status: 'En revisión por BANK_B', outcome: warn },
       { from: 3, to: 2, label: 'Rechaza · AC01', message: 'pacs.002', phase: 'Excepción', detail: 'BANK_B responde RJCT con el motivo AC01 (número de cuenta incorrecto).', money: 'Reservado en BANK_A', status: 'Rechazado', outcome: fail, xml: pacs002('BBBBDODX', 'SYSTDODX', 'STS-B-001', 'RJCT', 'AC01') },
       { from: 2, to: 1, label: 'Informa el rechazo', message: 'pacs.002', phase: 'Excepción', detail: 'El sistema reenvía el rechazo a BANK_A. No hubo liquidación.', money: 'Reservado en BANK_A', status: 'Rechazado', outcome: fail, xml: pacs002('SYSTDODX', 'AAAADODX', 'STS-S-001', 'RJCT', 'AC01') },
       { from: 1, to: 1, label: 'Libera la reserva', phase: 'Excepción', detail: 'BANK_A libera los 250 XXX. Como solo estaban reservados, el saldo de CUSTOMER_A vuelve a estar disponible sin ningún pago de vuelta.', money: 'Liberado: de nuevo disponible para CUSTOMER_A', status: 'Rechazado', outcome: warn },
@@ -237,10 +239,12 @@ export const journeys: Journey[] = [
   <PmtInf>
     <PmtInfId>BATCH-001</PmtInfId>
     <Dbtr><Nm>CUSTOMER_A</Nm></Dbtr>
+    <DbtrAcct><Id><IBAN>DO58AAAA00000000000000001001</IBAN></Id></DbtrAcct>
     <CdtTrfTxInf>
       <PmtId><EndToEndId>E2E-001</EndToEndId></PmtId>
       <Amt><InstdAmt Ccy="XXX">250.00</InstdAmt></Amt>
       <Cdtr><Nm>CUSTOMER_B</Nm></Cdtr>
+      <CdtrAcct><Id><IBAN>DO45BBBB00000000000000002001</IBAN></Id></CdtrAcct>
     </CdtTrfTxInf>
   </PmtInf>
 </CstmrCdtTrfInitn>` },

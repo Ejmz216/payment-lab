@@ -197,7 +197,8 @@ const messageEntries: ReferenceEntry[] = getMessages('es').map((message) => {
     xml: message.id === 'pacs.008',
   }
 })
-messageEntries.find((entry) => entry.id === 'pacs.008')!.related.push('actors', 'identifiers', 'bah', 'settlement')
+messageEntries.find((entry) => entry.id === 'pacs.008')!.related.push('actors', 'identifiers', 'iban', 'bah', 'settlement')
+messageEntries.find((entry) => entry.id === 'pain.001')!.related.push('iban')
 
 const encyclopediaConcepts: ReferenceEntry[] = conceptEntries.map((entry) => ({ ...entry, category: 'concepts', sources: entry.sources ?? [] }))
 export const referenceEntries: ReferenceEntry[] = [...curated, ...messageEntries, ...encyclopediaConcepts]

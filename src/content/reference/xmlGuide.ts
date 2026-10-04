@@ -318,6 +318,7 @@ export const fieldNotes: Record<string, FieldNote> = {
   DbtrAcct: {
     name: 'Debtor Account',
     meaning: 'Cuenta del pagador de la que sale el dinero.',
+    explain: 'Dentro va la identificación de la cuenta: un IBAN (<Id><IBAN>) si el país lo usa, u otro identificador (<Id><Othr><Id>) si no. Esta muestra usa Othr.',
     note: 'No es la cuenta del banco del pagador (DbtrAgtAcct).',
     concept: 'actors',
   },
@@ -325,12 +326,15 @@ export const fieldNotes: Record<string, FieldNote> = {
     name: 'Identification',
     meaning: 'Identificación dentro del objeto indicado por la ruta.',
     note: 'Como bloque agrupa una elección (IBAN u Othr); como hoja contiene el identificador concreto.',
+    concept: 'iban',
   },
   Othr: {
     name: 'Other',
     meaning: 'Forma de identificar una cuenta que no es IBAN.',
-    explain: 'ISO permite identificar una cuenta con IBAN o con otro identificador (Othr/Id). Muchos países sin IBAN usan esta opción.',
-    note: 'El valor no revela el tipo de cuenta por su nombre.',
+    explain: 'ISO permite identificar una cuenta con IBAN o con otro identificador (Othr/Id). Los países que no usan IBAN recurren a esta opción; aquí se usa para mostrar la alternativa.',
+    equivalent: 'Esta cuenta no se identifica con IBAN, sino con un número propio.',
+    note: 'El valor no revela el tipo de cuenta por su nombre. Con IBAN, el XML diría <Id><IBAN>DO58AAAA…</IBAN></Id>.',
+    concept: 'iban',
   },
   DbtrAgt: {
     name: 'Debtor Agent',
@@ -367,6 +371,8 @@ export const fieldNotes: Record<string, FieldNote> = {
   CdtrAcct: {
     name: 'Creditor Account',
     meaning: 'Cuenta del beneficiario a la que debe llegar el dinero.',
+    explain: 'Igual que DbtrAcct: dentro va un IBAN o, si el país no lo usa, Othr/Id. El banco del beneficiario usa este dato para encontrar la cuenta.',
+    concept: 'iban',
     note: 'Es distinta de la cuenta del banco del beneficiario (CdtrAgtAcct).',
   },
   Purp: {
