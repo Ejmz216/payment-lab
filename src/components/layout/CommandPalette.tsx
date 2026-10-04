@@ -13,6 +13,7 @@ export function CommandPalette() {
   const dialog = useRef<HTMLDivElement>(null)
   const filtered = useMemo(() => {
     const spaces = [
+      { id: 'visual', title: 'Guía visual', description: 'Diagramas, secuencias y arquitecturas de pagos', category: 'espacio', to: '/visual' },
       { id: 'classic', title: 'Estudio clásico', description: 'Lecciones, simuladores y práctica', category: 'espacio', to: '/classic' },
       { id: 'info-extra', title: 'Info extra', description: 'Comparativa Barbados vs. Bahamas', category: 'espacio', to: '/learn/info-extra' },
       { id: 'xml', title: 'Explorador XML', description: 'pacs.008.001.10', category: 'xml', to: '/xml' },

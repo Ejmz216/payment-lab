@@ -8,10 +8,13 @@ import { useUIStore } from '@/store/uiStore'
 
 export function AppShell() {
   const theme = useUIStore((s) => s.theme)
+  const lang = useUIStore((s) => s.lang)
   const commandPaletteOpen = useUIStore((s) => s.commandPaletteOpen)
   const setCommandPaletteOpen = useUIStore((s) => s.setCommandPaletteOpen)
   const location = useLocation()
   const mainRef = useRef<HTMLElement>(null)
+  const referenceExperience = ['/', '/visual', '/xml'].includes(location.pathname) || location.pathname.startsWith('/reference/')
+  useEffect(() => { document.documentElement.lang = referenceExperience ? 'es' : lang }, [referenceExperience, lang])
 
   useEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light')
@@ -33,7 +36,7 @@ export function AppShell() {
   }, [location.pathname])
 
   return (
-    <div className="flex h-full min-h-screen bg-bg text-text">
+    <div className={`flex h-full min-h-screen bg-bg text-text ${referenceExperience ? 'reference-experience' : ''}`}>
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <Header />

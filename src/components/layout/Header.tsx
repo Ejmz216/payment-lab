@@ -5,6 +5,7 @@ import { useUIStore } from '@/store/uiStore'
 import { useProgressStore } from '@/store/progressStore'
 import { useT } from '@/i18n/strings'
 import { referenceNav, secondaryNav } from './Sidebar'
+import { ColorIcon, type ReferenceTone } from '@/components/reference/ReferenceIdentity'
 import clsx from 'clsx'
 
 export function Header() {
@@ -18,7 +19,7 @@ export function Header() {
   const t = useT()
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const legacy = location.pathname !== '/' && location.pathname !== '/xml' && location.pathname !== '/classic' && !location.pathname.startsWith('/reference/')
+  const legacy = !['/', '/visual', '/xml', '/classic'].includes(location.pathname) && !location.pathname.startsWith('/reference/')
 
   useEffect(() => {
     setMobileMenuOpen(false)
@@ -39,14 +40,14 @@ export function Header() {
       </button>
       <button
         onClick={() => setCommandPaletteOpen(true)}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface2 text-sm text-muted hover:text-text sm:w-full sm:max-w-sm sm:justify-start sm:gap-2 sm:px-3"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface2 text-sm text-muted hover:text-text sm:w-full sm:min-w-0 sm:max-w-sm sm:shrink sm:flex-1 sm:justify-start sm:gap-2 sm:px-3"
         aria-label="Buscar en Payment Lab"
         title="Buscar en Payment Lab"
       >
         <Search size={15} />
         <span className="hidden truncate sm:block">Buscar en Payment Lab</span>
       </button>
-      <div className="flex min-w-0 items-center gap-1.5 sm:gap-2 sm:pl-3">
+      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 sm:pl-3">
         {legacy && <div className="flex items-center gap-1 rounded-md border border-border p-0.5 text-xs" title={t('header.language')}>
           <Languages size={13} className="ml-1 hidden text-muted sm:block" />
           <button
@@ -88,7 +89,7 @@ export function Header() {
           <div className="grid grid-cols-2 gap-2">
             {mobileNav.map((item) => (
               <Link key={`${item.to}:${item.label}`} to={item.to} className="flex min-h-11 items-center gap-2 rounded-md border border-border bg-bg/50 px-3 py-2 text-sm hover:bg-surface2">
-                <item.icon size={15} className={item.color} />
+                <ColorIcon icon={item.icon} tone={item.tone as ReferenceTone} small />
                 <span className="min-w-0">{item.label}</span>
               </Link>
             ))}

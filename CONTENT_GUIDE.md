@@ -7,6 +7,10 @@ All content lives in `src/content/`, separated from UI components in
 ## Encyclopedia and XML Study
 
 - Curated entries and reusable diagram data: `src/content/reference/entries.ts`.
+- Diagram `actorRoles` and architecture node `kind` select semantic symbols;
+  do not infer private implementation details or roles from labels. The Visual
+  Guide automatically includes entries with a diagram or architecture.
+- Reference appearance and illustration provenance: `docs/VISUAL_DESIGN.md`.
 - Field explanations: `src/content/reference/xmlGuide.ts`. Repeated tags must be
   interpreted by their full path, not only their local name.
 - Synthetic study instance: `src/content/reference/pacs008-v10.xml`, adapted from

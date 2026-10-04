@@ -3,6 +3,7 @@ import { getGlossary, getMessages } from '@/lib/i18nContent'
 export type EntryCategory = 'concepts' | 'messages' | 'architecture' | 'schemes'
 export interface ReferenceSource { title: string; url: string }
 export interface SequenceStep { from: number; to: number; label: string; detail: string; entry?: string }
+export type VisualRole = 'party' | 'agent' | 'infrastructure' | 'channel' | 'service' | 'report'
 export interface ReferenceEntry {
   id: string
   title: string
@@ -17,8 +18,8 @@ export interface ReferenceEntry {
   related: string[]
   sources: ReferenceSource[]
   reviewed?: string
-  diagram?: { title: string; actors: string[]; steps: SequenceStep[] }
-  architecture?: { title: string; nodes: { label: string; role: string }[] }
+  diagram?: { title: string; actors: string[]; actorRoles?: VisualRole[]; steps: SequenceStep[] }
+  architecture?: { title: string; nodes: { label: string; role: string; kind?: VisualRole }[] }
   messageId?: string
   xml?: boolean
   publicScheme?: boolean
@@ -49,7 +50,7 @@ const curated: ReferenceEntry[] = [
     example: { title: 'Un pago entre dos participantes', text: 'CUSTOMER_A ordena pagar a CUSTOMER_B. BANK_A procesa la orden; PAYMENT_SYSTEM la intercambia con BANK_B.', outcome: 'El abono disponible para CUSTOMER_B es un evento que hay que distinguir de la recepción del mensaje.' },
     caution: 'Una respuesta técnica o un mensaje recibido no demuestran, por sí solos, que el beneficiario ya pueda usar el dinero.',
     related: ['settlement', 'clearing', 'pacs.008', 'bimpay'], sources: [fastSource], reviewed: '2026-10-02',
-    diagram: { title: 'Intercambio conceptual de un pago', actors: ['CUSTOMER_A', 'BANK_A', 'PAYMENT_SYSTEM', 'BANK_B'], steps: [
+    diagram: { title: 'Intercambio conceptual de un pago', actors: ['CUSTOMER_A', 'BANK_A', 'PAYMENT_SYSTEM', 'BANK_B'], actorRoles: ['party', 'agent', 'infrastructure', 'agent'], steps: [
       { from: 0, to: 1, label: 'Orden de pago', detail: 'El canal del cliente recoge la intención de pagar. No se presupone un formato ISO.' },
       { from: 1, to: 2, label: 'Instrucción', detail: 'La institución envía la instrucción conforme a las reglas del esquema.' },
       { from: 2, to: 3, label: 'Procesamiento', detail: 'El participante receptor interviene según el flujo del sistema.' },
@@ -118,7 +119,7 @@ const curated: ReferenceEntry[] = [
     analogy: { text: 'Es una ventanilla automatizada entre dos oficinas: una entrega instrucciones y la otra devuelve resultados.', limit: 'No define un protocolo único ni garantiza procesamiento inmediato.' },
     example: { title: 'Lote empresarial', text: 'Un ERP envía un lote sintético a BANK_A. El banco acusa recepción y procesa cada instrucción.', outcome: 'La empresa correlaciona resultados y movimientos contables para conciliar; el acuse técnico no basta.' },
     related: ['pain.001', 'pain.002', 'reconciliation', 'payment-web-app'], sources: [],
-    architecture: { title: 'Integración conceptual por responsabilidades', nodes: [{ label: 'ERP', role: 'Prepara instrucciones' }, { label: 'Canal H2H', role: 'Transporta y autentica' }, { label: 'BANK_A', role: 'Valida y procesa' }, { label: 'Resultados', role: 'Permiten conciliar' }] },
+    architecture: { title: 'Integración conceptual por responsabilidades', nodes: [{ label: 'ERP', role: 'Prepara instrucciones', kind: 'service' }, { label: 'Canal H2H', role: 'Transporta y autentica', kind: 'channel' }, { label: 'BANK_A', role: 'Valida y procesa', kind: 'agent' }, { label: 'Resultados', role: 'Permiten conciliar', kind: 'report' }] },
   },
   {
     id: 'payment-web-app', title: 'Aplicación web de pagos', subtitle: 'Del canal del cliente al sistema de pagos', category: 'architecture',
@@ -127,8 +128,8 @@ const curated: ReferenceEntry[] = [
     example: { title: 'Una respuesta pendiente', text: 'La aplicación confirma que recibió la solicitud y muestra un estado pendiente mientras procesa la operación.', outcome: 'La interfaz necesita un resultado de negocio posterior; una respuesta HTTP satisfactoria no demuestra liquidación.' },
     caution: 'Modelo genérico de responsabilidades, sin describir la arquitectura interna de ningún banco ni de BiMPay.',
     related: ['host-to-host', 'timeouts', 'fast-payments', 'pacs.008'], sources: [httpSource],
-    architecture: { title: 'Arquitectura ilustrativa', nodes: [{ label: 'Web / móvil', role: 'Canal del usuario' }, { label: 'Servicio de pagos', role: 'Coordina la orden' }, { label: 'BANK_A', role: 'Participante originador' }, { label: 'PAYMENT_SYSTEM', role: 'Intercambia con BANK_B' }] },
-    diagram: { title: 'Solicitud y resultado asíncrono · modelo simplificado', actors: ['Cliente web', 'Servicio', 'Participante'], steps: [
+    architecture: { title: 'Arquitectura ilustrativa', nodes: [{ label: 'Web / móvil', role: 'Canal del usuario', kind: 'channel' }, { label: 'Servicio de pagos', role: 'Coordina la orden', kind: 'service' }, { label: 'BANK_A', role: 'Participante originador', kind: 'agent' }, { label: 'PAYMENT_SYSTEM', role: 'Intercambia con BANK_B', kind: 'infrastructure' }] },
+    diagram: { title: 'Solicitud y resultado asíncrono · modelo simplificado', actors: ['Cliente web', 'Servicio', 'Participante'], actorRoles: ['channel', 'service', 'agent'], steps: [
       { from: 0, to: 1, label: 'Solicitar pago', detail: 'La solicitud expresa intención, no un resultado financiero.' },
       { from: 1, to: 0, label: 'Recibido / pendiente', detail: 'El servicio devuelve una referencia de seguimiento, no una prueba de liquidación.' },
       { from: 1, to: 2, label: 'Procesar instrucción', detail: 'La integración con el participante utiliza su contrato específico.' },
@@ -150,7 +151,7 @@ const curated: ReferenceEntry[] = [
     example: { title: 'Participantes diferentes', text: 'Un pagador y un beneficiario usan instituciones distintas que participan en BiMPay.', outcome: 'La interoperabilidad permite conectarlos; el canal utilizado por cada usuario es una capa separada.' },
     related: ['fast-payments', 'payment-system', 'payment-web-app'], reviewed: '2026-10-02',
     sources: [{ title: 'Banco Central de Barbados · preguntas sobre BiMPay', url: 'https://www.centralbank.org.bb/faqs/bimpay-faqs' }, { title: 'Banco Central de Barbados · BiMPay', url: 'https://www.centralbank.org.bb/bimpay' }],
-    architecture: { title: 'Mapa conceptual de roles públicos', nodes: [{ label: 'Pagador', role: 'Canal habilitado' }, { label: 'Participante A', role: 'Institución de origen' }, { label: 'BiMPay', role: 'Infraestructura compartida' }, { label: 'Participante B', role: 'Institución del beneficiario' }] },
+    architecture: { title: 'Mapa conceptual de roles públicos', nodes: [{ label: 'Pagador', role: 'Canal habilitado', kind: 'party' }, { label: 'Participante A', role: 'Institución de origen', kind: 'agent' }, { label: 'BiMPay', role: 'Infraestructura compartida', kind: 'infrastructure' }, { label: 'Participante B', role: 'Institución del beneficiario', kind: 'agent' }] },
   },
 ]
 
@@ -166,7 +167,7 @@ const pacs = messageEntries.find((entry) => entry.id === 'pacs.008')!
 pacs.analogy = { text: 'Una ficha compartida permite que las instituciones describan quién paga, a quién y qué importe se instruye.', limit: 'La ficha comunica la instrucción; no demuestra que los fondos se hayan liquidado ni abonado.' }
 pacs.example = { title: 'La transferencia de la guía', text: 'CUSTOMER_A instruye un pago de 250 XXX a CUSTOMER_B. BANK_A y BANK_B aparecen en roles de agente. La muestra separa AppHdr y Document.', outcome: 'El XML permite identificar roles y referencias. No permite afirmar el resultado financiero de la operación.' }
 pacs.related.push('actors', 'identifiers', 'bah', 'settlement')
-pacs.diagram = { title: 'Intercambio FI-to-FI · modelo simplificado', actors: ['BANK_A', 'BANK_B'], steps: [
+pacs.diagram = { title: 'Intercambio FI-to-FI · modelo simplificado', actors: ['BANK_A', 'BANK_B'], actorRoles: ['agent', 'agent'], steps: [
   { from: 0, to: 1, label: 'pacs.008 · instrucción', detail: 'Transferencia de crédito de cliente entre instituciones. La ruta real puede incluir intermediarios o una infraestructura.', entry: 'pacs.008' },
   { from: 1, to: 0, label: 'pacs.002 · estado, si aplica', detail: 'Ejemplo conceptual de reporte de estado. Su uso, dirección, códigos y momento los fija el esquema.', entry: 'pacs.002' },
 ] }

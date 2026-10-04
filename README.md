@@ -10,6 +10,7 @@ Existing guided study, simulators and practice remain available in Classic Study
 ## Modes
 
 - **Enciclopedia** (`#/`): searchable concepts, messages, architectures and public systems.
+- **Guía visual** (`#/visual`): role-colored sequence and architecture diagrams with shareable topic URLs and links back to the reference.
 - **Explorador XML** (`#/xml`): table, tree and XML views of one synthetic pacs.008.001.10 instance, with field notes and shareable field URLs.
 - **Estudio clásico** (`#/classic`): original curriculum, Atlas, laboratories and practice. Existing routes and progress are preserved.
 - **Info extra** (`#/learn/info-extra`): unchanged questions and anonymous shared canvas.

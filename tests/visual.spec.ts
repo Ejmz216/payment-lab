@@ -1,0 +1,92 @@
+import { test, expect } from '@playwright/test'
+
+test('visual guide topics, diagrams and links work from shared URLs', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  await page.goto('#/visual')
+  await expect(page.getByRole('heading', { name: 'Guía visual', exact: true })).toBeVisible()
+  const topics = page.getByRole('group', { name: 'Temas visuales' })
+  await expect(topics.getByRole('button')).toHaveCount(5)
+  for (const title of ['Fast Payments', 'Host-to-host', 'Aplicación web de pagos', 'BiMPay', 'pacs.008']) {
+    await topics.getByRole('button', { name: new RegExp(title.replace('.', '\\.')) }).click()
+    await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Leer concepto', exact: true })).toHaveAttribute('href', /#\/reference\//)
+  }
+  await page.goto('#/visual?topic=payment-web-app&view=architecture')
+  await expect(page.getByRole('tab', { name: 'Arquitectura', exact: true })).toHaveAttribute('aria-selected', 'true')
+  await expect(page.locator('.architecture-node')).toHaveCount(4)
+  await page.locator('.architecture-node').nth(1).click()
+  await expect(page.locator('.architecture-node').nth(1)).toHaveAttribute('aria-pressed', 'true')
+  await page.getByRole('tab', { name: 'Secuencia', exact: true }).click()
+  await page.getByRole('button', { name: 'Paso siguiente', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Paso 2: Recibido / pendiente', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await page.reload()
+  await expect(page.getByRole('tab', { name: 'Secuencia', exact: true })).toHaveAttribute('aria-selected', 'true')
+  await page.getByRole('link', { name: 'Leer concepto' }).click()
+  await expect(page.getByRole('heading', { name: 'Aplicación web de pagos', exact: true })).toBeVisible()
+  await page.goto('#/visual?topic=unknown')
+  await expect(page.getByRole('heading', { name: 'Fast Payments', exact: true })).toBeVisible()
+  expect(errors).toEqual([])
+})
+
+test('illustrated reference renders in both themes at desktop and mobile widths', async ({ page }) => {
+  for (const theme of ['dark', 'light']) {
+    for (const width of [1440, 768, 390, 320]) {
+      await page.setViewportSize({ width, height: 1000 })
+      await page.goto('#/')
+      const light = await page.locator('html').evaluate((element) => element.classList.contains('light'))
+      if (light !== (theme === 'light')) await page.getByRole('button', { name: 'Cambiar tema' }).click()
+      const picture = page.getByRole('img', { name: /Ilustración conceptual de un teléfono/ })
+      await expect(picture).toBeVisible()
+      await expect.poll(() => picture.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(1000)
+      expect(await picture.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThan(180)
+      await expect(page.getByRole('link', { name: /Entender el sistema/ })).toHaveAttribute('href', '#/reference/fast-payments')
+      if (width !== 768 && width !== 320) await page.screenshot({ path: `test-results/design-home-${theme}-${width}.png` })
+      for (const route of ['/', '/visual', '/visual?topic=payment-web-app&view=architecture', '/reference/pacs.008', '/xml']) {
+        await page.goto(`#${route}`)
+        await expect(page.locator('main h1')).toBeVisible()
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), `${theme} ${width} ${route}: page overflow`).toBe(true)
+        expect(await page.evaluate(() => document.querySelector('main')!.scrollWidth <= document.querySelector('main')!.clientWidth), `${theme} ${width} ${route}: main overflow`).toBe(true)
+        if (width === 1440 && route.includes('view=architecture')) await page.screenshot({ path: `test-results/design-architecture-${theme}.png` })
+      }
+    }
+  }
+})
+
+test('visual navigation and motion preference are accessible', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('#/')
+  await page.getByRole('button', { name: 'Abrir navegación' }).click()
+  await page.getByRole('navigation', { name: 'Navegación móvil' }).getByRole('link', { name: 'Guía visual' }).click()
+  await expect(page.getByRole('heading', { name: 'Guía visual', exact: true })).toBeVisible()
+  await expect(page.getByRole('navigation', { name: 'Navegación móvil' })).toHaveCount(0)
+  const arrow = page.locator('.sequence-arrow[data-active="true"]')
+  expect(await arrow.evaluate((element) => getComputedStyle(element, '::after').animationName)).toBe('none')
+  await page.getByRole('button', { name: 'Paso siguiente', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Paso 2: Instrucción', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'es')
+  await page.getByRole('button', { name: 'Paso siguiente', exact: true }).scrollIntoViewIfNeeded()
+  await page.screenshot({ path: 'test-results/design-sequence-mobile.png' })
+})
+
+test('discovery tiles and compact search preserve the selected view', async ({ page }) => {
+  await page.goto('#/')
+  await expect(page.getByRole('button', { name: 'Ver fichas', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.locator('.reference-result-tile')).not.toHaveCount(0)
+  await page.getByRole('button', { name: 'Ver lista', exact: true }).click()
+  await expect(page.locator('.reference-result-tile')).toHaveCount(0)
+  await page.reload()
+  await expect(page.getByRole('button', { name: 'Ver lista', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await page.goto('#/?q=pacs008')
+  await expect(page.getByRole('button', { name: 'Ver lista', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await page.getByRole('button', { name: 'Ver fichas', exact: true }).click()
+  await expect(page.locator('.reference-result-tile')).not.toHaveCount(0)
+  await page.getByRole('searchbox', { name: 'Buscar en la enciclopedia' }).fill('Settlement')
+  await expect(page.getByRole('button', { name: 'Ver fichas', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await page.goto('#/?category=messages')
+  await expect(page.locator('.reference-result-tile')).toHaveCount(13)
+  await page.screenshot({ path: 'test-results/design-message-collection.png' })
+  await page.getByRole('button', { name: 'Cambiar tema' }).click()
+  await page.screenshot({ path: 'test-results/design-message-collection-light.png' })
+})
