@@ -5,14 +5,22 @@ import * as Y from 'yjs'
 import { useUIStore } from '@/store/uiStore'
 
 const BROKER_URL = 'wss://broker.hivemq.com:8884/mqtt'
-const CHANNEL = 'payment-lab/info-extra/anonymous-canvas/v2-7f4c61d3'
-const MAX_LENGTH = 12_000
+// v3: new channel so tabs still running the 12,000-character build never trim long texts.
+const CHANNEL = 'payment-lab/info-extra/anonymous-canvas/v3-b82e5a91'
+const MAX_LENGTH = 2_000_000
 const MAX_IMAGES = 4
 const MAX_IMAGE_BYTES = 420_000
 const MAX_SOURCE_IMAGE_BYTES = 12_000_000
 const MAX_TOTAL_IMAGE_BYTES = MAX_IMAGES * MAX_IMAGE_BYTES
 const MAX_IMAGE_DIMENSION = 1_400
-const MAX_WIRE_BYTES = 3_000_000
+// Whole message after reassembly and decompression (2M characters can take up to 6 MB as UTF-8).
+const MAX_WIRE_BYTES = 24_000_000
+// Large messages travel in pieces so the relay never receives one huge publish.
+const CHUNK_SIZE = 240_000
+const MAX_CHUNKS = Math.ceil(MAX_WIRE_BYTES / CHUNK_SIZE)
+const MAX_PENDING_MESSAGES = 6
+const CHUNK_TTL = 120_000
+const COMPRESS_FROM = 16_384
 const LOCAL_ORIGIN = Symbol('shared-study-canvas')
 const REMOTE_ORIGIN = Symbol('shared-study-canvas-remote')
 
@@ -29,10 +37,17 @@ type StoredImage = {
 
 type SharedImage = StoredImage & { url: string }
 
+// `z: 1` marks a gzip-compressed update.
+type UpdatePayload = { update: string; z?: 1 }
+
 type WireMessage =
   | { type: 'sync-request'; sender: string }
-  | { type: 'sync-response'; sender: string; target: string; update: string }
-  | { type: 'update'; sender: string; update: string }
+  | ({ type: 'sync-response'; sender: string; target: string } & UpdatePayload)
+  | ({ type: 'update'; sender: string } & UpdatePayload)
+
+type ChunkMessage = { type: 'chunk'; sender: string; id: string; index: number; total: number; data: string }
+
+type PendingMessage = { parts: string[]; received: number; total: number; timer: ReturnType<typeof setTimeout> }
 
 class ImagePreparationError extends Error {
   constructor(readonly reason: Exclude<ImageState, 'idle' | 'processing'>) {
@@ -60,6 +75,39 @@ function decodeUpdate(encoded: string) {
   const update = new Uint8Array(binary.length)
   for (let index = 0; index < binary.length; index += 1) {
     update[index] = binary.charCodeAt(index)
+  }
+  return update
+}
+
+async function packUpdate(update: Uint8Array): Promise<UpdatePayload> {
+  if (update.byteLength < COMPRESS_FROM || typeof CompressionStream === 'undefined') return { update: encodeUpdate(update) }
+  const stream = new Blob([update.slice().buffer as ArrayBuffer]).stream().pipeThrough(new CompressionStream('gzip'))
+  return { update: encodeUpdate(new Uint8Array(await new Response(stream).arrayBuffer())), z: 1 }
+}
+
+async function unpackUpdate(payload: { update: string; z?: unknown }) {
+  const bytes = decodeUpdate(payload.update)
+  if (payload.z !== 1) return bytes
+
+  // Decompress with a size cap so a malformed message on the public channel cannot balloon.
+  const reader = new Blob([bytes.buffer as ArrayBuffer]).stream().pipeThrough(new DecompressionStream('gzip')).getReader()
+  const parts: Uint8Array[] = []
+  let size = 0
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    size += value.byteLength
+    if (size > MAX_WIRE_BYTES) {
+      await reader.cancel()
+      throw new Error('update too large')
+    }
+    parts.push(value)
+  }
+  const update = new Uint8Array(size)
+  let offset = 0
+  for (const part of parts) {
+    update.set(part, offset)
+    offset += part.byteLength
   }
   return update
 }
@@ -175,7 +223,20 @@ function replaceSharedText(sharedText: Y.Text, nextValue: string) {
 
 function publish(client: MqttClient, message: WireMessage) {
   if (!client.connected) return
-  client.publish(CHANNEL, JSON.stringify(message), { qos: 0, retain: false })
+  // The serialized message is plain ASCII (ids and base64), so string length equals bytes.
+  const text = JSON.stringify(message)
+  if (text.length <= CHUNK_SIZE) {
+    client.publish(CHANNEL, text, { qos: 0, retain: false })
+    return
+  }
+
+  const total = Math.ceil(text.length / CHUNK_SIZE)
+  if (total > MAX_CHUNKS) return
+  const id = createEphemeralId()
+  for (let index = 0; index < total; index += 1) {
+    const chunk: ChunkMessage = { type: 'chunk', sender: message.sender, id, index, total, data: text.slice(index * CHUNK_SIZE, (index + 1) * CHUNK_SIZE) }
+    client.publish(CHANNEL, JSON.stringify(chunk), { qos: 0, retain: false })
+  }
 }
 
 export function SharedStudyCanvas() {
@@ -184,6 +245,8 @@ export function SharedStudyCanvas() {
   const [images, setImages] = useState<SharedImage[]>([])
   const [imageState, setImageState] = useState<ImageState>('idle')
   const [connectionState, setConnectionState] = useState<ConnectionState>('connecting')
+  // Percentage of a large message still arriving in pieces, or null.
+  const [incoming, setIncoming] = useState<number | null>(null)
   const sharedTextRef = useRef<Y.Text | null>(null)
   const sharedImagesRef = useRef<Y.Array<StoredImage> | null>(null)
   const imageUrlsRef = useRef<string[]>([])
@@ -207,6 +270,9 @@ export function SharedStudyCanvas() {
         imageError: 'No se pudo procesar la imagen.',
         clear: 'Borrar el lienzo compartido',
         confirmClear: '¿Borrar el contenido del lienzo para todas las personas?',
+        characters: 'caracteres',
+        receiving: 'Recibiendo texto largo…',
+        full: 'Llegaste al límite del lienzo.',
       }
     : {
         eyebrow: 'SHARED CANVAS',
@@ -224,6 +290,9 @@ export function SharedStudyCanvas() {
         imageError: 'The image could not be processed.',
         clear: 'Clear the shared canvas',
         confirmClear: 'Clear the canvas content for everyone?',
+        characters: 'characters',
+        receiving: 'Receiving long text…',
+        full: 'You reached the canvas limit.',
       }
 
   useEffect(() => {
@@ -281,47 +350,90 @@ export function SharedStudyCanvas() {
       resubscribe: true,
     })
 
-    const handleDocumentUpdate = (update: Uint8Array, origin: unknown) => {
-      if (origin === REMOTE_ORIGIN) return
-      publish(client, { type: 'update', sender, update: encodeUpdate(update) })
+    let closed = false
+    const pending = new Map<string, PendingMessage>()
+
+    const publishState = (build: (payload: UpdatePayload) => WireMessage) => {
+      void packUpdate(Y.encodeStateAsUpdate(document)).then((payload) => publish(client, build(payload)), () => undefined)
     }
 
-    const applyRemoteUpdate = (encoded: string) => {
-      if (encoded.length > MAX_WIRE_BYTES) return
+    const handleDocumentUpdate = (update: Uint8Array, origin: unknown) => {
+      if (origin === REMOTE_ORIGIN) return
+      void packUpdate(update).then((payload) => publish(client, { type: 'update', sender, ...payload }), () => undefined)
+    }
+
+    const applyRemoteUpdate = async (payload: { update: string; z?: unknown }) => {
+      if (payload.update.length > MAX_WIRE_BYTES) return
       try {
-        Y.applyUpdate(document, decodeUpdate(encoded), REMOTE_ORIGIN)
+        const update = await unpackUpdate(payload)
+        if (!closed) Y.applyUpdate(document, update, REMOTE_ORIGIN)
       } catch {
         // Ignore malformed messages on the public relay channel.
       }
     }
 
+    const handleWire = (message: Partial<WireMessage>) => {
+      if (typeof message.sender !== 'string' || message.sender === sender) return
+
+      if (message.type === 'sync-request') {
+        const target = message.sender
+        publishState((payload) => ({ type: 'sync-response', sender, target, ...payload }))
+        return
+      }
+
+      if (message.type === 'sync-response') {
+        if (message.target === sender && typeof message.update === 'string') {
+          void applyRemoteUpdate({ update: message.update, z: message.z })
+        }
+        return
+      }
+
+      if (message.type === 'update' && typeof message.update === 'string') {
+        void applyRemoteUpdate({ update: message.update, z: message.z })
+      }
+    }
+
+    const dropPending = (key: string) => {
+      const entry = pending.get(key)
+      if (!entry) return
+      clearTimeout(entry.timer)
+      pending.delete(key)
+      if (pending.size === 0) setIncoming(null)
+    }
+
+    const handleChunk = (chunk: Partial<ChunkMessage>) => {
+      const { sender: from, id, index, total, data } = chunk
+      if (typeof from !== 'string' || from === sender || typeof id !== 'string' || typeof data !== 'string') return
+      if (!Number.isInteger(total) || !Number.isInteger(index) || (total as number) < 2 || (total as number) > MAX_CHUNKS) return
+      if ((index as number) < 0 || (index as number) >= (total as number) || data.length > CHUNK_SIZE) return
+
+      const key = `${from}:${id}`
+      let entry = pending.get(key)
+      if (!entry) {
+        if (pending.size >= MAX_PENDING_MESSAGES) dropPending(pending.keys().next().value as string)
+        entry = { parts: new Array<string>(total as number), received: 0, total: total as number, timer: setTimeout(() => dropPending(key), CHUNK_TTL) }
+        pending.set(key, entry)
+      }
+      if (entry.total !== total || entry.parts[index as number] !== undefined) return
+
+      entry.parts[index as number] = data
+      entry.received += 1
+      if (entry.received < entry.total) {
+        setIncoming(Math.round((entry.received / entry.total) * 100))
+        return
+      }
+      const text = entry.parts.join('')
+      dropPending(key)
+      handleWire(JSON.parse(text) as Partial<WireMessage>)
+    }
+
     const handleMessage = (topic: string, payload: Uint8Array) => {
-      if (topic !== CHANNEL || payload.byteLength > MAX_WIRE_BYTES) return
+      if (topic !== CHANNEL || payload.byteLength > CHUNK_SIZE + 1_024) return
 
       try {
-        const message = JSON.parse(new TextDecoder().decode(payload)) as Partial<WireMessage>
-        if (typeof message.sender !== 'string' || message.sender === sender) return
-
-        if (message.type === 'sync-request') {
-          publish(client, {
-            type: 'sync-response',
-            sender,
-            target: message.sender,
-            update: encodeUpdate(Y.encodeStateAsUpdate(document)),
-          })
-          return
-        }
-
-        if (message.type === 'sync-response') {
-          if (message.target === sender && typeof message.update === 'string') {
-            applyRemoteUpdate(message.update)
-          }
-          return
-        }
-
-        if (message.type === 'update' && typeof message.update === 'string') {
-          applyRemoteUpdate(message.update)
-        }
+        const message = JSON.parse(new TextDecoder().decode(payload)) as { type?: unknown }
+        if (message.type === 'chunk') handleChunk(message as Partial<ChunkMessage>)
+        else handleWire(message as Partial<WireMessage>)
       } catch {
         // Ignore traffic that does not belong to this canvas protocol.
       }
@@ -336,11 +448,7 @@ export function SharedStudyCanvas() {
 
         setConnectionState('active')
         if (sharedText.length > 0 || sharedImages.length > 0) {
-          publish(client, {
-            type: 'update',
-            sender,
-            update: encodeUpdate(Y.encodeStateAsUpdate(document)),
-          })
+          publishState((payload) => ({ type: 'update', sender, ...payload }))
         }
         publish(client, { type: 'sync-request', sender })
       })
@@ -358,6 +466,9 @@ export function SharedStudyCanvas() {
     client.on('message', handleMessage)
 
     return () => {
+      closed = true
+      pending.forEach((entry) => clearTimeout(entry.timer))
+      pending.clear()
       client.off('connect', handleConnect)
       client.off('reconnect', handleReconnect)
       client.off('offline', handleOffline)
@@ -520,6 +631,15 @@ export function SharedStudyCanvas() {
         placeholder={copy.placeholder}
         className="min-h-56 w-full resize-y rounded-md border border-border bg-surface/80 px-4 py-3 text-[15px] leading-7 text-text outline-none transition-colors placeholder:text-muted/70 focus:border-camt focus:ring-2 focus:ring-camt/20"
       />
+      <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+        <span role="status" aria-live="polite" className="inline-flex items-center gap-1.5">
+          {incoming !== null && <><LoaderCircle size={13} className="animate-spin text-camt" />{copy.receiving} {incoming} %</>}
+        </span>
+        <span className={value.length >= MAX_LENGTH ? 'text-warning' : ''}>
+          {value.length >= MAX_LENGTH && `${copy.full} `}
+          {value.length.toLocaleString(lang)} / {MAX_LENGTH.toLocaleString(lang)} {copy.characters}
+        </span>
+      </div>
       {imageStatusLabel && (
         <p
           className={`mt-2 text-xs ${imageState === 'processing' ? 'text-muted' : 'text-warning'}`}
